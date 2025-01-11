@@ -61,9 +61,6 @@
 ---
 
 ## 📖 **Documentación del Template**
-### **Doot: React Responsive Bootstrap 5 Chat App**
-- **Introducción**:
-  Este proyecto se basa en el template premium **Doot**, un chat app diseñado con React y Bootstrap 5.3.2. Puedes encontrar más información sobre sus componentes en la [documentación oficial de Reactstrap](https://reactstrap.github.io/).
 
 - **Dependencias principales**:
   - React
@@ -71,14 +68,11 @@
   - SASS
   - Redux Saga
 
-Para más detalles sobre el template, visita [Themesbrand Support](https://themeforest.net/user/themesbrand).
-
 ---
 
 ## 📞 **Soporte**
 ¿Tienes preguntas o comentarios? Contáctanos:
 - 📧 **Correo**: [desarrollo@tecnologiasadministrativas.com](mailto:desarrollo@tecnologiasadministrativas.com)
-- 🌐 **Soporte del Template**: [Themesbrand](https://themeforest.net/user/themesbrand)
 
 ---
 
