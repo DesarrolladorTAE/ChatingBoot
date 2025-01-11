@@ -1,46 +1,91 @@
-# Getting Started with Create React App
+# 🛠️ Chatting Boot: Sistema de Respuestas Automáticas vía WhatsApp 🚀
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+¡Bienvenido a **Chatting Boot**! Esta aplicación está diseñada para optimizar la comunicación con prospectos y clientes a través de WhatsApp, integrando respuestas automáticas y funcionalidades avanzadas para gestionar múltiples usuarios y clientes.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🌟 **Características principales**
+- 🔒 **Autenticación segura**: Creación de cuentas, recuperación de contraseñas y confirmación vía correo electrónico.
+- 👥 **Multiusuario y multicliente**: Gestiona múltiples ambientes de forma independiente.
+- 📱 **Automatización en WhatsApp**: Canalización eficiente de consultas relacionadas con productos y servicios.
+- 🛠️ **Roles de usuarios**:
+  - **Asociado**: Propietario de la cuenta con acceso completo.
+  - **Agente**: Personal encargado de gestionar mensajes.
+  - **Prospecto**: Posibles clientes que interactúan vía WhatsApp.
+- 🌙 **Modos Oscuro y Claro**: Diseñado para adaptarse a tus preferencias visuales.
+- 🎨 **7 esquemas de color**: Para personalizar la apariencia.
 
-### `yarn start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 📋 **Tecnologías utilizadas**
+- ⚛️ **React**: Componentes basados en TypeScript para un rendimiento óptimo.
+- 🎨 **Reactstrap y Bootstrap 5**: Diseño responsivo y moderno.
+- 📦 **SASS**: Estilos avanzados sin depender de jQuery.
+- 🔄 **Redux Saga**: Manejo eficiente de estados.
+- 🔐 **Firebase/Fake-backend**: Autenticación con Google y Facebook (simulada en almacenamiento local).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+---
 
-### `yarn test`
+## 🚀 **Instalación**
+### **Requisitos previos**:
+1. Tener instalado Node.js (versión LTS recomendada).
+2. Asegúrate de contar con un entorno preparado para React.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### **Pasos**:
+1. Clona el repositorio:
+   ```bash
+   git clone git@github.com:DesarrolladorTAE/ChatingBoot.git
+   cd ChatingBoot
+   ```
 
-### `yarn build`
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. Inicia la aplicación:
+   ```bash
+   npm start
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. Accede desde tu navegador en `http://localhost:3000`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `yarn eject`
+## 🗂️ **Estructura del proyecto**
+- **/src**: Código fuente principal.
+- **/public**: Archivos públicos y estáticos.
+- **/components**: Componentes reutilizables de React.
+- **/redux**: Configuración de Redux y Saga.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+---
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📖 **Documentación del Template**
+### **Doot: React Responsive Bootstrap 5 Chat App**
+- **Introducción**:
+  Este proyecto se basa en el template premium **Doot**, un chat app diseñado con React y Bootstrap 5.3.2. Puedes encontrar más información sobre sus componentes en la [documentación oficial de Reactstrap](https://reactstrap.github.io/).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- **Dependencias principales**:
+  - React
+  - Bootstrap 5
+  - SASS
+  - Redux Saga
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Para más detalles sobre el template, visita [Themesbrand Support](https://themeforest.net/user/themesbrand).
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📞 **Soporte**
+¿Tienes preguntas o comentarios? Contáctanos:
+- 📧 **Correo**: [desarrollo@tecnologiasadministrativas.com](mailto:desarrollo@tecnologiasadministrativas.com)
+- 🌐 **Soporte del Template**: [Themesbrand](https://themeforest.net/user/themesbrand)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
+
+## 💡 **Contribuciones**
+¡Agradecemos tus ideas y contribuciones! Si encuentras un error o deseas proponer mejoras, crea un **issue** o envía un **pull request**. 🙌
+
+---
+
+## 🎉 **Gracias por elegir Chatting Boot!**
+Con esta herramienta, buscamos revolucionar la manera de interactuar con prospectos y clientes, ahorrando tiempo y recursos. ¡Vamos a construir el futuro juntos! 🚀
