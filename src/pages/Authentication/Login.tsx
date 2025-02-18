@@ -50,19 +50,18 @@ const Login = (props: LoginProps) => {
   //   })
   // );
 
-
   const errorData = createSelector(
-    (state : any) => state.Login,
-    (state) => ({
+    (state: any) => state.Login,
+    state => ({
       isUserLogin: state.isUserLogin,
       error: state.error,
       loginLoading: state.loading,
       isUserLogout: state.isUserLogout,
-
-    })
+    }),
   );
   // Inside your component
-  const { isUserLogin,error ,loginLoading,isUserLogout} = useAppSelector(errorData);
+  const { isUserLogin, error, loginLoading, isUserLogout } =
+    useAppSelector(errorData);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,7 +83,7 @@ const Login = (props: LoginProps) => {
     yup.object().shape({
       email: yup.string().required("Please Enter E-mail."),
       password: yup.string().required("Please Enter Password."),
-    })
+    }),
   );
 
   const defaultValues: any = {
@@ -144,8 +143,8 @@ const Login = (props: LoginProps) => {
         <Col sm={8} lg={6} xl={5} className="col-xxl-4">
           <div className="py-md-5 py-4">
             <AuthHeader
-              title="Welcome Back !"
-              subtitle="Sign in to continue to Doot."
+              title="Bienvenido!"
+              subtitle="Inicia sesión para continuar en ChattingBot."
             />
 
             {error && <Alert color="danger">{error}</Alert>}
@@ -157,7 +156,7 @@ const Login = (props: LoginProps) => {
               {loginLoading && <Loader />}
               <div className="mb-3">
                 <FormInput
-                  label="Username"
+                  label="Nombre de usuario"
                   type="text"
                   name="email"
                   register={register}
@@ -171,7 +170,7 @@ const Login = (props: LoginProps) => {
 
               <div className="mb-3">
                 <FormInput
-                  label="Password"
+                  label="Contraseña"
                   type="password"
                   name="password"
                   register={register}
@@ -193,19 +192,19 @@ const Login = (props: LoginProps) => {
                   className="form-check-label font-size-14"
                   htmlFor="remember-check"
                 >
-                  Remember me
+                  Recuerdame
                 </Label>
               </div>
 
               <div className="text-center mt-4">
                 <Button color="primary" className="w-100" type="submit">
-                  Log In
+                  Iniciar sesión
                 </Button>
               </div>
 
               <div className="mt-4 text-center">
                 <div className="signin-other-title">
-                  <h5 className="font-size-14 mb-4 title">Sign in with</h5>
+                  <h5 className="font-size-14 mb-4 title">Iniciar sesión con</h5>
                 </div>
                 <Row className="">
                   <div className="col-4">
@@ -274,13 +273,13 @@ const Login = (props: LoginProps) => {
 
             <div className="mt-5 text-center text-muted">
               <p>
-                Don't have an account ?{" "}
+                No tienes una cuenta ?{" "}
                 <Link
                   to="/auth-register"
                   className="fw-medium text-decoration-underline"
                 >
                   {" "}
-                  Register
+                  Registrarse
                 </Link>
               </p>
             </div>

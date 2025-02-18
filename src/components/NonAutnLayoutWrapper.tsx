@@ -22,7 +22,7 @@ const NonAuthLayoutWrapper = (props: NonAuthLayoutWrapperProps) => {
                   <h3>
                     <Link to="/" className="text-white">
                       <i className="bx bxs-message-alt-detail align-middle text-white h3 mb-1 me-2"></i>{" "}
-                      Doot
+                      ChattingBot
                     </Link>
                   </h3>
                   <p className="font-size-16">

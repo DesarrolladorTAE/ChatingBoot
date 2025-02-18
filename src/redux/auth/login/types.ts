@@ -9,4 +9,8 @@ export enum AuthLoginActionTypes {
 export interface AuthLoginState {
   error: string;
   loading: boolean;
+  // Faltan estas propiedades que se usan en el reducer y componente:
+  isUserLogin?: boolean;
+  isUserLogout?: boolean;
+  user?: any;
 }
