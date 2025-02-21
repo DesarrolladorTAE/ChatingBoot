@@ -25,9 +25,9 @@ const NonAuthLayoutWrapper = (props: NonAuthLayoutWrapperProps) => {
                       ChattingBot
                     </Link>
                   </h3>
-                  <p className="font-size-16">
+                  {/* <p className="font-size-16">
                     Responsive Bootstrap 5 Chat App
-                  </p>
+                  </p> */}
                 </div>
                 <div className="mt-auto">
                   <img src={authImage} alt="auth" className="auth-img" />
@@ -44,9 +44,9 @@ const NonAuthLayoutWrapper = (props: NonAuthLayoutWrapperProps) => {
                     <Col xl={12}>
                       <div className="text-center text-muted p-4">
                         <p className="mb-0">
-                          &copy; {new Date().getFullYear()} Doot. Crafted with{" "}
-                          <i className="mdi mdi-heart text-danger"></i> by
-                          Themesbrand
+                          &copy; {new Date().getFullYear()} Hecho con{" "}
+                          <i className="mdi mdi-heart text-danger"></i> por
+                          TAElad
                         </p>
                       </div>
                     </Col>

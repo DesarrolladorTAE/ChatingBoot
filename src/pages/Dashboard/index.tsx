@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import classnames from "classnames";
 
 // hooks
@@ -22,24 +22,42 @@ const Index = (props: IndexProps) => {
   //   selectedChat: state.Chats.selectedChat,
   // }));
   const errorData = createSelector(
-    (state : any) => state.Chats,
-    (state) => ({
+    (state: any) => state.Chats,
+    state => ({
       selectedChat: state.selectedChat,
-    })
+    }),
   );
   // Inside your component
-  const { selectedChat} = useAppSelector(errorData);
-
+  const { selectedChat } = useAppSelector(errorData);
 
   const { isChannel } = useConversationUserType();
 
+  // Estado para manejar el colapso del panel central
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Función para alternar el estado de colapso
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <>
-      <Leftbar />
+      {/*<Leftbar />
 
       <div
         className={classnames("user-chat", "w-100", "overflow-hidden", {
           "user-chat-show": selectedChat,
+        })}
+        id="user-chat"*/}
+
+      {/* Barra lateral izquierda */}
+      <Leftbar onToggleCollapse={toggleCollapse} />
+
+      {/* Panel central */}
+      <div
+        className={classnames("user-chat", "w-100", "overflow-hidden", {
+          "user-chat-show": selectedChat,
+          "user-chat-expanded": isCollapsed // Nueva clase para cuando está expandido
         })}
         id="user-chat"
       >

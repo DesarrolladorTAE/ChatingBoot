@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TabContent, TabPane } from "reactstrap";
 
 // hooks
@@ -15,11 +15,16 @@ import Calls from "./Calls/index";
 import Bookmark from "./Bookmark/index";
 import Settings from "./Settings/index";
 
-interface LeftbarProps {}
-const Leftbar = (props: LeftbarProps) => {
+interface LeftbarProps {
+  onToggleCollapse: () => void; // Prop para manejar el colapso
+}
+
+// const Leftbar = (props: LeftbarProps)=> {
+
+const Leftbar: React.FC<LeftbarProps> = ({ onToggleCollapse })=> {
   // global store
   const { useAppSelector } = useRedux();
-
+  const [isCollapsed, setIsCollapsed] = useState(false);
   // const { activeTab } = useAppSelector(state => ({
   //   activeTab: state.Layout.activeTab,
   // }));
@@ -32,10 +37,22 @@ const Leftbar = (props: LeftbarProps) => {
   // Inside your component
   const { activeTab} = useAppSelector(errorData);
 
+  const handleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+    onToggleCollapse();
+  };
+
   return (
     <>
-      {/* start chat-leftsidebar */}
-      <div className="chat-leftsidebar">
+      <div className={`chat-leftsidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <button 
+        onClick={handleCollapse} 
+        className="collapse-button"
+        title={isCollapsed ? "Expandir" : "Contraer"}
+      >
+        <i className={`bx ${isCollapsed ? 'bx-chevron-right' : 'bx-chevron-left'}`}></i>
+      </button>
+
         <TabContent activeTab={activeTab}>
           {/* Start Profile tab-pane */}
           <TabPane

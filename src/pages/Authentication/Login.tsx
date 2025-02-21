@@ -10,8 +10,8 @@ import {
 } from "reactstrap";
 
 //Social Media Imports
-import { GoogleLogin } from "react-google-login";
-import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
+// import { GoogleLogin } from "react-google-login";
+// import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 
 // router
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -202,7 +202,7 @@ const Login = (props: LoginProps) => {
                 </Button>
               </div>
 
-              <div className="mt-4 text-center">
+              {/* <div className="mt-4 text-center">
                 <div className="signin-other-title">
                   <h5 className="font-size-14 mb-4 title">Iniciar sesión con</h5>
                 </div>
@@ -268,7 +268,7 @@ const Login = (props: LoginProps) => {
                     </UncontrolledTooltip>
                   </div>
                 </Row>
-              </div>
+              </div> */}
             </Form>
 
             <div className="mt-5 text-center text-muted">
