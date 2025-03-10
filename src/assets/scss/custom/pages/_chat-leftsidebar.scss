@@ -3,17 +3,24 @@
 //
 
 .chat-leftsidebar {
-  height: 100vh;
+  width: 100%;
+  max-width: 350px;
+  height: 100%;
   position: relative;
   background-color: var(--#{$prefix}sidebar-sub-bg);
   transition: all 0.3s ease;
-  width: 350px;
   margin-left: 0px;
+  // Nuevo: Contenedor padre relativo para posicionamiento absoluto
+  &-wrapper {
+    position: relative;
+    width: 350px; // Ancho fijo del sidebar
+    transition: all 0.3s ease;
+  }
 
   .collapse-button {
     position: absolute;
-    right: -15px;
-    top: 70px;
+    left: calc(100%); // Posición relativa al wrapper
+    top: 10px;
     background: var(--#{$prefix}sidebar-sub-bg);
     border: 1px solid var(--#{$prefix}border-color);
     border-radius: 50%;
@@ -25,6 +32,7 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    transform: translateX(0); // Estado inicial
 
     i {
       transition: all 0.3s ease;
@@ -44,31 +52,26 @@
   }
 
   &.collapsed {
+    max-width: 0;
     width: 0;
-    min-width: 0;
-    padding: 0;
-    overflow: hidden;
+    margin-left: 0; // Compensa el ancho del wrapper
 
     .collapse-button {
-      right: -30px;
-      transform: translateX(0);
-      position: fixed;
-      left: 60px;
+      left: 0; // Nueva posición cuando está colapsado
+      transform: rotate(180deg); // Mueve el botón al borde visible
       background: var(--#{$prefix}primary);
       border-color: var(--#{$prefix}primary);
-      width: 35px;
-      height: 35px;
+      width: 30px;
+      height: 30px;
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 
       i {
-        transform: rotate(180deg);
         color: white;
       }
 
       &:hover {
-        // En lugar de usar darken, usamos filter para oscurecer
         filter: brightness(0.95);
-        transform: translateX(0) scale(1.05);
+        transform: rotate(180deg) scale(1.05);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
     }
@@ -98,28 +101,34 @@
   }
 }
 
-// Movemos .user-chat fuera de .chat-leftsidebar
-// .user-chat {
-//   transition: all 0.3s ease;
-//   margin-left: 300px; // Ancho normal de la barra lateral
+@media (max-width: 767px) {
+  .chat-leftsidebar {
+    width: 100%;
+    max-width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: var(--#{$prefix}sidebar-sub-bg);
+    overflow-y: auto;
+  }
 
-//   &.user-chat-collapsed {
-//     margin-left: 80px; // Ancho cuando la barra lateral está colapsada
-//   }
+  .collapse-button {
+    display: none !important; /* Oculta el botón en móviles */
+    // right: 10px;
+    // top: 10px;
+  }
 
-//   &.user-chat-show {
-//     visibility: visible;
-//     opacity: 1;
-//   }
-// }
+  .chat-leftsidebar.collapsed {
+    width: 0;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
 
-// Ajustamos el user-chat para que se expanda
-.user-chat {
-  transition: margin-left 0.3s ease;
-  margin-left: 0px; // 300px del sidebar + 70px del sidemenu
-
-  &.user-chat-expanded {
-    margin-left: 0px; // Solo el margen del sidemenu cuando el sidebar está colapsado
+    .collapse-button {
+      right: 10px;
+      left: auto;
+    }
   }
 }
 

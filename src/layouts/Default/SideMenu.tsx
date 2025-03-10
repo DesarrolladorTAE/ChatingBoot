@@ -88,7 +88,7 @@ interface MenuNavItemProps {
       | TABS.CHAT
       | TABS.CONTACTS
       | TABS.SETTINGS
-      | TABS.USERS
+      | TABS.USERS,
   ) => void;
 }
 const MenuNavItem = ({ item, selectedTab, onChangeTab }: MenuNavItemProps) => {
@@ -123,7 +123,7 @@ interface ProfileDropdownMenuProps {
       | TABS.CHAT
       | TABS.CONTACTS
       | TABS.SETTINGS
-      | TABS.USERS
+      | TABS.USERS,
   ) => void;
 }
 const ProfileDropdownMenu = ({ onChangeTab }: ProfileDropdownMenuProps) => {
@@ -163,8 +163,10 @@ const ProfileDropdownMenu = ({ onChangeTab }: ProfileDropdownMenuProps) => {
         <DropdownItem />
         <DropdownItem
           className="d-flex align-items-center justify-content-between"
-          tag="a"
-          href="/logout"
+          tag={Link}
+          to="/logout"
+          // tag="a"
+          // href="/logout"
         >
           Log out <i className="bx bx-log-out-circle text-muted ms-1"></i>
         </DropdownItem>
@@ -184,14 +186,14 @@ const SideMenu = ({ onChangeLayoutMode }: any) => {
   // }));
 
   const errorData = createSelector(
-    (state : any) => state.Layout,
-    (state) => ({
+    (state: any) => state.Layout,
+    state => ({
       activeTab: state.activeTab,
       layoutMode: state.layoutMode,
-    })
+    }),
   );
   // Inside your component
-  const { activeTab,layoutMode} = useAppSelector(errorData);
+  const { activeTab, layoutMode } = useAppSelector(errorData);
 
   /* 
     tab activation
@@ -211,7 +213,7 @@ const SideMenu = ({ onChangeLayoutMode }: any) => {
       | TABS.CHAT
       | TABS.CONTACTS
       | TABS.SETTINGS
-      | TABS.USERS
+      | TABS.USERS,
   ) => {
     setSelectedTab(id);
     dispatch(changeTab(id));

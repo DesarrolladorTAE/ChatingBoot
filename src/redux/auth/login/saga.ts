@@ -16,6 +16,7 @@ import {
   postFakeLogin,
   postJwtLogin,
   postSocialLogin,
+  postFakeLogout,
 } from "../../../api/index";
 
 const fireBaseBackend = getFirebaseBackend();
@@ -92,22 +93,53 @@ function* socialLogin({ payload: { data, type } }: any) {
   }
 }
 
+// function* logoutUser() {
+//   try {
+//     localStorage.removeItem("authUser");
+//     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
+//       const response: Promise<any> = yield call(fireBaseBackend.logout);
+//       yield put(
+//         authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, response),
+//       );
+//     } else {
+//       yield put(
+//         authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, true),
+//       );
+//     }
+//   } catch (error: any) {
+//     yield put(
+//       authLoginApiResponseError(AuthLoginActionTypes.LOGOUT_USER, error),
+//     );
+//   }
+// }
+
 function* logoutUser() {
   try {
+    // Eliminamos el usuario autenticado del localStorage
     localStorage.removeItem("authUser");
+
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
+      // Para Firebase se llama al backend que gestiona el logout
       const response: Promise<any> = yield call(fireBaseBackend.logout);
       yield put(
-        authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, response),
+        authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, response)
+      );
+    }  else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
+      // console.log("Intentando fake login...")
+      // Para autenticación fake se simula la acción de logout.
+      const response: Promise<any> = yield call(postFakeLogout);
+      yield put(
+        authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, response)
       );
     } else {
+      // En caso de no tener un método específico, se despacha éxito inmediato.
       yield put(
-        authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, true),
+        authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, true)
       );
     }
   } catch (error: any) {
     yield put(
-      authLoginApiResponseError(AuthLoginActionTypes.LOGOUT_USER, error),
+      authLoginApiResponseError(AuthLoginActionTypes.LOGOUT_USER, error)
     );
   }
 }

@@ -79,6 +79,17 @@ const fakeBackend = () => {
     });
   });
 
+  mock.onPost("/post-fake-logout").reply(config => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Aquí puedes simular alguna validación si lo requieres,
+        // pero normalmente el logout no implica verificación de datos.
+        
+        resolve([200, { message: "Logout successful" }]);
+      }, 1000);
+    });
+  });
+
   mock.onPost("/fake-forget-pwd").reply(config => {
     // User needs to check that user is eXist or not and send mail for Reset New password
 

@@ -162,6 +162,7 @@ const Index = (props: IndexProps) => {
     dispatch(readConversation(id));
     dispatch(getChatUserConversations(id));
     dispatch(changeSelectedChat(id));
+
   };
 
   /*

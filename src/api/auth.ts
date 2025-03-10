@@ -13,6 +13,8 @@ const postJwtForgetPwd = (data: any) =>
 
 const postFakeLogin = (data: any) => api.create(url.POST_FAKE_LOGIN, data);
 
+const postFakeLogout = () => api.create(url.POST_FAKE_LOGOUT);
+
 const postJwtLogin = (data: any) => api.create(url.POST_FAKE_JWT_LOGIN, data);
 
 // Register Method
@@ -35,6 +37,7 @@ export {
   postFakeForgetPwd,
   postJwtForgetPwd,
   postFakeLogin,
+  postFakeLogout,
   postJwtLogin,
   postFakeRegister,
   postJwtRegister,
