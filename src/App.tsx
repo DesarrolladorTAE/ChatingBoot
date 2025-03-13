@@ -31,7 +31,7 @@ fakeBackend();
 // initFirebaseBackend(firebaseConfig);
 
 const App = () => {
-  document.title = "Chat | Doot - React Admin & Dashboard Template"
+  document.title = "ChattingBot"
 
   return <Routes />;
 };

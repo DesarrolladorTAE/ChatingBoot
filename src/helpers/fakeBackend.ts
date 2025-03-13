@@ -61,7 +61,7 @@ const fakeBackend = () => {
   mock.onPost("/post-fake-login").reply(config => {
     const user = JSON.parse(config["data"]);
     const validUser = users.filter(
-      usr => usr.email === user.email && usr.password === user.password
+      usr => usr.email === user.email && usr.password === user.password,
     );
 
     return new Promise((resolve, reject) => {
@@ -84,7 +84,7 @@ const fakeBackend = () => {
       setTimeout(() => {
         // Aquí puedes simular alguna validación si lo requieres,
         // pero normalmente el logout no implica verificación de datos.
-        
+
         resolve([200, { message: "Logout successful" }]);
       }, 1000);
     });
@@ -114,7 +114,7 @@ const fakeBackend = () => {
   mock.onPost("/post-jwt-login").reply(config => {
     const user = JSON.parse(config["data"]);
     const validUser = users.filter(
-      usr => usr.email === user.email && usr.password === user.password
+      usr => usr.email === user.email && usr.password === user.password,
     );
 
     return new Promise((resolve, reject) => {
@@ -144,7 +144,6 @@ const fakeBackend = () => {
     // const one = config.headers;
 
     // let finalToken = one.Authorization;
-    
 
     // const validUser = users.filter(usr => usr.uid === user.idx);
 
@@ -154,17 +153,13 @@ const fakeBackend = () => {
       //   if (finalToken === accessToken) {
       //     if (validUser["length"] === 1) {
       //       let objIndex;
-
       //       //Find index of specific object using findIndex method.
       //       objIndex = users.findIndex(obj => obj.uid === user.idx);
-
       //       //Update object's name property.
       //       users[objIndex].username = user.username;
-
       //       // Assign a value to locastorage
       //       localStorage.removeItem("authUser");
       //       localStorage.setItem("authUser", JSON.stringify(users[objIndex]));
-
       //       resolve([200, "Profile Updated Successfully"]);
       //     } else {
       //       reject([400, "Something wrong for edit profile"]);
@@ -292,7 +287,7 @@ const fakeBackend = () => {
     return new Promise((resolve, reject) => {
       if (params.id && bookmarks.length !== 0) {
         const updatedB = bookmarks.filter(
-          (b: any) => b.id + "" !== params.id + ""
+          (b: any) => b.id + "" !== params.id + "",
         );
         onChangeBookmark(updatedB);
         resolve([200, "Bookmark is Deleted!"]);
@@ -307,7 +302,7 @@ const fakeBackend = () => {
     return new Promise((resolve, reject) => {
       if (data.id && bookmarks.length !== 0) {
         const bookmIdx = bookmarks.findIndex(
-          (b: any) => b.id + "" === data.id + ""
+          (b: any) => b.id + "" === data.id + "",
         );
 
         if (bookmIdx > -1) {
@@ -416,7 +411,7 @@ const fakeBackend = () => {
     let data: any;
     if (params.id && contacts.length !== 0) {
       const chat = (contacts || []).find(
-        (c: any) => c.id + "" === params.id + ""
+        (c: any) => c.id + "" === params.id + "",
       );
       if (chat) {
         data = chat;
@@ -468,7 +463,7 @@ const fakeBackend = () => {
     if (data && data.meta && data.meta.receiver && data.meta.sender) {
       let modifiedC = [...conversations];
       const conversationIdx = (conversations || []).findIndex(
-        (c: any) => c.userId + "" === data.meta.receiver + ""
+        (c: any) => c.userId + "" === data.meta.receiver + "",
       );
       if (conversationIdx > -1) {
         const mid =
@@ -553,7 +548,7 @@ const fakeBackend = () => {
     if (data.params && data.params.id && conversations.length !== 0) {
       let modifiedC = [...conversations];
       const conversationIdx = (modifiedC || []).findIndex(
-        (c: any) => c.userId + "" === data.params.id + ""
+        (c: any) => c.userId + "" === data.params.id + "",
       );
       if (conversationIdx > -1) {
         if (modifiedC[conversationIdx].messages) {
@@ -588,7 +583,7 @@ const fakeBackend = () => {
     if (data.params && data.params.id && conversations.length !== 0) {
       let modifiedC = [...conversations];
       const conversationIdx = (modifiedC || []).findIndex(
-        (c: any) => c.userId + "" === data.params.id + ""
+        (c: any) => c.userId + "" === data.params.id + "",
       );
       if (conversationIdx > -1) {
         if (modifiedC[conversationIdx].messages) {
@@ -623,7 +618,7 @@ const fakeBackend = () => {
     if (params && params.id && conversations.length !== 0) {
       let modifiedC = [...conversations];
       const conversationIdx = (modifiedC || []).findIndex(
-        (c: any) => c.userId + "" === params.id + ""
+        (c: any) => c.userId + "" === params.id + "",
       );
       if (conversationIdx > -1) {
         if (modifiedC[conversationIdx].messages) {
@@ -666,7 +661,7 @@ const fakeBackend = () => {
       if (params.userId && params.messageId) {
         let modifiedC = [...conversations];
         const conversationIdx = (modifiedC || []).findIndex(
-          (c: any) => c.userId + "" === params.userId + ""
+          (c: any) => c.userId + "" === params.userId + "",
         );
         if (conversationIdx > -1) {
           modifiedC[conversationIdx].messages = (
@@ -688,7 +683,7 @@ const fakeBackend = () => {
       for (let index = 0; index < data.contacts.length; index++) {
         const c = data.contacts[index];
         const conversationIdx = (modifiedC || []).findIndex(
-          (con: any) => con.userId + "" === c + ""
+          (con: any) => con.userId + "" === c + "",
         );
 
         if (conversationIdx > -1) {
@@ -780,7 +775,7 @@ const fakeBackend = () => {
       if (params.userId) {
         let modifiedC = [...conversations];
         modifiedC = (modifiedC || []).filter(
-          (c: any) => c.userId + "" !== params.userId + ""
+          (c: any) => c.userId + "" !== params.userId + "",
         );
         onChangeConversations(modifiedC);
         resolve([200, "Messages are Deleted!"]);
@@ -795,11 +790,11 @@ const fakeBackend = () => {
     let data: any;
     if (params.id && contacts.length !== 0) {
       const chat = (channels || []).find(
-        (c: any) => c.id + "" === params.id + ""
-        );
-        if (chat) {
-          data = chat;
-        }
+        (c: any) => c.id + "" === params.id + "",
+      );
+      if (chat) {
+        data = chat;
+      }
     }
 
     return new Promise((resolve, reject) => {
@@ -822,7 +817,7 @@ const fakeBackend = () => {
     let modifiedD = [...directMessages];
     if (data.params.id && contacts.length !== 0) {
       const contactIdx = (modifiedC || []).findIndex(
-        (c: any) => c.id + "" === data.params.id + ""
+        (c: any) => c.id + "" === data.params.id + "",
       );
       if (contactIdx > -1) {
         if (contacts[contactIdx].isFavourite) {
@@ -874,10 +869,10 @@ const fakeBackend = () => {
     let modifiedChatChannels = [...channels];
     if (data.params.id && contacts.length !== 0) {
       const contactIdx = (modifiedC || []).findIndex(
-        (c: any) => c.id + "" === data.params.id + ""
+        (c: any) => c.id + "" === data.params.id + "",
       );
       const channelIdx = (modifiedChannels || []).findIndex(
-        (c: any) => c.id + "" === data.params.id + ""
+        (c: any) => c.id + "" === data.params.id + "",
       );
       if (contactIdx > -1) {
         if (contacts[contactIdx].isArchived) {
@@ -901,10 +896,10 @@ const fakeBackend = () => {
             { ...userChannels[channelIdx], isChannel: true },
           ];
           modifiedChannels = modifiedChannels.filter(
-            (c: any) => c.id !== data.params.id
+            (c: any) => c.id !== data.params.id,
           );
           modifiedChatChannels = modifiedChatChannels.filter(
-            (c: any) => c.id !== data.params.id
+            (c: any) => c.id !== data.params.id,
           );
         }
       }
@@ -937,13 +932,13 @@ const fakeBackend = () => {
      */
 
       const contactIdx = (modifiedD || []).findIndex(
-        (c: any) => c.id + "" === data.params.id + ""
+        (c: any) => c.id + "" === data.params.id + "",
       );
       const contactFIdx = (modifiedF || []).findIndex(
-        (c: any) => c.id + "" === data.params.id + ""
+        (c: any) => c.id + "" === data.params.id + "",
       );
       const contactCIdx = (modifiedC || []).findIndex(
-        (c: any) => c.id + "" === data.params.id + ""
+        (c: any) => c.id + "" === data.params.id + "",
       );
       if (contactIdx > -1 && modifiedD[contactIdx]["meta"]) {
         modifiedD[contactIdx].meta!.unRead = 0;
@@ -977,11 +972,11 @@ const fakeBackend = () => {
       if (params.userId && params.messageId && params.imageId) {
         let modifiedC = [...conversations];
         const conversationIdx = (modifiedC || []).findIndex(
-          (c: any) => c.userId + "" === params.userId + ""
+          (c: any) => c.userId + "" === params.userId + "",
         );
         if (conversationIdx > -1 && modifiedC[conversationIdx].messages) {
           const mIdx = (modifiedC[conversationIdx].messages || []).findIndex(
-            (c: any) => c.mId + "" === params.messageId + ""
+            (c: any) => c.mId + "" === params.messageId + "",
           );
           if (
             mIdx > -1 &&
@@ -996,7 +991,7 @@ const fakeBackend = () => {
               modifiedC[conversationIdx].messages[mIdx].image = modifiedC[
                 conversationIdx
               ].messages[mIdx].image?.filter(
-                (m: any) => m.id + "" !== params.imageId + ""
+                (m: any) => m.id + "" !== params.imageId + "",
               );
             }
           }

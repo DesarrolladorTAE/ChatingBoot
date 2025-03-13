@@ -57,7 +57,7 @@ const LogoDarkSVG = () => {
 const Logo = () => {
   return (
     <div className="navbar-brand-box">
-      <Link to="#" className="logo logo-dark">
+      <Link to="#" className="logo logo-dark" title="Chattingbot">
         <span className="logo-sm">
           <LogoLightSVG />
         </span>
