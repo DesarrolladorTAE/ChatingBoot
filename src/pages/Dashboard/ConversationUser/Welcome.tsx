@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Row } from "reactstrap";
+import {Col, Row } from "reactstrap";
 
 const Welcome = () => {
   return (
@@ -10,17 +10,16 @@ const Welcome = () => {
             <div className="p-4 text-center">
               <div className="avatar-xl mx-auto mb-4">
                 <div className="avatar-title bg-soft-primary rounded-circle">
-                  <i className="bx bxs-message-alt-detail display-4 text-primary m-0"></i>
+                  <i className="fa-solid fa-robot fa-3x"></i>
                 </div>
               </div>
-              <h4>Welcome to Doot Chat App</h4>
+              <h4>Bienvenido a ChattingBot</h4>
               <p className="text-muted mb-4">
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                commodo ligula eget dolor. cum sociis natoque penatibus et
+              Este CRM Chatbot es una solución inteligente que fusiona la eficiencia de un sistema de gestión de relaciones con clientes (CRM) con la inmediatez de un chat interactivo
               </p>
-              <Button type="button" className="btn btn-primary w-lg">
+              {/* <Button type="button" className="btn btn-primary w-lg">
                 Get Started
-              </Button>
+              </Button> */}
             </div>
           </Col>
         </Row>

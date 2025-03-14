@@ -4,7 +4,7 @@ import { TABS, LAYOUT_MODES } from "../../constants/index";
 import { LayoutActionTypes, LayoutState } from "./types";
 
 export const INIT_STATE: LayoutState = {
-  activeTab: TABS.CHAT,
+  activeTab: TABS.ATENCION,
   layoutMode: LAYOUT_MODES.LIGHT,
 };
 

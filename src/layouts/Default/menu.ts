@@ -10,10 +10,11 @@ export interface MenuItemType {
   tabId:
     | TABS.BOOKMARK
     | TABS.CALLS
-    | TABS.CHAT
+    | TABS.ATENCION
     | TABS.CONTACTS
     | TABS.SETTINGS
-    | TABS.USERS;
+    | TABS.USERS
+    | TABS.ATENCION;
 }
 const MENU_ITEMS: MenuItemType[] = [
   {
@@ -27,9 +28,9 @@ const MENU_ITEMS: MenuItemType[] = [
   {
     id: 2,
     key: "pills-chat-tab",
-    icon: "bx bx-conversation",
-    tooltipTitle: "Chats",
-    tabId: TABS.CHAT,
+    icon: "bx bx-message-square-dots",
+    tooltipTitle: "Atención",
+    tabId: TABS.ATENCION,
   },
   {
     id: 3,

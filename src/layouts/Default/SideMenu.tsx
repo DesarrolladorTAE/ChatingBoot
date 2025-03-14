@@ -57,18 +57,19 @@ const LogoDarkSVG = () => {
 const Logo = () => {
   return (
     <div className="navbar-brand-box">
-      <Link to="#" className="logo logo-dark" title="Chattingbot">
-        <span className="logo-sm">
-          <LogoLightSVG />
-        </span>
-      </Link>
+  <Link to="#" className="logo logo-dark" title="Chattingbot">
+    <span className="logo-sm">
+      <i className="fa-solid fa-robot fa-2x text-primary"></i>
+    </span>
+  </Link>
+  {/* Opcional: Si también quieres el logo en su versión "light", puedes hacer algo similar */}
+  <Link to="#" className="logo logo-light">
+    <span className="logo-sm">
+      <i className="fa-solid fa-robot fa-2x text-primary"></i>
+    </span>
+  </Link>
+</div>
 
-      <Link to="#" className="logo logo-light">
-        <span className="logo-sm">
-          <LogoDarkSVG />
-        </span>
-      </Link>
-    </div>
   );
 };
 
@@ -77,7 +78,7 @@ interface MenuNavItemProps {
   selectedTab:
     | TABS.BOOKMARK
     | TABS.CALLS
-    | TABS.CHAT
+    | TABS.ATENCION
     | TABS.CONTACTS
     | TABS.SETTINGS
     | TABS.USERS;
@@ -85,7 +86,7 @@ interface MenuNavItemProps {
     id:
       | TABS.BOOKMARK
       | TABS.CALLS
-      | TABS.CHAT
+      | TABS.ATENCION
       | TABS.CONTACTS
       | TABS.SETTINGS
       | TABS.USERS,
@@ -120,7 +121,7 @@ interface ProfileDropdownMenuProps {
     id:
       | TABS.BOOKMARK
       | TABS.CALLS
-      | TABS.CHAT
+      | TABS.ATENCION
       | TABS.CONTACTS
       | TABS.SETTINGS
       | TABS.USERS,
@@ -201,16 +202,16 @@ const SideMenu = ({ onChangeLayoutMode }: any) => {
   const [selectedTab, setSelectedTab] = useState<
     | TABS.BOOKMARK
     | TABS.CALLS
-    | TABS.CHAT
+    | TABS.ATENCION
     | TABS.CONTACTS
     | TABS.SETTINGS
     | TABS.USERS
-  >(TABS.CHAT);
+  >(TABS.ATENCION);
   const onChangeTab = (
     id:
       | TABS.BOOKMARK
       | TABS.CALLS
-      | TABS.CHAT
+      | TABS.ATENCION
       | TABS.CONTACTS
       | TABS.SETTINGS
       | TABS.USERS,

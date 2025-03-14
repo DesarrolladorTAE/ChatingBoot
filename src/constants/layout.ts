@@ -10,7 +10,8 @@ export enum CHATS_TABS {
 
 export enum TABS {
   USERS = "pills-user",
-  CHAT = "pills-chat",
+  // CHAT = "pills-chat",
+  ATENCION = "pills-atencion",
   CONTACTS = "pills-contacts",
   CALLS = "pills-calls",
   BOOKMARK = "pills-bookmark",

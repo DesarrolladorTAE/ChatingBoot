@@ -12,7 +12,7 @@ export interface LayoutState {
   activeTab:
     | TABS.BOOKMARK
     | TABS.CALLS
-    | TABS.CHAT
+    | TABS.ATENCION
     | TABS.CONTACTS
     | TABS.SETTINGS
     | TABS.USERS;
