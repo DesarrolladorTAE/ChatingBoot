@@ -10,10 +10,9 @@ export interface LayoutState {
     | LAYOUT_MODES.LIGHT
     | LAYOUT_MODES.DARK,
   activeTab:
-    | TABS.BOOKMARK
-    | TABS.CALLS
+    | TABS.ADMINISTRACION
     | TABS.ATENCION
-    | TABS.CONTACTS
+    | TABS.METRICS
     | TABS.SETTINGS
     | TABS.USERS;
 }

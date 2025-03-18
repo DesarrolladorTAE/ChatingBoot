@@ -31,10 +31,9 @@ const Atencion = (props: IndexProps) => {
     { icon: "bx-filter", title: "Embudo de Ventas", count: 2 },
     { icon: "bx-task", title: "Mis tareas", count: 3 },
     { icon: "bx-user", title: "Contactos" },
-    { icon: "bx-calendar", title: "Agendamientos" },
+    { icon: "bx-calendar-plus", title: "Agendamientos" },
     { icon: "bx-tag", title: "Etiquetas" },
     { icon: "bx-chat", title: "Chat en Equipo" },
-    { icon: "bx-help-circle", title: "Ayuda" },
   ];
 
   const handleSectionClick = (sectionTitle: string) => {

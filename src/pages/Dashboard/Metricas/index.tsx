@@ -17,7 +17,7 @@ interface SectionProps {
 
 interface IndexProps {}
 
-const Atencion = (props: IndexProps) => {
+const Metricas = (props: IndexProps) => {
   // global store
   const { dispatch } = useRedux();
 
@@ -26,8 +26,8 @@ const Atencion = (props: IndexProps) => {
 
   // Ahora solo dos secciones relacionadas con métricas
   const predefinedSections: SectionProps[] = [
-    { icon: "bx-bar-chart-alt-2", title: "Resumen de Métricas", count: 0 },
-    { icon: "bx-line-chart", title: "Métricas Detalladas", count: 2 },
+    { icon: "bx-bar-chart-alt-2", title: "Atención y Estado de Tickets", count: 0 },
+    { icon: "bx-line-chart", title: "Tiempos de Servicio", count: 2 },
   ];
 
   const handleSectionClick = (sectionTitle: string) => {
@@ -126,4 +126,4 @@ const Atencion = (props: IndexProps) => {
   );
 };
 
-export default Atencion;
+export default Metricas;

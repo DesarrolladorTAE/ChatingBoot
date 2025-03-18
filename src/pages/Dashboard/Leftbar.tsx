@@ -10,12 +10,14 @@ import { TABS } from "../../constants/index";
 // component
 import Profile from "./Profile/index";
 //import Chats from "./Chats/index";
-import Contacts from "./Contacts/index";
-import Calls from "./Calls/index";
+//import Contacts from "./Contacts/index";
+//import Calls from "./Calls/index";
 import Bookmark from "./Bookmark/index";
 import Settings from "./Settings/index";
-import Atencion from "./Atencion";
-//import Atencion from "./Atencion/index";
+//import Atencion from "./Atencion";
+import Metricas from "./Metricas/index";
+import Atencion from "./Atencion/index";
+import Administracion from "./Administracion/index";
 
 interface LeftbarProps {
   onToggleCollapse: () => void; // Prop para manejar el colapso
@@ -72,24 +74,17 @@ const Leftbar: React.FC<LeftbarProps> = ({ onToggleCollapse })=> {
           </TabPane>
 
           <TabPane
-            tabId={TABS.CONTACTS}
+            tabId={TABS.METRICS}
             role="tabpanel"
           >
-            <Contacts />
+            <Metricas />
           </TabPane>
 
           <TabPane
-            tabId={TABS.CALLS}
+            tabId={TABS.ADMINISTRACION}
             role="tabpanel"
           >
-            <Calls />
-          </TabPane>
-
-          <TabPane
-            tabId={TABS.BOOKMARK}
-            role="tabpanel"
-          >
-            <Bookmark />
+            <Administracion/>
           </TabPane>
 
           <TabPane

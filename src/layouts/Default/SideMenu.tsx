@@ -76,18 +76,16 @@ const Logo = () => {
 interface MenuNavItemProps {
   item: MenuItemType;
   selectedTab:
-    | TABS.BOOKMARK
-    | TABS.CALLS
+    | TABS.ADMINISTRACION
     | TABS.ATENCION
-    | TABS.CONTACTS
+    | TABS.METRICS
     | TABS.SETTINGS
     | TABS.USERS;
   onChangeTab: (
     id:
-      | TABS.BOOKMARK
-      | TABS.CALLS
+      | TABS.ADMINISTRACION
       | TABS.ATENCION
-      | TABS.CONTACTS
+      | TABS.METRICS
       | TABS.SETTINGS
       | TABS.USERS,
   ) => void;
@@ -119,10 +117,9 @@ const MenuNavItem = ({ item, selectedTab, onChangeTab }: MenuNavItemProps) => {
 interface ProfileDropdownMenuProps {
   onChangeTab: (
     id:
-      | TABS.BOOKMARK
-      | TABS.CALLS
+      | TABS.ADMINISTRACION
       | TABS.ATENCION
-      | TABS.CONTACTS
+      | TABS.METRICS
       | TABS.SETTINGS
       | TABS.USERS,
   ) => void;
@@ -200,19 +197,17 @@ const SideMenu = ({ onChangeLayoutMode }: any) => {
     tab activation
     */
   const [selectedTab, setSelectedTab] = useState<
-    | TABS.BOOKMARK
-    | TABS.CALLS
+    | TABS.ADMINISTRACION
     | TABS.ATENCION
-    | TABS.CONTACTS
+    | TABS.METRICS
     | TABS.SETTINGS
     | TABS.USERS
   >(TABS.ATENCION);
   const onChangeTab = (
     id:
-      | TABS.BOOKMARK
-      | TABS.CALLS
+      | TABS.ADMINISTRACION
       | TABS.ATENCION
-      | TABS.CONTACTS
+      | TABS.METRICS
       | TABS.SETTINGS
       | TABS.USERS,
   ) => {

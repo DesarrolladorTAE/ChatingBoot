@@ -12,8 +12,10 @@ export enum TABS {
   USERS = "pills-user",
   // CHAT = "pills-chat",
   ATENCION = "pills-atencion",
-  CONTACTS = "pills-contacts",
-  CALLS = "pills-calls",
-  BOOKMARK = "pills-bookmark",
+  METRICS = "pills-metrics",
+  //CONTACTS = "pills-contacts",
+  //CALLS = "pills-calls",
+  ADMINISTRACION = "pills-administracion",
+  //BOOKMARK = "pills-bookmark",
   SETTINGS = "pills-setting",
 }

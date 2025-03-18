@@ -8,13 +8,12 @@ export interface MenuItemType {
   tooltipTitle: string;
   className?: string;
   tabId:
-    | TABS.BOOKMARK
-    | TABS.CALLS
-    | TABS.ATENCION
-    | TABS.CONTACTS
-    | TABS.SETTINGS
-    | TABS.USERS
-    | TABS.ATENCION;
+  | TABS.ADMINISTRACION
+  | TABS.ATENCION
+  | TABS.METRICS
+  | TABS.SETTINGS
+  | TABS.USERS
+  | TABS.ATENCION;
 }
 const MENU_ITEMS: MenuItemType[] = [
   {
@@ -28,33 +27,26 @@ const MENU_ITEMS: MenuItemType[] = [
   {
     id: 2,
     key: "pills-chat-tab",
-    icon: "bx bx-message-square-dots",
+    icon: "bx bx-support",
     tooltipTitle: "Atención",
     tabId: TABS.ATENCION,
   },
   {
     id: 3,
-    key: "pills-contacts-tab",
-    icon: "bx bxs-user-detail",
-    tooltipTitle: "Contacts",
-    tabId: TABS.CONTACTS,
+    key: "pills-metrics-tab",
+    icon: "bx bx-bar-chart-alt-2",
+    tooltipTitle: "Métricas",
+    tabId: TABS.METRICS,
   },
   {
     id: 4,
-    key: "pills-calls-tab",
-    icon: "bx bx-phone-call",
-    tooltipTitle: "Calls",
-    tabId: TABS.CALLS,
+    key: "pills-administracion-tab",
+    icon: "bx bx-clipboard",
+    tooltipTitle: "Administración",
+    tabId: TABS.ADMINISTRACION,
   },
   {
     id: 5,
-    key: "pills-bookmark-tab",
-    icon: "bx bx-bookmarks",
-    tooltipTitle: "Bookmark",
-    tabId: TABS.BOOKMARK,
-  },
-  {
-    id: 6,
     key: "pills-setting-tab",
     icon: "bx bx-cog",
     tooltipTitle: "Settings",
