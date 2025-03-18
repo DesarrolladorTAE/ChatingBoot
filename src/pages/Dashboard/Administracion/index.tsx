@@ -80,30 +80,30 @@ const Administracion = (props: IndexProps) => {
     // dispatch(changeSelectedSubsection(subsectionTitle.toLowerCase()));
   };
 
-  const searchSections = () => {
-    const inputValue: any = document.getElementById("searchSections");
-    const filter: any = inputValue.value.toUpperCase();
-    const sectionItems = document.querySelectorAll(".section-item, .subsection-item");
+  // const searchSections = () => {
+  //   const inputValue: any = document.getElementById("searchSections");
+  //   const filter: any = inputValue.value.toUpperCase();
+  //   const sectionItems = document.querySelectorAll(".section-item, .subsection-item");
     
-    sectionItems.forEach((item: any) => {
-      const titleElement = item.querySelector(".section-title, .subsection-title");
-      if (titleElement) {
-        const txtValue = titleElement.textContent || titleElement.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          item.style.display = "";
-          // Si es una subsección, también muestra su sección padre
-          if (item.classList.contains("subsection-item")) {
-            const parentSection = item.closest(".section-subsections")?.previousElementSibling;
-            if (parentSection) {
-              parentSection.style.display = "";
-            }
-          }
-        } else {
-          item.style.display = "none";
-        }
-      }
-    });
-  };
+  //   sectionItems.forEach((item: any) => {
+  //     const titleElement = item.querySelector(".section-title, .subsection-title");
+  //     if (titleElement) {
+  //       const txtValue = titleElement.textContent || titleElement.innerText;
+  //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+  //         item.style.display = "";
+  //         // Si es una subsección, también muestra su sección padre
+  //         if (item.classList.contains("subsection-item")) {
+  //           const parentSection = item.closest(".section-subsections")?.previousElementSibling;
+  //           if (parentSection) {
+  //             parentSection.style.display = "";
+  //           }
+  //         }
+  //       } else {
+  //         item.style.display = "none";
+  //       }
+  //     }
+  //   });
+  // };
 
   // Componente para cada ítem de subsección
   const SubsectionItem = ({ title, isActive }: SubsectionProps) => {
@@ -178,7 +178,7 @@ const Administracion = (props: IndexProps) => {
               <h4 className="mb-4">Administración</h4>
             </div>
           </div>
-          <Form>
+          {/* <Form>
             <div className="input-group mb-3">
               <Input
                 onKeyUp={searchSections}
@@ -191,7 +191,7 @@ const Administracion = (props: IndexProps) => {
                 <i className="bx bx-search align-middle"></i>
               </Button>
             </div>
-          </Form>
+          </Form> */}
         </div>
         <AppSimpleBar className="section-list">
           <ul className="list-unstyled section-list-unstyled mb-0">

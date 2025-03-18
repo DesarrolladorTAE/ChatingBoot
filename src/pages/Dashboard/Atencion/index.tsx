@@ -42,23 +42,23 @@ const Atencion = (props: IndexProps) => {
     // dispatch(changeSelectedSection(sectionTitle.toLowerCase()));
   };
 
-  const searchSections = () => {
-    const inputValue: any = document.getElementById("searchSections");
-    const filter: any = inputValue.value.toUpperCase();
-    const sectionItems = document.querySelectorAll(".section-item");
+  // const searchSections = () => {
+  //   const inputValue: any = document.getElementById("searchSections");
+  //   const filter: any = inputValue.value.toUpperCase();
+  //   const sectionItems = document.querySelectorAll(".section-item");
     
-    sectionItems.forEach((item: any) => {
-      const titleElement = item.querySelector(".section-title");
-      if (titleElement) {
-        const txtValue = titleElement.textContent || titleElement.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-          item.style.display = "";
-        } else {
-          item.style.display = "none";
-        }
-      }
-    });
-  };
+  //   sectionItems.forEach((item: any) => {
+  //     const titleElement = item.querySelector(".section-title");
+  //     if (titleElement) {
+  //       const txtValue = titleElement.textContent || titleElement.innerText;
+  //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
+  //         item.style.display = "";
+  //       } else {
+  //         item.style.display = "none";
+  //       }
+  //     }
+  //   });
+  // };
 
   // Componente para cada ítem de sección
   const SectionItem = ({ icon, title, count, isActive }: SectionProps) => {
@@ -96,7 +96,7 @@ const Atencion = (props: IndexProps) => {
               <h4 className="mb-4">Atención</h4>
             </div>
           </div>
-          <Form>
+          {/* <Form>
             <div className="input-group mb-3">
               <Input
                 onKeyUp={searchSections}
@@ -109,7 +109,7 @@ const Atencion = (props: IndexProps) => {
                 <i className="bx bx-search align-middle"></i>
               </Button>
             </div>
-          </Form>
+          </Form> */}
         </div>{" "}
         {/* .p-4 */}
         <AppSimpleBar className="section-list">
