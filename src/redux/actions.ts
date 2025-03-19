@@ -23,3 +23,6 @@ export * from "./settings/actions";
 
 // chats
 export * from "./chats/actions";
+
+//atencion
+export * from "./atencion/actions";

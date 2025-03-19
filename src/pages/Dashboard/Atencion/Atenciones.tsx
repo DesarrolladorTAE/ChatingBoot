@@ -1,257 +1,232 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
+  Card,
+  CardBody,
+  Button,
+  Badge,
+  Input,
+  FormGroup,
+  Label,
   Row,
   Col,
-  Nav,
-  NavItem,
-  NavLink,
-  Button,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
 } from "reactstrap";
-import classnames from "classnames";
+import { useRedux } from "../../../hooks/index";
 
-// Interfaz para un item de la lista de atenciones
-interface AttentionItem {
+interface Atencion {
   id: number;
-  name: string;
-  lastMessage: string;
-  labels: string[]; // etiquetas (conexión, usuario, área, personalizadas, etc.)
-  status: "EN ESPERA" | "ATENDIENDO" | "FINALIZADA"; // o el que manejes
-  time: string; // hora/fecha ficticia
+  cliente: string;
+  asunto: string;
+  fecha: string;
+  estado: string;
+  prioridad: string;
+  ultimoMensaje: string;
 }
 
 const Atenciones = () => {
-  // Estado para las tabs (Abiertos, Resueltos, Buscar)
-  const [activeTab, setActiveTab] = useState<"abiertos" | "resueltos" | "buscar">("abiertos");
-
-  // Dropdowns para “Todos”, “Área & Sectores”
-  const [openTodosDropdown, setOpenTodosDropdown] = useState(false);
-  const [openAreaDropdown, setOpenAreaDropdown] = useState(false);
-
-  // Estado para la atención seleccionada
-  const [selectedAttention, setSelectedAttention] = useState<AttentionItem | null>(null);
-
-  // Datos ficticios para la lista de atenciones
-  const attentionList: AttentionItem[] = [
+  const [atenciones, setAtenciones] = useState<Atencion[]>([
     {
       id: 1,
-      name: "Josías",
-      lastMessage: "Adios",
-      labels: ["PRUEBA", "TAE", "CHATTING"],
-      status: "ATENDIENDO",
-      time: "12:50",
+      cliente: "Juan Pérez",
+      asunto: "Consulta sobre producto",
+      fecha: "2025-03-15 10:30",
+      estado: "abierto",
+      prioridad: "alta",
+      ultimoMensaje: "Necesito más información sobre el producto XYZ.",
     },
     {
       id: 2,
-      name: "Gema Ramírez",
-      lastMessage: "Hola, necesito ayuda",
-      labels: ["PRUEBA", "Juan Pérez", "Soporte", "IMPORTANTE"],
-      status: "EN ESPERA",
-      time: "13:00",
+      cliente: "María González",
+      asunto: "Problema con facturación",
+      fecha: "2025-03-17 15:45",
+      estado: "en proceso",
+      prioridad: "media",
+      ultimoMensaje: "No recibí la factura del mes pasado.",
     },
     {
       id: 3,
-      name: "Proyecto Chatbot",
-      lastMessage: "Conversación previa",
-      labels: ["CHATBOT", "Luis G.", "TI"],
-      status: "ATENDIENDO",
-      time: "10:25",
+      cliente: "Carlos Rodríguez",
+      asunto: "Solicitud de devolución",
+      fecha: "2025-03-18 09:15",
+      estado: "abierto",
+      prioridad: "baja",
+      ultimoMensaje: "Quiero devolver el producto por un defecto.",
     },
     {
       id: 4,
-      name: "ResidenciasTAE",
-      lastMessage: "Status",
-      labels: ["PRUEBA", "Sofía M.", "Ventas", "PENDIENTE"],
-      status: "EN ESPERA",
-      time: "09:45",
+      cliente: "Ana Martínez",
+      asunto: "Información sobre envío",
+      fecha: "2025-03-18 11:20",
+      estado: "abierto",
+      prioridad: "alta",
+      ultimoMensaje: "¿Cuándo llegará mi pedido?",
     },
-  ];
+    {
+      id: 5,
+      cliente: "Pedro Sánchez",
+      asunto: "Consulta técnica",
+      fecha: "2025-03-19 08:30",
+      estado: "nuevo",
+      prioridad: "media",
+      ultimoMensaje: "Tengo problemas para configurar el dispositivo.",
+    },
+  ]);
 
-  // Filtrar la lista de atenciones según la tab activa
-  // (Por ahora, solo muestro todo en "abiertos" y nada en "resueltos" o "buscar")
-  let filteredAttentions: AttentionItem[] = [];
-  if (activeTab === "abiertos") {
-    filteredAttentions = attentionList; // Podrías filtrar según status
-  } else if (activeTab === "resueltos") {
-    // Ejemplo: filtrar por finalizadas
-    filteredAttentions = attentionList.filter((a) => a.status === "FINALIZADA");
-  } else {
-    // buscar: en este ejemplo no implementamos la lógica, quedaría vacío
-    filteredAttentions = [];
-  }
+  const [filteredAtenciones, setFilteredAtenciones] =
+    useState<Atencion[]>(atenciones);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterEstado, setFilterEstado] = useState("todos");
+  const [filterPrioridad, setFilterPrioridad] = useState("todas");
 
-  // Funciones para manejar clicks
-  const handleSelectAttention = (item: AttentionItem) => {
-    setSelectedAttention(item);
-  };
+  useEffect(() => {
+    let result = atenciones;
 
-  // Renderizado de cada item en la lista de atenciones
-  const renderAttentionItem = (item: AttentionItem) => {
-    return (
-      <div
-        key={item.id}
-        className={classnames("p-2 attention-item", {
-          active: selectedAttention?.id === item.id,
-        })}
-        onClick={() => handleSelectAttention(item)}
-        style={{ cursor: "pointer" }}
-      >
-        <div className="d-flex align-items-center justify-content-between">
-          <div>
-            <h6 className="mb-0">{item.name}</h6>
-            <small className="text-muted">{item.lastMessage}</small>
-          </div>
-          <small>{item.time}</small>
-        </div>
-        <div className="mt-1">
-          {/* Render de etiquetas en orden (conexión, usuario, área, personalizadas...) */}
-          {item.labels.map((label, idx) => (
-            <span
-              key={idx}
-              className="badge bg-primary me-1"
-              style={{ fontSize: "0.7rem" }}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  // Render del área derecha (Chat o pantalla vacía con el logo)
-  const renderChatArea = () => {
-    if (!selectedAttention) {
-      return (
-        <div className="d-flex flex-column justify-content-center align-items-center h-100">
-          <h3 className="text-muted">CHATING BOOT</h3>
-          <p className="text-muted">Selecciona una atención para comenzar</p>
-        </div>
+    if (searchTerm) {
+      result = result.filter(
+        atencion =>
+          atencion.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          atencion.asunto.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          atencion.ultimoMensaje
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()),
       );
     }
-    // Si hay atención seleccionada, puedes renderizar la conversación
-    return (
-      <div className="p-3 h-100 d-flex flex-column">
-        <div className="mb-2 border-bottom pb-2">
-          <h5 className="mb-0">
-            {selectedAttention.name} - {selectedAttention.status}
-          </h5>
-          <small className="text-muted">
-            Asignado a: {selectedAttention.labels[1] ?? "Sin Asignar"}
-          </small>
-        </div>
-        <div className="flex-grow-1" style={{ overflowY: "auto" }}>
-          {/* Aquí irían los mensajes del chat */}
-          <p className="text-muted">[Mensajes de ejemplo]</p>
-        </div>
-        <div className="mt-2">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Escribe un mensaje..."
-          />
-        </div>
-      </div>
-    );
+
+    if (filterEstado !== "todos") {
+      result = result.filter(atencion => atencion.estado === filterEstado);
+    }
+
+    if (filterPrioridad !== "todas") {
+      result = result.filter(
+        atencion => atencion.prioridad === filterPrioridad,
+      );
+    }
+
+    setFilteredAtenciones(result);
+  }, [searchTerm, filterEstado, filterPrioridad, atenciones]);
+
+  const getEstadoBadgeColor = (estado: string) => {
+    switch (estado) {
+      case "nuevo":
+        return "primary";
+      case "abierto":
+        return "success";
+      case "en proceso":
+        return "warning";
+      case "cerrado":
+        return "secondary";
+      default:
+        return "info";
+    }
+  };
+
+  const getPrioridadBadgeColor = (prioridad: string) => {
+    switch (prioridad) {
+      case "alta":
+        return "danger";
+      case "media":
+        return "warning";
+      case "baja":
+        return "info";
+      default:
+        return "secondary";
+    }
   };
 
   return (
-    <div className="user-chat-container" style={{ height: "100vh", overflow: "hidden" }}>
-      <Row className="h-100 g-0">
-        {/* Columna Izquierda */}
-        <Col md={3} className="border-end d-flex flex-column" style={{ maxWidth: "320px" }}>
-          {/* Tabs superiores */}
-          <Nav pills className="nav-justified bg-light">
-            <NavItem>
-              <NavLink
-                className={classnames({ active: activeTab === "abiertos" })}
-                onClick={() => setActiveTab("abiertos")}
+    <div className="conversation-content p-4">
+      <h4 className="mb-4">Atenciones</h4>
+
+      <div className="mb-4">
+        <Row>
+          <Col md={4}>
+            <Input
+              type="text"
+              placeholder="Buscar por cliente, asunto o mensaje..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="mb-3"
+            />
+          </Col>
+          <Col md={4}>
+            <FormGroup>
+              <Label for="estadoFilter">Estado</Label>
+              <Input
+                type="select"
+                id="estadoFilter"
+                value={filterEstado}
+                onChange={e => setFilterEstado(e.target.value)}
               >
-                Abiertos
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink
-                className={classnames({ active: activeTab === "resueltos" })}
-                onClick={() => setActiveTab("resueltos")}
+                <option value="todos">Todos</option>
+                <option value="nuevo">Nuevo</option>
+                <option value="abierto">Abierto</option>
+                <option value="en proceso">En proceso</option>
+                <option value="cerrado">Cerrado</option>
+              </Input>
+            </FormGroup>
+          </Col>
+          <Col md={4}>
+            <FormGroup>
+              <Label for="prioridadFilter">Prioridad</Label>
+              <Input
+                type="select"
+                id="prioridadFilter"
+                value={filterPrioridad}
+                onChange={e => setFilterPrioridad(e.target.value)}
               >
-                Resueltos
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink
-                className={classnames({ active: activeTab === "buscar" })}
-                onClick={() => setActiveTab("buscar")}
-              >
-                Buscar
-              </NavLink>
-            </NavItem>
-          </Nav>
+                <option value="todas">Todas</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+              </Input>
+            </FormGroup>
+          </Col>
+        </Row>
+      </div>
 
-          {/* Contenido debajo de las tabs */}
-          <div className="flex-grow-1" style={{ overflowY: "auto" }}>
-            {/* Controles: NUEVO, Todos, Área & Sectores */}
-            <div className="p-3 d-flex align-items-center gap-2">
-              <Button color="primary" size="sm">
-                NUEVO
-              </Button>
-
-              {/* Dropdown: Todos */}
-              <Dropdown isOpen={openTodosDropdown} toggle={() => setOpenTodosDropdown(!openTodosDropdown)}>
-                <DropdownToggle color="light" size="sm" caret>
-                  Todos
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem>Opción 1</DropdownItem>
-                  <DropdownItem>Opción 2</DropdownItem>
-                  <DropdownItem>Opción 3</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-
-              {/* Dropdown: Área & Sectores */}
-              <Dropdown isOpen={openAreaDropdown} toggle={() => setOpenAreaDropdown(!openAreaDropdown)}>
-                <DropdownToggle color="light" size="sm" caret>
-                  Área & Sectores
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem>Área 1</DropdownItem>
-                  <DropdownItem>Área 2</DropdownItem>
-                  <DropdownItem>Área 3</DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-
-            {/* Secciones de estado: EN ESPERA, ATENDIENDO */}
-            <div className="px-3 mb-2">
-              <small className="text-muted">ESTADOS</small>
-              <div className="mt-2">
-                <span className="d-block">En Espera</span>
-                <span className="d-block">Atendiendo</span>
-                {/* Agrega más si deseas */}
-              </div>
-            </div>
-
-            {/* Lista de atenciones */}
-            <div className="px-2">
-              {filteredAttentions.length === 0 ? (
-                <div className="p-3 text-center text-muted">
-                  No se encontró ninguna atención con ese estado
+      <div
+        className="atenciones-list"
+        style={{ maxHeight: "600px", overflowY: "auto" }}
+      >
+        {filteredAtenciones.length > 0 ? (
+          filteredAtenciones.map(atencion => (
+            <Card
+              key={atencion.id}
+              className="mb-3 cursor-pointer hover-shadow"
+            >
+              <CardBody>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h5 className="mb-0">{atencion.cliente}</h5>
+                  <div>
+                    <Badge
+                      color={getEstadoBadgeColor(atencion.estado)}
+                      className="me-2"
+                    >
+                      {atencion.estado.toUpperCase()}
+                    </Badge>
+                    <Badge color={getPrioridadBadgeColor(atencion.prioridad)}>
+                      {atencion.prioridad.toUpperCase()}
+                    </Badge>
+                  </div>
                 </div>
-              ) : (
-                filteredAttentions.map((item) => renderAttentionItem(item))
-              )}
-            </div>
+                <h6>{atencion.asunto}</h6>
+                <p className="text-muted mb-2">{atencion.ultimoMensaje}</p>
+                <small className="text-muted">{atencion.fecha}</small>
+                <div className="d-flex justify-content-end mt-2">
+                  <Button color="primary" size="sm">
+                    Ver detalles
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          ))
+        ) : (
+          <div className="text-center p-4">
+            <p className="text-muted">
+              No se encontraron atenciones con los filtros aplicados.
+            </p>
           </div>
-        </Col>
-
-        {/* Columna Derecha (Chat o contenido) */}
-        <Col md={9} className="bg-white">
-          {renderChatArea()}
-        </Col>
-      </Row>
+        )}
+      </div>
     </div>
   );
 };
