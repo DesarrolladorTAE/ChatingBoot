@@ -11,6 +11,7 @@ import Leftbar from "./Leftbar";
 import ConversationUser from "./ConversationUser/index";
 import UserProfileDetails from "./UserProfileDetails/index";
 import Welcome from "./ConversationUser/Welcome";
+//Atención
 import Atenciones from "./Atencion/Atenciones";
 import RespuestasRapidas from "./Atencion/RespuestasRapidas";
 

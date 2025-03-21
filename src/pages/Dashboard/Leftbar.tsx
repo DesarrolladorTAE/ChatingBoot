@@ -44,28 +44,28 @@ const Leftbar: React.FC<LeftbarProps> = ({
   };
 
   // Función para manejar el cambio de pestaña, si la necesitas usar
-  const handleTabChange = (tab: string, subsection?: string) => {
-    console.log("Leftbar: handleTabChange llamado con tab:", tab, "subsection:", subsection);
-    if (onSectionChange) {
-      if (tab === TABS.ATENCION) {
-        // Si se especifica una subsección, la usamos; de lo contrario, asignamos por defecto "Atenciones"
-        const sub = subsection ? subsection : "atenciones";
-        console.log("Leftbar: Tab es ATENCION. Llamando onSectionChange con:", sub);
-        onSectionChange(sub);
-      } else {
-        console.log("Leftbar: Tab no es ATENCION. Llamando onSectionChange con null");
-        onSectionChange(null);
-      }
-    } else {
-      console.log("Leftbar: onSectionChange es undefined");
-    }
-  };
+  // const handleTabChange = (tab: string, subsection?: string) => {
+  //   console.log("Leftbar: handleTabChange llamado con tab:", tab, "subsection:", subsection);
+  //   if (onSectionChange) {
+  //     if (tab === TABS.ATENCION) {
+  //       // Si se especifica una subsección, la usamos; de lo contrario, asignamos por defecto "Atenciones"
+  //       const sub = subsection ? subsection : "atenciones";
+  //       console.log("Leftbar: Tab es ATENCION. Llamando onSectionChange con:", sub);
+  //       onSectionChange(sub);
+  //     } else {
+  //       console.log("Leftbar: Tab no es ATENCION. Llamando onSectionChange con null");
+  //       onSectionChange(null);
+  //     }
+  //   } else {
+  //     console.log("Leftbar: onSectionChange es undefined");
+  //   }
+  // };
   
 
   // Usamos un useEffect para detectar cambios en activeTab y ejecutar la función
-  useEffect(() => {
-    handleTabChange(activeTab);
-  }, [activeTab]);
+  // useEffect(() => {
+  //   handleTabChange(activeTab);
+  // }, [activeTab]);
 
   return (
     <div className={`chat-leftsidebar ${isCollapsed ? "collapsed" : ""}`}>

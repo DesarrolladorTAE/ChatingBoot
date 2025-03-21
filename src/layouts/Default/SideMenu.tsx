@@ -143,19 +143,19 @@ const ProfileDropdownMenu = ({ onChangeTab }: ProfileDropdownMenuProps) => {
           className="d-flex align-items-center justify-content-between"
           onClick={() => onChangeTab(TABS.USERS)}
         >
-          Profile <i className="bx bx-user-circle text-muted ms-1"></i>
+          Perfil <i className="bx bx-user-circle text-muted ms-1"></i>
         </DropdownItem>
         <DropdownItem
           className="d-flex align-items-center justify-content-between"
           onClick={() => onChangeTab(TABS.SETTINGS)}
         >
-          Setting <i className="bx bx-cog text-muted ms-1"></i>
+          Configuración <i className="bx bx-cog text-muted ms-1"></i>
         </DropdownItem>
         <DropdownItem
           className="d-flex align-items-center justify-content-between"
           href="/auth-changepassword"
         >
-          Change Password <i className="bx bx-lock-open text-muted ms-1"></i>
+          Cambiar contraseña <i className="bx bx-lock-open text-muted ms-1"></i>
         </DropdownItem>
 
         <DropdownItem />
@@ -166,7 +166,7 @@ const ProfileDropdownMenu = ({ onChangeTab }: ProfileDropdownMenuProps) => {
           // tag="a"
           // href="/logout"
         >
-          Log out <i className="bx bx-log-out-circle text-muted ms-1"></i>
+          Cerrar sesión <i className="bx bx-log-out-circle text-muted ms-1"></i>
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>

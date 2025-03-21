@@ -1,229 +1,213 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane,
   Card,
   CardBody,
   Button,
   Badge,
   Input,
-  FormGroup,
-  Label,
   Row,
   Col,
 } from "reactstrap";
-import { useRedux } from "../../../hooks/index";
+import classnames from "classnames";
+import AppSimpleBar from "../../../components/AppSimpleBar";
+import Loader from "../../../components/Loader";
+import Message from "../ConversationUser/Message"; // Componente de mensaje con toda la lógica de imágenes, menú, etc.
+import { Link } from "react-router-dom";
 
-interface Atencion {
+// Simulación de datos para tickets y mensajes
+interface Ticket {
   id: number;
-  cliente: string;
-  asunto: string;
-  fecha: string;
-  estado: string;
-  prioridad: string;
-  ultimoMensaje: string;
+  name: string;
+  lastMessage: string;
+  messages: any[]; // Aquí colocarías el tipo correcto de tus mensajes
 }
 
-const Atenciones = () => {
-  const [atenciones, setAtenciones] = useState<Atencion[]>([
-    {
-      id: 1,
-      cliente: "Juan Pérez",
-      asunto: "Consulta sobre producto",
-      fecha: "2025-03-15 10:30",
-      estado: "abierto",
-      prioridad: "alta",
-      ultimoMensaje: "Necesito más información sobre el producto XYZ.",
-    },
-    {
-      id: 2,
-      cliente: "María González",
-      asunto: "Problema con facturación",
-      fecha: "2025-03-17 15:45",
-      estado: "en proceso",
-      prioridad: "media",
-      ultimoMensaje: "No recibí la factura del mes pasado.",
-    },
-    {
-      id: 3,
-      cliente: "Carlos Rodríguez",
-      asunto: "Solicitud de devolución",
-      fecha: "2025-03-18 09:15",
-      estado: "abierto",
-      prioridad: "baja",
-      ultimoMensaje: "Quiero devolver el producto por un defecto.",
-    },
-    {
-      id: 4,
-      cliente: "Ana Martínez",
-      asunto: "Información sobre envío",
-      fecha: "2025-03-18 11:20",
-      estado: "abierto",
-      prioridad: "alta",
-      ultimoMensaje: "¿Cuándo llegará mi pedido?",
-    },
-    {
-      id: 5,
-      cliente: "Pedro Sánchez",
-      asunto: "Consulta técnica",
-      fecha: "2025-03-19 08:30",
-      estado: "nuevo",
-      prioridad: "media",
-      ultimoMensaje: "Tengo problemas para configurar el dispositivo.",
-    },
-  ]);
+const sampleTickets: Ticket[] = [
+  {
+    id: 1,
+    name: "Cliente A",
+    lastMessage: "Hola, necesito información.",
+    messages: [
+      { mId: 101, time: new Date(), text: "Hola, ¿en qué puedo ayudarte?", isFromMe: false, meta: { sent: true, received: true, read: true } },
+      { mId: 102, time: new Date(), text: "Necesito información sobre el producto X.", isFromMe: true, meta: { sent: true, received: true, read: true } },
+    ],
+  },
+  {
+    id: 2,
+    name: "Cliente B",
+    lastMessage: "Gracias por la ayuda.",
+    messages: [
+      { mId: 201, time: new Date(), text: "¿Puedo ayudarte en algo más?", isFromMe: false, meta: { sent: true, received: true, read: false } },
+      { mId: 202, time: new Date(), text: "No, muchas gracias.", isFromMe: true, meta: { sent: true, received: true, read: false } },
+    ],
+  },
+];
 
-  const [filteredAtenciones, setFilteredAtenciones] =
-    useState<Atencion[]>(atenciones);
+const Atenciones: React.FC = () => {
+  // Estados para la barra lateral y pestañas
+  const [activeTab, setActiveTab] = useState<"abiertos" | "resultados" | "buscar">("abiertos");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterEstado, setFilterEstado] = useState("todos");
-  const [filterPrioridad, setFilterPrioridad] = useState("todas");
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+
+  // Para la parte de conversación (mensajes)
+  const messages = selectedTicket?.messages || [];
+
+  // Referencia para controlar el scroll en la conversación
+  const scrollRef = useRef<any>(null);
+  const scrollElement = useCallback(() => {
+    if (scrollRef && scrollRef.current) {
+      const listEle = document.getElementById("chat-conversation-list");
+      let offsetHeight = 0;
+      if (listEle) {
+        offsetHeight = listEle.scrollHeight - window.innerHeight + 250;
+      }
+      if (offsetHeight) {
+        scrollRef.current
+          .getScrollElement()
+          .scrollTo({ top: offsetHeight, behavior: "smooth" });
+      }
+    }
+  }, [scrollRef]);
 
   useEffect(() => {
-    let result = atenciones;
-
-    if (searchTerm) {
-      result = result.filter(
-        atencion =>
-          atencion.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          atencion.asunto.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          atencion.ultimoMensaje
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()),
-      );
+    if (scrollRef && scrollRef.current) {
+      scrollRef.current.recalculate();
     }
+  }, []);
 
-    if (filterEstado !== "todos") {
-      result = result.filter(atencion => atencion.estado === filterEstado);
+  useEffect(() => {
+    if (selectedTicket && selectedTicket.messages) {
+      scrollElement();
     }
+  }, [selectedTicket?.messages, scrollElement]);
 
-    if (filterPrioridad !== "todas") {
-      result = result.filter(
-        atencion => atencion.prioridad === filterPrioridad,
-      );
-    }
+  // Filtrado de tickets basado en la pestaña activa y el término de búsqueda
+  const filteredTickets = sampleTickets.filter((ticket) => {
+    const matchesSearch = ticket.name.toLowerCase().includes(searchTerm.toLowerCase());
+    // Aquí podrías agregar lógica adicional según el valor de activeTab (por ejemplo, filtrar "Abiertos" o "Resultados")
+    return matchesSearch;
+  });
 
-    setFilteredAtenciones(result);
-  }, [searchTerm, filterEstado, filterPrioridad, atenciones]);
-
-  const getEstadoBadgeColor = (estado: string) => {
-    switch (estado) {
-      case "nuevo":
-        return "primary";
-      case "abierto":
-        return "success";
-      case "en proceso":
-        return "warning";
-      case "cerrado":
-        return "secondary";
-      default:
-        return "info";
-    }
-  };
-
-  const getPrioridadBadgeColor = (prioridad: string) => {
-    switch (prioridad) {
-      case "alta":
-        return "danger";
-      case "media":
-        return "warning";
-      case "baja":
-        return "info";
-      default:
-        return "secondary";
-    }
+  const toggleTab = (tab: "abiertos" | "resultados" | "buscar") => {
+    setActiveTab(tab);
+    // Al cambiar de pestaña, reseteamos el ticket seleccionado
+    setSelectedTicket(null);
   };
 
   return (
-    <div className="conversation-content p-4">
-      <h4 className="mb-4">Atenciones</h4>
-
-      <div className="mb-4">
-        <Row>
-          <Col md={4}>
-            <Input
-              type="text"
-              placeholder="Buscar por cliente, asunto o mensaje..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="mb-3"
-            />
-          </Col>
-          <Col md={4}>
-            <FormGroup>
-              <Label for="estadoFilter">Estado</Label>
+    <div className="d-flex" style={{ height: "100%" }}>
+      {/* Panel lateral con pestañas y lista de tickets */}
+      <div className="border-end" style={{ width: "320px" }}>
+        <Nav tabs className="bg-light">
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "abiertos" })}
+              onClick={() => toggleTab("abiertos")}
+            >
+              Abiertos
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "resultados" })}
+              onClick={() => toggleTab("resultados")}
+            >
+              Resultados
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: activeTab === "buscar" })}
+              onClick={() => toggleTab("buscar")}
+            >
+              Buscar
+            </NavLink>
+          </NavItem>
+        </Nav>
+        <TabContent activeTab={activeTab}>
+          <TabPane tabId="abiertos">
+            <div className="p-2">
               <Input
-                type="select"
-                id="estadoFilter"
-                value={filterEstado}
-                onChange={e => setFilterEstado(e.target.value)}
-              >
-                <option value="todos">Todos</option>
-                <option value="nuevo">Nuevo</option>
-                <option value="abierto">Abierto</option>
-                <option value="en proceso">En proceso</option>
-                <option value="cerrado">Cerrado</option>
-              </Input>
-            </FormGroup>
-          </Col>
-          <Col md={4}>
-            <FormGroup>
-              <Label for="prioridadFilter">Prioridad</Label>
+                type="text"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </TabPane>
+          <TabPane tabId="resultados">
+            <div className="p-2">
+              <p className="text-muted">Resultados filtrados</p>
+            </div>
+          </TabPane>
+          <TabPane tabId="buscar">
+            <div className="p-2">
               <Input
-                type="select"
-                id="prioridadFilter"
-                value={filterPrioridad}
-                onChange={e => setFilterPrioridad(e.target.value)}
+                type="text"
+                placeholder="Buscar tickets..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </TabPane>
+        </TabContent>
+        <div style={{ height: "calc(100% - 150px)", overflowY: "auto" }}>
+          {filteredTickets.length > 0 ? (
+            filteredTickets.map((ticket) => (
+              <Card
+                key={ticket.id}
+                className="m-2"
+                onClick={() => setSelectedTicket(ticket)}
+                style={{ cursor: "pointer" }}
               >
-                <option value="todas">Todas</option>
-                <option value="alta">Alta</option>
-                <option value="media">Media</option>
-                <option value="baja">Baja</option>
-              </Input>
-            </FormGroup>
-          </Col>
-        </Row>
+                <CardBody>
+                  <strong>{ticket.name}</strong>
+                  <div className="small text-muted">{ticket.lastMessage}</div>
+                </CardBody>
+              </Card>
+            ))
+          ) : (
+            <div className="p-3 text-center text-muted">
+              No se encontraron tickets.
+            </div>
+          )}
+        </div>
       </div>
 
-      <div
-        className="atenciones-list"
-        style={{ maxHeight: "600px", overflowY: "auto" }}
-      >
-        {filteredAtenciones.length > 0 ? (
-          filteredAtenciones.map(atencion => (
-            <Card
-              key={atencion.id}
-              className="mb-3 cursor-pointer hover-shadow"
-            >
-              <CardBody>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="mb-0">{atencion.cliente}</h5>
-                  <div>
-                    <Badge
-                      color={getEstadoBadgeColor(atencion.estado)}
-                      className="me-2"
-                    >
-                      {atencion.estado.toUpperCase()}
-                    </Badge>
-                    <Badge color={getPrioridadBadgeColor(atencion.prioridad)}>
-                      {atencion.prioridad.toUpperCase()}
-                    </Badge>
-                  </div>
-                </div>
-                <h6>{atencion.asunto}</h6>
-                <p className="text-muted mb-2">{atencion.ultimoMensaje}</p>
-                <small className="text-muted">{atencion.fecha}</small>
-                <div className="d-flex justify-content-end mt-2">
-                  <Button color="primary" size="sm">
-                    Ver detalles
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ))
+      {/* Área principal de conversación */}
+      <div className="flex-grow-1 d-flex flex-column">
+        {selectedTicket ? (
+          <AppSimpleBar
+            scrollRef={scrollRef}
+            className="chat-conversation p-3 p-lg-4 position-relative"
+          >
+            <Loader /> {/* Puedes condicionar la visualización del loader según el estado de carga */}
+            <ul className="list-unstyled chat-conversation-list" id="chat-conversation-list">
+              {messages.map((msg, key) => (
+                <Message
+                  key={key}
+                  message={msg}
+                  chatUserDetails={selectedTicket}
+                  onDelete={(id) => console.log("Eliminar mensaje", id)}
+                  onSetReplyData={(reply) => console.log("Establecer reply", reply)}
+                  isFromMe={msg.isFromMe}
+                  onOpenForward={(msg) => console.log("Reenviar mensaje", msg)}
+                  isChannel={false}
+                  onDeleteImage={(messageId, imageId) =>
+                    console.log("Eliminar imagen", messageId, imageId)
+                  }
+                />
+              ))}
+            </ul>
+          </AppSimpleBar>
         ) : (
-          <div className="text-center p-4">
-            <p className="text-muted">
-              No se encontraron atenciones con los filtros aplicados.
-            </p>
+          <div className="d-flex justify-content-center align-items-center h-100">
+            <h2 className="text-muted">Selecciona un ticket para ver la conversación</h2>
           </div>
         )}
       </div>
