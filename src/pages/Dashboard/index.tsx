@@ -38,18 +38,18 @@ const Index = (props: IndexProps) => {
 
   // Handle section changes from Leftbar
   const handleSectionChange = (section: string | null) => {
-    console.log("Index: handleSectionChange called with section:", section);
+    //console.log("Index: handleSectionChange called with section:", section);
     dispatch(setSelectedSection(section || ""));
   };
 
   // Render content based on selected chat or section
   const renderContent = () => {
-    console.log(
-      "Index: renderContent. selectedSection:",
-      selectedSection,
-      "selectedChat:",
-      selectedChat,
-    );
+    // console.log(
+    //   "Index: renderContent. selectedSection:",
+    //   selectedSection,
+    //   "selectedChat:",
+    //   selectedChat,
+    // );
 
     if (selectedChat !== null) {
       return (

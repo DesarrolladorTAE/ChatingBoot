@@ -35,6 +35,7 @@ interface MenuProps {
 }
 
 const Menu = ({ onDelete, onReply, onForward }: MenuProps) => {
+  console.log("Renderizando Menu", { onDelete, onReply, onForward });
   return (
     <UncontrolledDropdown className="align-self-start message-box-drop">
       <DropdownToggle className="btn btn-toggle" role="button" tag={"a"}>
@@ -89,6 +90,7 @@ interface ImageMoreMenuProps {
   onDelete: () => void;
 }
 const ImageMoreMenu = ({ imagelink,onReply, onDelete }: ImageMoreMenuProps) => {
+  console.log("Renderizando ImageMoreMenu", { imagelink });
   return (
     <div className="message-img-link">
       <ul className="list-inline mb-0">
@@ -160,7 +162,7 @@ const Image = ({ message ,image, onImageClick, index,onSetReplyData, onDeleteImg
     onDeleteImg(image.id);
   };
   const onClickReply = () => {
-
+    console.log("Se hizo clic en Reply para la imagen con id:", image.id);
     let multiimages: any = message['image'];
 
     let results = multiimages.filter((multiimage : any) => multiimage.id === image.id);
@@ -311,6 +313,12 @@ const Message = ({
   isChannel,
   onDeleteImage,
 }: MessageProps) => {
+  console.log("Renderizando Message", {
+    message: message,
+    isFromMe: isFromMe,
+    hasImages: message.image && message.image.length,
+    hasText: message.text,
+  });
   const { userProfile } = useProfile();
   const hasImages = message.image && message.image.length;
   const hasAttachments = message.attachments && message.attachments.length;
@@ -433,6 +441,7 @@ const Message = ({
                   )}
                   {/* files message end */}
                 </div>
+                {console.log("Renderizando Menu en mensaje sin imágenes")}
                 <Menu
                   onForward={onForwardMessage}
                   onDelete={onDeleteMessage}
