@@ -38,7 +38,7 @@ function* loginUser({ payload: { user } }: any) {
       );
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
       const response: Promise<any> = yield call(postJwtLogin, {
-        email: user.email,
+        number: user.number,
         password: user.password,
       });
       setLoggeedInUser(response);
@@ -49,7 +49,7 @@ function* loginUser({ payload: { user } }: any) {
     } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
       // console.log("Intentando fake login...");
       const response: Promise<any> = yield call(postFakeLogin, {
-        email: user.email,
+        number: user.number,
         password: user.password,
       });
       // console.log("Respuesta fake login:", response);

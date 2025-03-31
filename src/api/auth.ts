@@ -15,7 +15,9 @@ const postFakeLogin = (data: any) => api.create(url.POST_FAKE_LOGIN, data);
 
 const postFakeLogout = () => api.create(url.POST_FAKE_LOGOUT);
 
-const postJwtLogin = (data: any) => api.create(url.POST_FAKE_JWT_LOGIN, data);
+//const postJwtLogin = (data: any) => api.create(url.POST_FAKE_JWT_LOGIN, data);
+
+const postJwtLogin = (data: any) => api.create("/login", data);
 
 // Register Method
 const postFakeRegister = (data: any) => {

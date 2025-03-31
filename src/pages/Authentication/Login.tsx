@@ -81,15 +81,19 @@ const Login = (props: LoginProps) => {
 
   const resolver = yupResolver(
     yup.object().shape({
-      email: yup.string().required("Please Enter E-mail."),
+      number: yup
+        .string()
+        .required("Por favor ingresa tu número.")
+        .matches(/^\d{10}$/, "El número debe tener 10 dígitos."),
+
       password: yup.string().required("Please Enter Password."),
     }),
   );
 
   const defaultValues: any = {
-    email: "admin@themesbrand.com",
-    password: "123456",
-  };
+    number: "",
+    password: "",
+  };  
 
   const methods = useForm({ defaultValues, resolver });
   const {
@@ -156,14 +160,14 @@ const Login = (props: LoginProps) => {
               {loginLoading && <Loader />}
               <div className="mb-3">
                 <FormInput
-                  label="Nombre de usuario"
+                  label="Número de WhatsApp"
                   type="text"
-                  name="email"
+                  name="number"
+                  placeholder="Ej. 5512345678"
                   register={register}
                   errors={errors}
                   control={control}
                   labelClassName="form-label"
-                  placeholder="Enter username"
                   className="form-control"
                 />
               </div>
