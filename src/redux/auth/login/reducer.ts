@@ -22,6 +22,7 @@ const Login = (state = INIT_STATE, action: any) => {
             ...state,
             loading: false,
             isUserLogout: true,
+            error: "", // ✅ limpia el error
           };
         default:
           return { ...state };
@@ -42,6 +43,7 @@ const Login = (state = INIT_STATE, action: any) => {
             loading: false,
             isUserLogin: false,
             isUserLogout: false,
+            error: "", // ✅ limpia el error
           };
         default:
           return { ...state };

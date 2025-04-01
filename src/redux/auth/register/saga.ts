@@ -1,5 +1,5 @@
 import { takeEvery, fork, put, all, call } from "redux-saga/effects";
-
+import { setAuthorization } from "../../../api/apiCore";
 //Account Redux states
 import { AuthRegisterActionTypes } from "./types";
 import {
@@ -15,7 +15,7 @@ import { postFakeRegister, postJwtRegister } from "../../../api/index";
 const fireBaseBackend = getFirebaseBackend();
 
 // Is user register successfull then direct plot user in redux.
-function* registerUser({ payload: { user } }: any) {
+function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
   try {
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
       const response: Promise<any> = yield call(
@@ -30,14 +30,23 @@ function* registerUser({ payload: { user } }: any) {
         )
       );
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
-      const response: Promise<any> = yield call(postJwtRegister, user);
+      const response: any = yield call(postJwtRegister, user);
+    
+      // ✅ Guarda token localmente
+      localStorage.setItem("authUser", JSON.stringify(response));
+    
+      // ✅ Establece header Authorization
+      setAuthorization(response.token);
+    
       yield put(
         authRegisterApiResponseSuccess(
           AuthRegisterActionTypes.REGISTER_USER,
           response
         )
       );
-    } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
+    }
+    
+    else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
       const response: Promise<any> = yield call(postFakeRegister, user);
       yield put(
         authRegisterApiResponseSuccess(

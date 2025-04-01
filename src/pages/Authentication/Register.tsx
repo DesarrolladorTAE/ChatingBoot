@@ -1,5 +1,16 @@
 import React from "react";
-import { Alert, Row, Col, Form, Button, UncontrolledTooltip } from "reactstrap";
+import { useEffect } from "react"; // Asegúrate de importar esto
+import {
+  Alert,
+  Row,
+  Col,
+  Form,
+  Button,
+  UncontrolledTooltip,
+  FormGroup,
+  Label,
+  FormFeedback,
+} from "reactstrap";
 
 // hooks
 import { useRedux } from "../../hooks/index";
@@ -25,6 +36,18 @@ import FormInput from "../../components/FormInput";
 import Loader from "../../components/Loader";
 
 interface RegisterProps {}
+
+type Role = "admin" | "supervisor" | "agent";
+
+interface RegisterFormValues {
+  name: string;
+  email: string;
+  number: string;
+  password: string;
+  confirmPassword: string;
+  role: Role;
+}
+
 const Register = (props: RegisterProps) => {
   // global store
   const { dispatch, useAppSelector } = useRedux();
@@ -37,47 +60,101 @@ const Register = (props: RegisterProps) => {
   // }));
 
   const errorData = createSelector(
-    (state : any) => state.Register,
-    (state) => ({
+    (state: any) => state.Register,
+    state => ({
       user: state.user,
       registrationError: state.registrationError,
       regLoading: state.loading,
       isUserRegistered: state.isUserRegistered,
-
-    })
+    }),
   );
   // Inside your component
-  const { user,registrationError ,regLoading} = useAppSelector(errorData);
+  const { user, registrationError, regLoading } = useAppSelector(errorData);
 
   const resolver = yupResolver(
-    yup.object().shape({
-      email: yup
+    yup.object({
+      name: yup.string().required(),
+      email: yup.string().required().email(),
+      number: yup
         .string()
-        .email("This value should be a valid email.")
-        .required("Please Enter E-mail."),
-      username: yup.string().required("Please Enter E-mail."),
-      password: yup.string().required("Please Enter Password."),
-    })
+        .required()
+        .matches(/^\d{10}$/, "Debe tener 10 dígitos"),
+      password: yup
+        .string()
+        .required()
+        .min(8)
+        .matches(/[A-Z]/)
+        .matches(/[a-z]/)
+        .matches(/\d/)
+        .matches(/[@$!%*?&]/),
+      confirmPassword: yup
+        .string()
+        .required()
+        .oneOf([yup.ref("password")], "Las contraseñas no coinciden"),
+      role: yup
+        .mixed<Role>()
+        .oneOf(["admin", "supervisor", "agent"])
+        .required(),
+    }),
   );
 
-  const defaultValues: any = {};
+  // const defaultValues = {
+  //   name: "",
+  //   email: "",
+  //   number: "",
+  //   password: "",
+  //   confirmPassword: "",
+  //   role: "agent", // puede ser fijo o un selector
+  // };
 
-  const methods = useForm({ defaultValues, resolver });
+  const methods = useForm<RegisterFormValues>({
+    defaultValues: {
+      name: "",
+      email: "",
+      number: "",
+      password: "",
+      confirmPassword: "",
+      role: "admin",
+    },
+    resolver,
+  });
+
   const {
     handleSubmit,
     register,
     control,
     formState: { errors },
+    setError,
   } = methods;
 
-  const onSubmitForm = (values: object) => {
-    dispatch(registerUser(values));
+  useEffect(() => {
+    if (
+      registrationError &&
+      typeof registrationError === "object" &&
+      registrationError.type === "validation"
+    ) {
+      Object.entries(registrationError.errors).forEach(([field, messages]) => {
+        setError(field as keyof RegisterFormValues, {
+          type: "server",
+          message: (messages as string[])[0],
+        });
+      });
+    }
+  }, [registrationError, setError]);
+
+  const onSubmitForm = (values: any) => {
+    const { confirmPassword, ...user } = values; // omitimos confirmPassword
+    dispatch(registerUser(user));
   };
 
   const { userProfile, loading } = useProfile();
 
+  // if (userProfile && !loading) {
+  //   return <Navigate to={{ pathname: "/dashboard" }} />;
+  // }
+
   if (userProfile && !loading) {
-    return <Navigate to={{ pathname: "/dashboard" }} />;
+    return <Navigate to="/dashboard" />;
   }
 
   return (
@@ -91,12 +168,16 @@ const Register = (props: RegisterProps) => {
             />
 
             {user && user ? (
-              <Alert color="success">Register User Successfully</Alert>
+              <Alert color="success">Usuario Registrado Exitosamente</Alert>
             ) : null}
 
-            {registrationError && registrationError ? (
-              <Alert color="danger">{registrationError}</Alert>
-            ) : null}
+            {registrationError && (
+              <Alert color="danger">
+                {typeof registrationError === "object"
+                  ? registrationError.message
+                  : registrationError}
+              </Alert>
+            )}
 
             <Form
               onSubmit={handleSubmit(onSubmitForm)}
@@ -105,52 +186,87 @@ const Register = (props: RegisterProps) => {
               {regLoading && <Loader />}
               <div className="mb-3">
                 <FormInput
-                  label="Email"
+                  label="Nombre"
                   type="text"
+                  name="name"
+                  placeholder="Ej. Juan Pérez"
+                  register={register}
+                  errors={errors}
+                  control={control}
+                  className="form-control"
+                />
+
+                <FormInput
+                  label="Correo electrónico"
+                  type="email"
                   name="email"
+                  placeholder="ejemplo@correo.com"
                   register={register}
                   errors={errors}
                   control={control}
-                  labelClassName="form-label"
-                  placeholder="Enter Email"
                   className="form-control"
                 />
-              </div>
 
-              <div className="mb-3">
                 <FormInput
-                  label="Username"
+                  label="Número de WhatsApp"
                   type="text"
-                  name="username"
+                  name="number"
+                  placeholder="5512345678"
                   register={register}
                   errors={errors}
                   control={control}
-                  labelClassName="form-label"
-                  placeholder="Enter username"
                   className="form-control"
                 />
-              </div>
 
-              <div className="mb-3">
                 <FormInput
-                  label="Password"
+                  label="Contraseña"
                   type="password"
                   name="password"
                   register={register}
                   errors={errors}
                   control={control}
-                  labelClassName="form-label"
-                  className="form-control pe-5"
-                  placeholder="Enter Password"
+                  className="form-control"
                 />
+
+                <FormInput
+                  label="Confirmar contraseña"
+                  type="password"
+                  name="confirmPassword"
+                  register={register}
+                  errors={errors}
+                  control={control}
+                  className="form-control"
+                />
+
+                <FormGroup className="mb-3">
+                  <Label htmlFor="role" className="form-label">
+                    Rol
+                  </Label>
+                  <select
+                    id="role"
+                    className={`form-control ${errors.role ? "is-invalid" : ""}`}
+                    {...register("role")}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Selecciona un rol
+                    </option>
+                    <option value="admin">Administrador</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="agent">Agente</option>
+                  </select>
+                  {errors.role && (
+                    <FormFeedback>{errors.role.message}</FormFeedback>
+                  )}
+                </FormGroup>
               </div>
 
               <div className="mb-4">
                 <p className="mb-0">
-                  By registering you agree to the Doot{" "}
-                  <Link to="#" className="text-primary">
+                  Dale a tu cuerpo alegría, Macarena{" "}
+                  {/* <Link to="#" className="text-primary">
                     Terms of Use
-                  </Link>
+                  </Link> */}
                 </p>
               </div>
 
@@ -163,7 +279,7 @@ const Register = (props: RegisterProps) => {
                   Register
                 </Button>
               </div>
-              <div className="mt-4 text-center">
+              {/* <div className="mt-4 text-center">
                 <div className="signin-other-title">
                   <h5 className="font-size-14 mb-4 title">Sign up using</h5>
                 </div>
@@ -211,7 +327,7 @@ const Register = (props: RegisterProps) => {
                     </UncontrolledTooltip>
                   </div>
                 </Row>
-              </div>
+              </div> */}
             </Form>
 
             <div className="mt-5 text-center text-muted">

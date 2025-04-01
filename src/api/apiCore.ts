@@ -8,28 +8,75 @@ axios.defaults.baseURL = config.API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // intercepting to capture errors
+// axios.interceptors.response.use(
+//   function (response: any) {
+//     return response.data ? response.data : response;
+//   },
+//   function (error: any) {
+//     // Any status codes that falls outside the range of 2xx cause this function to trigger
+//     let message;
+//     switch (error.status) {
+//       case 500:
+//         message = "Internal Server Error";
+//         break;
+//       case 401:
+//         message = "Invalid credentials";
+//         break;
+//       case 404:
+//         message = "Sorry! the data you are looking for could not be found";
+//         break;
+//       default:
+//         message = error.message || error;
+//     }
+//     return Promise.reject(message);
+//   }
+// );
+
 axios.interceptors.response.use(
   function (response: any) {
     return response.data ? response.data : response;
   },
   function (error: any) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    let message;
-    switch (error.status) {
+    const response = error.response;
+
+    if (response?.data?.errors) {
+      // Laravel 422 - Validación con campos específicos
+      return Promise.reject({
+        type: "validation",
+        errors: response.data.errors,
+        message: response.data.message || "Error de validación",
+      });
+    }
+
+    if (response?.data?.message) {
+      // Otros errores con mensaje general (como 401)
+      return Promise.reject({
+        type: "general",
+        message: response.data.message,
+      });
+    }
+
+    // Errores sin estructura Laravel
+    let fallbackMessage;
+    switch (response?.status) {
       case 500:
-        message = "Internal Server Error";
+        fallbackMessage = "Error interno del servidor";
         break;
       case 401:
-        message = "Invalid credentials";
+        fallbackMessage = "No autorizado. Verifica tus credenciales.";
         break;
       case 404:
-        message = "Sorry! the data you are looking for could not be found";
+        fallbackMessage = "Recurso no encontrado";
         break;
       default:
-        message = error.message || error;
+        fallbackMessage = error.message || "Error desconocido";
     }
-    return Promise.reject(message);
-  }
+
+    return Promise.reject({
+      type: "general",
+      message: fallbackMessage,
+    });
+  },
 );
 
 /**
@@ -102,7 +149,7 @@ class APIClient {
     // };
     return axios.post(url, formData);
   };
-};
+}
 
 const getLoggedinUser = () => {
   const user = localStorage.getItem("authUser");
