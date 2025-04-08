@@ -9,6 +9,7 @@ import Register from "../pages/Authentication/Register";
 import RecoverPassword from "../pages/Authentication/RecoverPassword";
 import ChangePassword from "../pages/Authentication/ChangePassword";
 import LockScreen from "../pages/Authentication/LockScreen";
+import VerificarCodigo from "../pages/Authentication/VerificarCodigo";
 
 // dashboard
 import Dashboard from "../pages/Dashboard/index";
@@ -27,6 +28,7 @@ const publicRoutes: Array<RouteProps> = [
   { path: "/auth-changepassword", component: <ChangePassword /> },
   { path: "/auth-lock-screen", component: <LockScreen /> },
   { path: "/logout", component: <Logout /> },
+  { path: "/verificar-codigo", component: <VerificarCodigo /> },
 ];
 
 const privateRoutes: Array<RouteProps> = [

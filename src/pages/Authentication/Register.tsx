@@ -16,7 +16,7 @@ import {
 import { useRedux } from "../../hooks/index";
 
 // router
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 // validations
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -37,15 +37,12 @@ import Loader from "../../components/Loader";
 
 interface RegisterProps {}
 
-type Role = "admin" | "supervisor" | "agent";
-
 interface RegisterFormValues {
   name: string;
   email: string;
   number: string;
   password: string;
   confirmPassword: string;
-  role: Role;
 }
 
 const Register = (props: RegisterProps) => {
@@ -91,10 +88,6 @@ const Register = (props: RegisterProps) => {
         .string()
         .required()
         .oneOf([yup.ref("password")], "Las contraseñas no coinciden"),
-      role: yup
-        .mixed<Role>()
-        .oneOf(["admin", "supervisor", "agent"])
-        .required(),
     }),
   );
 
@@ -114,7 +107,6 @@ const Register = (props: RegisterProps) => {
       number: "",
       password: "",
       confirmPassword: "",
-      role: "admin",
     },
     resolver,
   });
@@ -142,9 +134,19 @@ const Register = (props: RegisterProps) => {
     }
   }, [registrationError, setError]);
 
+  const navigate = useNavigate();
+
+  // const onSubmitForm = (values: any) => {
+  //   const { confirmPassword, ...user } = values; // omitimos confirmPassword
+  //   dispatch(registerUser(user));
+  // };
+
   const onSubmitForm = (values: any) => {
-    const { confirmPassword, ...user } = values; // omitimos confirmPassword
+    const { confirmPassword, ...user } = values;
     dispatch(registerUser(user));
+    setTimeout(() => {
+      navigate("/verificar-codigo");
+    }, 1000); // ⏱️ pequeño delay opcional para esperar confirmación visual
   };
 
   const { userProfile, loading } = useProfile();
@@ -168,7 +170,18 @@ const Register = (props: RegisterProps) => {
             />
 
             {user && user ? (
-              <Alert color="success">Usuario Registrado Exitosamente</Alert>
+              <Alert color="success">
+                ✅ Registro exitoso. Te enviamos un código por WhatsApp para
+                verificar tu número.
+                <br />
+                <span className="d-block mt-2">
+                  👉 Si no recibiste el mensaje, puedes&nbsp;
+                  <Link to="/verificar-codigo" className="fw-bold text-primary">
+                    verificar tu número aquí
+                  </Link>
+                  .
+                </span>
+              </Alert>
             ) : null}
 
             {registrationError && (
@@ -237,28 +250,6 @@ const Register = (props: RegisterProps) => {
                   control={control}
                   className="form-control"
                 />
-
-                <FormGroup className="mb-3">
-                  <Label htmlFor="role" className="form-label">
-                    Rol
-                  </Label>
-                  <select
-                    id="role"
-                    className={`form-control ${errors.role ? "is-invalid" : ""}`}
-                    {...register("role")}
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Selecciona un rol
-                    </option>
-                    <option value="admin">Administrador</option>
-                    <option value="supervisor">Supervisor</option>
-                    <option value="agent">Agente</option>
-                  </select>
-                  {errors.role && (
-                    <FormFeedback>{errors.role.message}</FormFeedback>
-                  )}
-                </FormGroup>
               </div>
 
               <div className="mb-4">
