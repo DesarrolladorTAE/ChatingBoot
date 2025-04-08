@@ -42,6 +42,14 @@ const VerificarCodigo = () => {
     }
   };
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("confirmado") === "true") {
+      navigate("/dashboard");
+    }
+  }, []);
+  
+
   return (
     <Row className="justify-content-center mt-5">
       <Col md={6} lg={5} xl={4}>
@@ -77,3 +85,7 @@ const VerificarCodigo = () => {
 };
 
 export default VerificarCodigo;
+function useEffect(arg0: () => void, arg1: never[]) {
+  throw new Error("Function not implemented.");
+}
+
