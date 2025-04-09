@@ -201,29 +201,23 @@ function* socialLogin({ payload: { data, type } }: any) {
 
 function* logoutUser(): Generator<any, void, any> {
   try {
-    // Recuperar token del usuario autenticado
     const storedUser = localStorage.getItem("authUser");
     const token = storedUser ? JSON.parse(storedUser).token : null;
 
     if (token) {
-      // Setear el header de autorización
       setAuthorization(token);
+      // Intenta cerrar sesión en el backend
+      yield call(postLogout);
     }
-
-    // Llamar al endpoint de logout del backend
-    const response: any = yield call(postLogout);
-
-    // Limpiar authUser del localStorage
-    localStorage.removeItem("authUser");
-
-    // Disparar acción de éxito
-    yield put(
-      authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, response)
-    );
   } catch (error: any) {
-    yield put(
-      authLoginApiResponseError(AuthLoginActionTypes.LOGOUT_USER, error)
-    );
+    console.warn("Error al cerrar sesión (posiblemente token inválido):", error);
+    // No se lanza error porque igual limpiamos el frontend
+  } finally {
+    // ✅ Limpieza obligatoria, sin importar si falló el logout
+    localStorage.removeItem("authUser");
+    yield put({
+      type: AuthLoginActionTypes.LOGOUT_USER,
+    });
   }
 }
 

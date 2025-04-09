@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import classnames from "classnames";
-
+import { useNavigate } from "react-router-dom";
 // hooks
 import { useRedux } from "../../hooks/index";
-import { useConversationUserType } from "../../hooks/index";
+import { useConversationUserType, useProfile } from "../../hooks/index";
 import { createSelector } from "reselect";
 
 // components
@@ -72,6 +72,15 @@ const Index = (props: IndexProps) => {
         return <Welcome />;
     }
   };
+
+  const { userProfile, loading } = useProfile();
+const navigate = useNavigate();
+
+// useEffect(() => {
+//   if (!loading && userProfile && !userProfile.email_verified_at) {
+//     navigate("/verificar-codigo");
+//   }
+// }, [userProfile, loading]);
 
   return (
     <>
