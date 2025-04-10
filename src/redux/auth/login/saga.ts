@@ -206,20 +206,31 @@ function* logoutUser(): Generator<any, void, any> {
 
     if (token) {
       setAuthorization(token);
-      // Intenta cerrar sesión en el backend
-      yield call(postLogout);
+      try {
+        yield call(postLogout);
+      } catch (logoutError) {
+        console.warn("Error al hacer logout en backend:", logoutError);
+      }
     }
-  } catch (error: any) {
-    console.warn("Error al cerrar sesión (posiblemente token inválido):", error);
-    // No se lanza error porque igual limpiamos el frontend
-  } finally {
-    // ✅ Limpieza obligatoria, sin importar si falló el logout
+
+    // ✅ Limpiar localStorage siempre
     localStorage.removeItem("authUser");
-    yield put({
-      type: AuthLoginActionTypes.LOGOUT_USER,
-    });
+
+    // ✅ Limpiar headers
+    setAuthorization(null);
+
+    // ✅ Disparar éxito
+    yield put(
+      authLoginApiResponseSuccess(AuthLoginActionTypes.LOGOUT_USER, true)
+    );
+
+  } catch (error: any) {
+    yield put(
+      authLoginApiResponseError(AuthLoginActionTypes.LOGOUT_USER, error.message || "Error desconocido al cerrar sesión")
+    );
   }
 }
+
 
 function* loginSaga() {
   yield takeEvery(AuthLoginActionTypes.LOGIN_USER, loginUser);

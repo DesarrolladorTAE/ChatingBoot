@@ -23,25 +23,38 @@ const VerificarCodigo = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
     try {
       const response = await axios.post(
-        `https://chatingbot.com.mx/api/vistaWhats/${code}`
+        "https://chatingbot.com.mx/api/verificar-codigo",
+        { code }
       );
-
+  
+      console.log("✅ Verificación exitosa:", response);
+  
       if (response.status === 200) {
         setSuccess(true);
         setTimeout(() => navigate("/dashboard"), 2000);
-      } else {
-        setError("El código no es válido o ya fue usado.");
       }
-    } catch (err) {
-      setError("Hubo un problema al verificar el código.");
+    } catch (err: any) {
+      console.error("❌ Error al verificar:", err);
+  
+      if (err.response) {
+        // Error esperado (ej. 404 o 409 desde Laravel)
+        const status = err.response.status;
+        if (status === 404 || status === 409) {
+          setError(err.response.data?.message || "El código es inválido o ya fue usado.");
+        } else {
+          setError("Error inesperado del servidor.");
+        }
+      } else {
+        // Error de red, CORS o Axios
+        setError("No se pudo conectar al servidor.");
+      }
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("confirmado") === "true") {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Row, Col } from "reactstrap";
 
@@ -12,17 +12,17 @@ import withRouter from "../../components/withRouter";
 // actions
 import { logoutUser } from "../../redux/actions";
 
-const Logout = (props: any) => {
-  // global store
+const Logout = () => {
   const { dispatch } = useRedux();
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
 
   useEffect(() => {
-    dispatch(logoutUser());
+    const doLogout = async () => {
+      await dispatch(logoutUser());
+      setIsLoggedOut(true);
+    };
+    doLogout();
   }, [dispatch]);
-
-  // if (isUserLogout) {
-  //   return <Redirect to="/auth-login" />;
-  // }
 
   return (
     <NonAuthLayoutWrapper>
@@ -40,14 +40,19 @@ const Logout = (props: any) => {
                 Gracias por usar{" "}
                 <span className="fw-semibold text-dark">ChattingBot</span>
               </p>
-              <div className="mt-4">
-                <Link
-                  to="/auth-login"
-                  className="btn btn-primary w-100 waves-effect waves-light"
-                >
-                  Inicia sesión
-                </Link>
-              </div>
+
+              {isLoggedOut ? (
+                <div className="mt-4">
+                  <Link
+                    to="/auth-login"
+                    className="btn btn-primary w-100 waves-effect waves-light"
+                  >
+                    Inicia sesión
+                  </Link>
+                </div>
+              ) : (
+                <p className="mt-4">Cerrando sesión...</p>
+              )}
             </div>
           </div>
         </Col>

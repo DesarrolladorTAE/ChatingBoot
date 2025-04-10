@@ -80,6 +80,12 @@ const Login = (props: LoginProps) => {
     }
   }, [isUserLogin, navigate, loginLoading, isUserLogout, redirectUrl]);
 
+  useEffect(() => {
+    if (isUserLogout) {
+      localStorage.removeItem("authUser");
+    }
+  }, [isUserLogout]);
+
   const resolver = yupResolver(
     yup.object().shape({
       number: yup
@@ -94,7 +100,7 @@ const Login = (props: LoginProps) => {
   const defaultValues: any = {
     number: "",
     password: "",
-  };  
+  };
 
   const methods = useForm({ defaultValues, resolver });
   const {
@@ -110,7 +116,7 @@ const Login = (props: LoginProps) => {
 
   const { userProfile, loading } = useProfile();
 
-  if (userProfile && !loading) {
+  if (userProfile && !loading && !isUserLogout) {
     return <Navigate to={{ pathname: redirectUrl }} />;
   }
 
