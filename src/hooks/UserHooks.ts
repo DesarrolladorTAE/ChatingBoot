@@ -10,36 +10,34 @@ import { createSelector } from "reselect";
 import { divideByKey } from "../utils";
 
 const useProfile = () => {
-  // global store
   const { useAppSelector } = useRedux();
 
-  // const { settings } = useAppSelector(state => ({
-  //   settings: state.Settings.settings,
-  // }));
-
   const errorData = createSelector(
-    (state : any) => state.Settings,
-    (state) => ({
+    (state: any) => state.Settings,
+    state => ({
       settings: state.settings,
-    })
+    }),
   );
-  // Inside your component
-  const { settings} = useAppSelector(errorData);
 
-
-
-
+  const { settings } = useAppSelector(errorData);
   const image = settings.basicDetails && settings.basicDetails.profile;
-  const userProfileSession = getLoggedinUser();
-  const [loading] = useState(userProfileSession ? false : true);
-  const [userProfile, setUserProfile] = useState(
-    userProfileSession ? { ...userProfileSession, profileImage: image } : null
-  );
+
+  const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<any>(null);
+
   useEffect(() => {
     const userProfileSession = getLoggedinUser();
-    setUserProfile(
-      userProfileSession ? { ...userProfileSession, profileImage: image } : null
-    );
+
+    // 👇 Aquí pones el console.log
+    console.log("👤 getLoggedinUser():", userProfileSession);
+
+    if (userProfileSession) {
+      setUserProfile({ ...userProfileSession, profileImage: image });
+    } else {
+      setUserProfile(null);
+    }
+
+    setLoading(false); // ✅ aquí marcamos que terminó de cargar
   }, [image]);
 
   return { userProfile, loading };
@@ -53,20 +51,18 @@ const useContacts = () => {
   //   contactsList: state.Contacts.contacts,
   // }));
 
-
-
   const errorData = createSelector(
-    (state : any) => state.Contacts,
-    (state) => ({
+    (state: any) => state.Contacts,
+    state => ({
       contactsList: state.contacts,
-    })
+    }),
   );
   // Inside your component
-  const { contactsList} = useAppSelector(errorData);
+  const { contactsList } = useAppSelector(errorData);
 
   const [contacts, setContacts] = useState<Array<any>>([]);
   const [categorizedContacts, setCategorizedContacts] = useState<Array<any>>(
-    []
+    [],
   );
   useEffect(() => {
     if (contactsList.length > 0) {
@@ -94,13 +90,13 @@ const useConversationUserType = () => {
   // }));
 
   const errorData = createSelector(
-    (state : any) => state.Chats,
-    (state) => ({
+    (state: any) => state.Chats,
+    state => ({
       chatUserDetails: state.chatUserDetails,
-    })
+    }),
   );
   // Inside your component
-  const { chatUserDetails} = useAppSelector(errorData);
+  const { chatUserDetails } = useAppSelector(errorData);
 
   const [isChannel, setIsChannel] = useState<boolean>(false);
   useEffect(() => {

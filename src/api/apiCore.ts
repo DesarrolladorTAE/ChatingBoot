@@ -99,7 +99,9 @@ class APIClient {
    * post given data to url
    */
   create = (url: string, data?: {}) => {
-    return axios.post(url, data);
+    return axios.post(url, data, {
+      withCredentials: false,
+    });
   };
 
   /**

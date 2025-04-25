@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { Button, Form, Input } from "reactstrap";
 import { Link } from "react-router-dom";
-// hooks
+import AppSimpleBar from "../../../components/AppSimpleBar";
 import { useRedux } from "../../../hooks/index";
 
-// components
-import AppSimpleBar from "../../../components/AppSimpleBar";
+// Redux para cambio de sección
+import { setSelectedSection } from "../../../redux/atencion/actions";
 
-// interfaces
 interface SectionProps {
   icon: string;
   title: string;
@@ -23,26 +21,20 @@ interface SubsectionProps {
   isActive?: boolean;
 }
 
-interface IndexProps {}
-
-const Administracion = (props: IndexProps) => {
-  // global store
+const Administracion = () => {
   const { dispatch } = useRedux();
 
-  // Estado para la sección actualmente seleccionada
   const [activeSection, setActiveSection] = useState<string>("campañas");
   const [activeSubsection, setActiveSubsection] = useState<string>("lista de campañas");
-  
-  // Estado para controlar secciones expandidas
+
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     campañas: true
   });
 
-  // Lista de secciones predefinidas
   const predefinedSections: SectionProps[] = [
-    { 
-      icon: "bx-calendar", 
-      title: "Campañas", 
+    {
+      icon: "bx-calendar",
+      title: "Campañas",
       hasSubsections: true,
       subsections: [
         { title: "Lista de campañas" },
@@ -58,54 +50,27 @@ const Administracion = (props: IndexProps) => {
     { icon: "bx-dollar", title: "Facturacion" },
   ];
 
-  const handleSectionClick = (sectionTitle: string, hasSubsections: boolean = false) => {
-    // Si la sección tiene subsecciones, solo expandimos/colapsamos
+  const handleSectionClick = (sectionTitle: string, hasSubsections = false) => {
+    const lower = sectionTitle.toLowerCase();
+
     if (hasSubsections) {
       setExpandedSections(prev => ({
         ...prev,
-        [sectionTitle.toLowerCase()]: !prev[sectionTitle.toLowerCase()]
+        [lower]: !prev[lower]
       }));
     } else {
-      // Si no tiene subsecciones, la activamos directamente
-      setActiveSection(sectionTitle.toLowerCase());
-      // Aquí puedes disparar acciones de Redux según la sección seleccionada
-      // dispatch(changeSelectedSection(sectionTitle.toLowerCase()));
+      setActiveSection(lower);
+      dispatch(setSelectedSection(lower)); // 💥 Activa en Redux
     }
   };
 
   const handleSubsectionClick = (sectionTitle: string, subsectionTitle: string) => {
+    const lowerSub = subsectionTitle.toLowerCase();
     setActiveSection(sectionTitle.toLowerCase());
-    setActiveSubsection(subsectionTitle.toLowerCase());
-    // Aquí puedes disparar acciones de Redux según la subsección seleccionada
-    // dispatch(changeSelectedSubsection(subsectionTitle.toLowerCase()));
+    setActiveSubsection(lowerSub);
+    dispatch(setSelectedSection(lowerSub)); // 💥 Dispara subsección si aplica
   };
 
-  // const searchSections = () => {
-  //   const inputValue: any = document.getElementById("searchSections");
-  //   const filter: any = inputValue.value.toUpperCase();
-  //   const sectionItems = document.querySelectorAll(".section-item, .subsection-item");
-    
-  //   sectionItems.forEach((item: any) => {
-  //     const titleElement = item.querySelector(".section-title, .subsection-title");
-  //     if (titleElement) {
-  //       const txtValue = titleElement.textContent || titleElement.innerText;
-  //       if (txtValue.toUpperCase().indexOf(filter) > -1) {
-  //         item.style.display = "";
-  //         // Si es una subsección, también muestra su sección padre
-  //         if (item.classList.contains("subsection-item")) {
-  //           const parentSection = item.closest(".section-subsections")?.previousElementSibling;
-  //           if (parentSection) {
-  //             parentSection.style.display = "";
-  //           }
-  //         }
-  //       } else {
-  //         item.style.display = "none";
-  //       }
-  //     }
-  //   });
-  // };
-
-  // Componente para cada ítem de subsección
   const SubsectionItem = ({ title, isActive }: SubsectionProps) => {
     return (
       <li className="subsection-item ps-4">
@@ -122,10 +87,8 @@ const Administracion = (props: IndexProps) => {
     );
   };
 
-  // Componente para cada ítem de sección
   const SectionItem = ({ icon, title, count, isActive, hasSubsections, subsections }: SectionProps) => {
     const isExpanded = expandedSections[title.toLowerCase()];
-    
     return (
       <>
         <li className="section-item">
@@ -149,18 +112,18 @@ const Administracion = (props: IndexProps) => {
             )}
             {hasSubsections && (
               <div className="flex-shrink-0">
-                <i className={`bx ${isExpanded ? 'bx-chevron-up' : 'bx-chevron-down'}`}></i>
+                <i className={`bx ${isExpanded ? "bx-chevron-up" : "bx-chevron-down"}`}></i>
               </div>
             )}
           </Link>
         </li>
         {hasSubsections && isExpanded && subsections && (
           <ul className="list-unstyled section-subsections mb-0">
-            {subsections.map((subsection, subIndex) => (
+            {subsections.map((sub, i) => (
               <SubsectionItem
-                key={subIndex}
-                title={subsection.title}
-                isActive={activeSection === title.toLowerCase() && activeSubsection === subsection.title.toLowerCase()}
+                key={i}
+                title={sub.title}
+                isActive={activeSection === title.toLowerCase() && activeSubsection === sub.title.toLowerCase()}
               />
             ))}
           </ul>
@@ -170,46 +133,30 @@ const Administracion = (props: IndexProps) => {
   };
 
   return (
-    <>
-      <div>
-        <div className="px-4 pt-4">
-          <div className="d-flex align-items-start">
-            <div className="flex-grow-1">
-              <h4 className="mb-4">Administración</h4>
-            </div>
+    <div>
+      <div className="px-4 pt-4">
+        <div className="d-flex align-items-start">
+          <div className="flex-grow-1">
+            <h4 className="mb-4">Administración</h4>
           </div>
-          {/* <Form>
-            <div className="input-group mb-3">
-              <Input
-                onKeyUp={searchSections}
-                id="searchSections"
-                type="text"
-                className="form-control bg-light border-0 pe-0"
-                placeholder="Buscar sección..."
-              />
-              <Button color="light" type="button" id="searchbtn-addon">
-                <i className="bx bx-search align-middle"></i>
-              </Button>
-            </div>
-          </Form> */}
         </div>
-        <AppSimpleBar className="section-list">
-          <ul className="list-unstyled section-list-unstyled mb-0">
-            {predefinedSections.map((section, index) => (
-              <SectionItem
-                key={index}
-                icon={section.icon}
-                title={section.title}
-                count={section.count}
-                isActive={activeSection === section.title.toLowerCase()}
-                hasSubsections={section.hasSubsections}
-                subsections={section.subsections}
-              />
-            ))}
-          </ul>
-        </AppSimpleBar>
       </div>
-    </>
+      <AppSimpleBar className="section-list">
+        <ul className="list-unstyled section-list-unstyled mb-0">
+          {predefinedSections.map((section, i) => (
+            <SectionItem
+              key={i}
+              icon={section.icon}
+              title={section.title}
+              count={section.count}
+              isActive={activeSection === section.title.toLowerCase()}
+              hasSubsections={section.hasSubsections}
+              subsections={section.subsections}
+            />
+          ))}
+        </ul>
+      </AppSimpleBar>
+    </div>
   );
 };
 

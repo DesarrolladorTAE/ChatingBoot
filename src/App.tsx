@@ -1,4 +1,5 @@
 import React from "react";
+import { getLoggedinUser, setAuthorization} from "./api/apiCore";
 
 // scss
 import "./assets/scss/theme.scss";
@@ -29,6 +30,12 @@ fakeBackend();
 
 // // init firebase backend
 // initFirebaseBackend(firebaseConfig);
+
+// ✅ Asegura que el token se configure antes de hacer peticiones protegidas
+const user = getLoggedinUser();
+if (user && user.token) {
+  setAuthorization(user.token);
+}
 
 const App = () => {
   document.title = "ChattingBot"

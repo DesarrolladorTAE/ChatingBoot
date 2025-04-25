@@ -332,14 +332,19 @@ const Message = ({
   const myProfile = userProfile.profileImage
     ? userProfile.profileImage
     : imagePlaceholder;
-  const channeluserProfile =
-    message.meta.userData && message.meta.userData.profileImage
-      ? message.meta.userData.profileImage
-      : imagePlaceholder;
-  const chatUserprofile = chatUserDetails.profileImage
-    ? chatUserDetails.profileImage
-    : imagePlaceholder;
-  const profile = isChannel ? channeluserProfile : chatUserprofile;
+  // const channeluserProfile =
+  //   message.meta.userData && message.meta.userData.profileImage
+  //     ? message.meta.userData.profileImage
+  //     : imagePlaceholder;
+  const channeluserProfile = message.meta.userData?.profileImage || imagePlaceholder;
+  // const chatUserprofile = chatUserDetails.profileImage
+  //   ? chatUserDetails.profileImage
+  //   : imagePlaceholder;
+  const chatUserprofile = chatUserDetails?.profileImage || imagePlaceholder;
+  // const profile = isChannel ? channeluserProfile : chatUserprofile;
+  const profile = isChannel
+  ? (message.meta.userData?.profileImage || imagePlaceholder)
+  : (chatUserDetails?.profileImage || imagePlaceholder);
   const date = formateDate(message.time, "hh:mmaaa");
   const isSent = message.meta.sent;
   const isReceived = message.meta.received;

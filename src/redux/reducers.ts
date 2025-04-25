@@ -11,6 +11,7 @@ import Bookmarks from "./bookmarks/reducer";
 import Settings from "./settings/reducer";
 import Chats from "./chats/reducer";
 import Atencion from "./atencion/reducer";
+import Administracion from "./administracion/reducer";
 
 export default combineReducers({
   ForgetPassword,
@@ -24,5 +25,5 @@ export default combineReducers({
   Settings,
   Chats,
   Atencion,
-  
+  Administracion,
 });

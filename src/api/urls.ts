@@ -1,6 +1,7 @@
 //auth
 export const POST_FAKE_LOGIN = "/post-fake-login";
 export const POST_FAKE_JWT_LOGIN = "/post-jwt-login";
+export const POST_JWT_LOGIN = "/login";
 export const POST_FAKE_LOGOUT = "/post-fake-logout";
 export const POST_FAKE_PASSWORD_FORGET = "/fake-forget-pwd";
 export const POST_FAKE_JWT_PASSWORD_FORGET = "/jwt-forget-pwd";
@@ -47,6 +48,21 @@ export const GET_ARCHIVE_CONTACT = "/get-archive-contacts";
 export const TOGGLE_ARCHIVE_CONTACT = "/toggle-archive-contact";
 export const READ_CONVERSATION = "/read-conversation";
 export const DELETE_IMAGE = "/user-delete-img";
+
+// Conexiones (Administración)
+export const GET_CONEXIONES = "/connections"; // GET todas las conexiones
+export const CREATE_CONEXION = "/connections"; // POST nueva conexión
+export const DELETE_CONEXION = (id: number) => `/connections/${id}`; // DELETE por ID
+export const UPDATE_CONEXION = (id: number) => `/connections/${id}`; // PUT por ID
+export const SET_CONEXION_DEFAULT = (id: number) => `/connections/${id}/set-default`; // POST para hacerla predeterminada
+
+// Acciones de sesión vía WA Controller
+export const DISCONNECT_SESSION = (id: string) => `/wa/disconnect/${id}`; // POST para desconectar sesión
+// Iniciar sesión manualmente (Node.js backend inicia la sesión)
+export const START_SESSION = "/wa/start"; // POST con { connectionId }
+// Obtener código QR de una sesión
+export const GET_QR_CODE = (id: string) => `/wa/qr/${id}`; // GET
+
 
 // groups
 export const GET_CHANNEL_DETAILS = "/get-channel-details";

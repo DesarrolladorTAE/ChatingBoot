@@ -88,8 +88,14 @@ function* loginUser({ payload: { user } }: any): Generator<any, void, any> {
       });
 
       // Guardar usuario y token en localStorage
-      localStorage.setItem("authUser", JSON.stringify(response));
-
+      localStorage.setItem(
+        "authUser",
+        JSON.stringify({
+          ...response.user,
+          token: response.token,
+        })
+      );      
+      console.log("respuesta de login:", response);
       // Establecer token como header por defecto
       setAuthorization(response.token);
 

@@ -1,5 +1,5 @@
 const config = {
-  API_URL: "https://chatingbot.com.mx/api/",
+  API_URL: "https://chatingbot.com.mx/api",
   AUTH_BACKEND: "Dummy",
   FIRE_BASE: {
     API_KEY: process.env.REACT_APP_APIKEY,

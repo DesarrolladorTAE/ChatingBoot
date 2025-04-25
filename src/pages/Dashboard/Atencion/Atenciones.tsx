@@ -7,137 +7,223 @@ import {
   TabPane,
   Card,
   CardBody,
-  Button,
-  Badge,
   Input,
-  Row,
-  Col,
 } from "reactstrap";
 import classnames from "classnames";
 import AppSimpleBar from "../../../components/AppSimpleBar";
 import Loader from "../../../components/Loader";
-import Message from "../ConversationUser/Message"; // Componente de mensaje con toda la lógica de imágenes, menú, etc.
+import Message from "../ConversationUser/Message";
 import { Link } from "react-router-dom";
 
-// Simulación de datos para tickets y mensajes
+// ✅ Tipado
+interface MessageMeta {
+  sent: boolean;
+  received: boolean;
+  read: boolean;
+  isForwarded?: boolean;
+  sender: string;
+  receiver: string;
+  userData?: {
+    id: number;
+    email: string;
+    location: string;
+    firstName: string;
+    lastName: string;
+    profileImage?: string;
+  };
+}
+
+
+interface MessageType {
+  mId: number;
+  text: string;
+  time: string; // 👈 no Date ni string | Date
+  isFromMe: boolean;
+  meta: MessageMeta;
+  image?: any[];
+  attachments?: any[];
+  replyOf?: any;
+}
+
 interface Ticket {
   id: number;
   name: string;
   lastMessage: string;
-  messages: any[]; // Aquí colocarías el tipo correcto de tus mensajes
+  messages: MessageType[];
+  profileImage?: string;
+  firstName: string;
+  lastName: string;
 }
 
 const sampleTickets: Ticket[] = [
   {
     id: 1,
     name: "Cliente A",
+    firstName: "Cliente",
+    lastName: "A",
     lastMessage: "Hola, necesito información.",
+    profileImage: "/ruta/a/imagen-predeterminada.png",
     messages: [
-      { mId: 101, time: new Date(), text: "Hola, ¿en qué puedo ayudarte?", isFromMe: false, meta: { sent: true, received: true, read: true } },
-      { mId: 102, time: new Date(), text: "Necesito información sobre el producto X.", isFromMe: true, meta: { sent: true, received: true, read: true } },
+      {
+        mId: 101,
+        time: new Date().toISOString(),
+        text: "Hola, ¿en qué puedo ayudarte?",
+        isFromMe: false,
+        meta: {
+          sent: true,
+          received: true,
+          read: true,
+          sender: "cliente_1",
+          receiver: "soporte_1",
+          userData: {
+            id: 999,
+            email: "cliente1@correo.com",
+            location: "CDMX",
+            firstName: "Cliente",
+            lastName: "Uno",
+            profileImage: "/ruta/a/imagen.png",
+          },
+        }
+        
+      },
+      {
+        mId: 102,
+        time: new Date().toISOString(),
+        text: "Necesito información sobre el producto X.",
+        isFromMe: true,
+        meta: {
+          sent: true,
+          received: true,
+          read: true,
+          sender: "cliente_1",
+          receiver: "soporte_1",
+          userData: {
+            id: 999,
+            email: "cliente1@correo.com",
+            location: "CDMX",
+            firstName: "Cliente",
+            lastName: "Uno",
+            profileImage: "/ruta/a/imagen.png",
+          },
+        }
+        
+      },
     ],
   },
   {
     id: 2,
     name: "Cliente B",
+    firstName: "Cliente",
+    lastName: "B",
     lastMessage: "Gracias por la ayuda.",
+    profileImage: "/ruta/a/imagen-predeterminada.png",
     messages: [
-      { mId: 201, time: new Date(), text: "¿Puedo ayudarte en algo más?", isFromMe: false, meta: { sent: true, received: true, read: false } },
-      { mId: 202, time: new Date(), text: "No, muchas gracias.", isFromMe: true, meta: { sent: true, received: true, read: false } },
+      {
+        mId: 201,
+        time: new Date().toISOString(),
+        text: "¿Puedo ayudarte en algo más?",
+        isFromMe: false,
+        meta: {
+          sent: true,
+          received: true,
+          read: false,
+          sender: "cliente_b",
+          receiver: "soporte_bot",
+          userData: {
+            id: 998,
+            email: "cliente2@correo.com",
+            location: "Monterrey",
+            firstName: "Cliente",
+            lastName: "B",
+            profileImage: "/ruta/a/imagen-predeterminada.png",
+          },
+        },
+      },
+      {
+        mId: 202,
+        time: new Date().toISOString(),
+        text: "No, muchas gracias.",
+        isFromMe: true,
+        meta: {
+          sent: true,
+          received: true,
+          read: false,
+          sender: "soporte_bot",
+          receiver: "cliente_b",
+          userData: {
+            id: 998,
+            email: "cliente2@correo.com",
+            location: "Monterrey",
+            firstName: "Cliente",
+            lastName: "B",
+            profileImage: "/ruta/a/imagen-predeterminada.png",
+          },
+        },
+      },
     ],
   },
 ];
 
+
 const Atenciones: React.FC = () => {
-  // Estados para la barra lateral y pestañas
   const [activeTab, setActiveTab] = useState<"abiertos" | "resultados" | "buscar">("abiertos");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
-  // Para la parte de conversación (mensajes)
-  const messages = selectedTicket?.messages || [];
-
-  // Referencia para controlar el scroll en la conversación
   const scrollRef = useRef<any>(null);
-  const scrollElement = useCallback(() => {
-    if (scrollRef && scrollRef.current) {
-      const listEle = document.getElementById("chat-conversation-list");
-      let offsetHeight = 0;
-      if (listEle) {
-        offsetHeight = listEle.scrollHeight - window.innerHeight + 250;
-      }
-      if (offsetHeight) {
-        scrollRef.current
-          .getScrollElement()
-          .scrollTo({ top: offsetHeight, behavior: "smooth" });
-      }
-    }
-  }, [scrollRef]);
 
-  useEffect(() => {
-    if (scrollRef && scrollRef.current) {
-      scrollRef.current.recalculate();
+  const scrollToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      const listEle = document.getElementById("chat-conversation-list");
+      const offsetHeight = listEle?.scrollHeight || 0;
+      scrollRef.current.getScrollElement().scrollTo({
+        top: offsetHeight,
+        behavior: "smooth",
+      });
     }
   }, []);
 
   useEffect(() => {
-    if (selectedTicket && selectedTicket.messages) {
-      scrollElement();
+    if (selectedTicket && selectedTicket.messages.length > 0) {
+      scrollToBottom();
     }
-  }, [selectedTicket?.messages, scrollElement]);
+  }, [selectedTicket, scrollToBottom]);
 
-  // Filtrado de tickets basado en la pestaña activa y el término de búsqueda
-  const filteredTickets = sampleTickets.filter((ticket) => {
-    const matchesSearch = ticket.name.toLowerCase().includes(searchTerm.toLowerCase());
-    // Aquí podrías agregar lógica adicional según el valor de activeTab (por ejemplo, filtrar "Abiertos" o "Resultados")
-    return matchesSearch;
-  });
+  const filteredTickets = sampleTickets.filter((ticket) =>
+    ticket.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const toggleTab = (tab: "abiertos" | "resultados" | "buscar") => {
+  const toggleTab = (tab: typeof activeTab) => {
     setActiveTab(tab);
-    // Al cambiar de pestaña, reseteamos el ticket seleccionado
     setSelectedTicket(null);
   };
 
   return (
     <div className="d-flex" style={{ height: "100%" }}>
-      {/* Panel lateral con pestañas y lista de tickets */}
+      {/* Lado izquierdo */}
       <div className="border-end" style={{ width: "320px" }}>
         <Nav tabs className="bg-light">
           <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === "abiertos" })}
-              onClick={() => toggleTab("abiertos")}
-            >
+            <NavLink className={classnames({ active: activeTab === "abiertos" })} onClick={() => toggleTab("abiertos")}>
               Abiertos
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === "resultados" })}
-              onClick={() => toggleTab("resultados")}
-            >
+            <NavLink className={classnames({ active: activeTab === "resultados" })} onClick={() => toggleTab("resultados")}>
               Resultados
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink
-              className={classnames({ active: activeTab === "buscar" })}
-              onClick={() => toggleTab("buscar")}
-            >
+            <NavLink className={classnames({ active: activeTab === "buscar" })} onClick={() => toggleTab("buscar")}>
               Buscar
             </NavLink>
           </NavItem>
         </Nav>
+
         <TabContent activeTab={activeTab}>
           <TabPane tabId="abiertos">
             <div className="p-2">
-              <Input
-                type="text"
-                placeholder="Buscar..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <Input type="text" placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
           </TabPane>
           <TabPane tabId="resultados">
@@ -147,15 +233,11 @@ const Atenciones: React.FC = () => {
           </TabPane>
           <TabPane tabId="buscar">
             <div className="p-2">
-              <Input
-                type="text"
-                placeholder="Buscar tickets..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <Input type="text" placeholder="Buscar tickets..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
           </TabPane>
         </TabContent>
+
         <div style={{ height: "calc(100% - 150px)", overflowY: "auto" }}>
           {filteredTickets.length > 0 ? (
             filteredTickets.map((ticket) => (
@@ -172,35 +254,28 @@ const Atenciones: React.FC = () => {
               </Card>
             ))
           ) : (
-            <div className="p-3 text-center text-muted">
-              No se encontraron tickets.
-            </div>
+            <div className="p-3 text-center text-muted">No se encontraron tickets.</div>
           )}
         </div>
       </div>
 
-      {/* Área principal de conversación */}
+      {/* Lado derecho */}
       <div className="flex-grow-1 d-flex flex-column">
         {selectedTicket ? (
-          <AppSimpleBar
-            scrollRef={scrollRef}
-            className="chat-conversation p-3 p-lg-4 position-relative"
-          >
-            <Loader /> {/* Puedes condicionar la visualización del loader según el estado de carga */}
+          <AppSimpleBar scrollRef={scrollRef} className="chat-conversation p-3 p-lg-4 position-relative">
+            <Loader /> {/* Mostrar loader si estás cargando datos reales */}
             <ul className="list-unstyled chat-conversation-list" id="chat-conversation-list">
-              {messages.map((msg, key) => (
+              {selectedTicket.messages.map((msg, key) => (
                 <Message
                   key={key}
                   message={msg}
                   chatUserDetails={selectedTicket}
                   onDelete={(id) => console.log("Eliminar mensaje", id)}
-                  onSetReplyData={(reply) => console.log("Establecer reply", reply)}
+                  onSetReplyData={(reply) => console.log("Reply:", reply)}
                   isFromMe={msg.isFromMe}
-                  onOpenForward={(msg) => console.log("Reenviar mensaje", msg)}
+                  onOpenForward={(msg) => console.log("Forward:", msg)}
                   isChannel={false}
-                  onDeleteImage={(messageId, imageId) =>
-                    console.log("Eliminar imagen", messageId, imageId)
-                  }
+                  onDeleteImage={(messageId, imageId) => console.log("Eliminar imagen", messageId, imageId)}
                 />
               ))}
             </ul>

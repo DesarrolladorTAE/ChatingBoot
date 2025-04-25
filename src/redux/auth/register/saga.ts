@@ -33,7 +33,14 @@ function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
       const response: any = yield call(postJwtRegister, user);
     
       // ✅ Guarda token localmente
-      localStorage.setItem("authUser", JSON.stringify(response));
+      localStorage.setItem(
+        "authUser",
+        JSON.stringify({
+          ...response.user,
+          token: response.token,
+        })
+      );
+      
     
       // ✅ Establece header Authorization
       setAuthorization(response.token);

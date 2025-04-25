@@ -17,9 +17,13 @@ const postFakeLogout = () => api.create(url.POST_FAKE_LOGOUT);
 
 const postLogout = () => api.create("/logout");
 
-//const postJwtLogin = (data: any) => api.create(url.POST_FAKE_JWT_LOGIN, data);
+const postJwtLogin = (data: any) => api.create(url.POST_JWT_LOGIN, data);
 
-const postJwtLogin = (data: any) => api.create("/login", data);
+// const postJwtLogin = (data: any) => {
+//   api.create("/login", data).then(res => {
+//     console.log("res", res);
+//   });
+// };
 
 // Register Method
 const postFakeRegister = (data: any) => {
@@ -34,7 +38,6 @@ const postFakeRegister = (data: any) => {
 const postJwtRegister = (data: any) => {
   return api.create("/register", data);
 };
-
 
 const changePassword = (data: object) => {
   return api.update(url.USER_CHANGE_PASSWORD, data);

@@ -14,7 +14,8 @@ import Welcome from "./ConversationUser/Welcome";
 //Atención
 import Atenciones from "./Atencion/Atenciones";
 import RespuestasRapidas from "./Atencion/RespuestasRapidas";
-
+//Administración
+import Conexiones from "./Administracion/Conexiones";
 // redux actions
 import { setSelectedSection } from "../../redux/atencion/actions";
 
@@ -63,11 +64,13 @@ const Index = (props: IndexProps) => {
     } 
     
     // Handle sections - use lowercase consistently for comparison
-    switch(selectedSection?.toLowerCase()) {
+    switch (selectedSection?.toLowerCase()) {
       case "atenciones":
         return <Atenciones />;
       case "respuestas rapidas":
         return <RespuestasRapidas />;
+      case "conexiones":
+        return <Conexiones />;
       default:
         return <Welcome />;
     }

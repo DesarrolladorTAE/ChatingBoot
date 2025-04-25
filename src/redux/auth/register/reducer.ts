@@ -15,7 +15,8 @@ const Register = (state = INIT_STATE, action: any) => {
           return {
             ...state,
             loading: false,
-            user: action.payload.data,
+            user: action.payload.data.user,
+            token: action.payload.data.token,
             registrationError: null,
             isUserRegistered: true,
           };
