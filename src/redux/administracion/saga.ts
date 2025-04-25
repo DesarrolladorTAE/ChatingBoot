@@ -19,6 +19,7 @@ import {
   startSesion,
   getQrCode,
   updateConexion,
+  setAsDefault,
 } from '../../api/index';
 
 // 🔁 Obtener conexiones
@@ -112,6 +113,19 @@ function* updateConexionSaga(action: {
   }
 }
 
+function* setAsDefaultSaga(action: { type: string; payload: number }): Generator<any, void, any> {
+  try {
+    yield call(setAsDefault, action.payload); // 🔵 llama al endpoint de tu API
+    yield put({ type: AdministracionActionTypes.SET_AS_DEFAULT_SUCCESS });
+    yield put(fetchConexionesRequest()); // 🔄 actualiza las conexiones después de marcar
+  } catch (error: any) {
+    yield put({
+      type: AdministracionActionTypes.SET_AS_DEFAULT_FAILURE,
+      payload: error.message,
+    });
+  }
+}
+
 // 🎯 Watchers
 export default function* administracionSaga(): Generator {
   yield all([
@@ -122,6 +136,7 @@ export default function* administracionSaga(): Generator {
     takeLatest(AdministracionActionTypes.START_SESSION_REQUEST, startSessionSaga),
     takeLatest(AdministracionActionTypes.FETCH_QR_REQUEST, fetchQrSaga),
     takeLatest(AdministracionActionTypes.UPDATE_CONEXION_REQUEST, updateConexionSaga),
+    takeLatest(AdministracionActionTypes.SET_AS_DEFAULT_REQUEST, setAsDefaultSaga),
   ]);
 }
 

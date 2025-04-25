@@ -55,13 +55,15 @@ type Action =
       payload: string;
     }
   | { type: AdministracionActionTypes.CLEAR_QR_CODE } // ✅ aquí
-
   | { type: AdministracionActionTypes.UPDATE_CONEXION_REQUEST }
   | { type: AdministracionActionTypes.UPDATE_CONEXION_SUCCESS }
   | {
-    type: AdministracionActionTypes.UPDATE_CONEXION_FAILURE;
-    payload: string;
+      type: AdministracionActionTypes.UPDATE_CONEXION_FAILURE;
+      payload: string;
     }
+  | { type: AdministracionActionTypes.SET_AS_DEFAULT_REQUEST }
+  | { type: AdministracionActionTypes.SET_AS_DEFAULT_SUCCESS }
+  | { type: AdministracionActionTypes.SET_AS_DEFAULT_FAILURE; payload: string };
 
 const Administracion = (
   state = initialState,
@@ -169,6 +171,25 @@ const Administracion = (
         conexiones: { ...state.conexiones, loading: false },
       };
     case AdministracionActionTypes.UPDATE_CONEXION_FAILURE:
+      return {
+        ...state,
+        conexiones: {
+          ...state.conexiones,
+          loading: false,
+          error: action.payload,
+        },
+      };
+    case AdministracionActionTypes.SET_AS_DEFAULT_REQUEST:
+      return {
+        ...state,
+        conexiones: { ...state.conexiones, loading: true, error: null },
+      };
+    case AdministracionActionTypes.SET_AS_DEFAULT_SUCCESS:
+      return {
+        ...state,
+        conexiones: { ...state.conexiones, loading: false },
+      };
+    case AdministracionActionTypes.SET_AS_DEFAULT_FAILURE:
       return {
         ...state,
         conexiones: {

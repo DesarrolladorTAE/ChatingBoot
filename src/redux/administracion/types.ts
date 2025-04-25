@@ -28,6 +28,10 @@ export enum AdministracionActionTypes {
   FETCH_QR_SUCCESS = "@@administracion/FETCH_QR_SUCCESS",
   FETCH_QR_FAILURE = "@@administracion/FETCH_QR_FAILURE",
   CLEAR_QR_CODE = "@@administracion/CLEAR_QR_CODE",
+
+  SET_AS_DEFAULT_REQUEST = "@@administracion/SET_AS_DEFAULT_REQUEST",
+  SET_AS_DEFAULT_SUCCESS = "@@administracion/SET_AS_DEFAULT_SUCCESS",
+  SET_AS_DEFAULT_FAILURE = "@@administracion/SET_AS_DEFAULT_FAILURE",
 }
 
 // 🧩 Conexión individual

@@ -24,7 +24,7 @@ const updateConexion = (id: number, data: object) => {
 };
 
 // (Opcional) Marcar como predeterminada
-const setConexionDefault = (id: number) => {
+const setAsDefault = (id: number) => {
   return api.create(url.SET_CONEXION_DEFAULT(id));
 };
 // (Opcional) Crear una nueva conexión
@@ -48,7 +48,7 @@ export {
   disconnectConexion,
   createConexion,
   updateConexion,
-  setConexionDefault,
+  setAsDefault,
   startSesion,
   getQrCode,
 };

@@ -82,3 +82,18 @@ export const updateConexionFailure = (error: string) => ({
   type: AdministracionActionTypes.UPDATE_CONEXION_FAILURE,
   payload: error,
 });
+
+// ⭐ Marcar una conexión como predeterminada
+export const setAsDefaultRequest = (id: number) => ({
+  type: AdministracionActionTypes.SET_AS_DEFAULT_REQUEST,
+  payload: id,
+});
+
+export const setAsDefaultSuccess = () => ({
+  type: AdministracionActionTypes.SET_AS_DEFAULT_SUCCESS,
+});
+
+export const setAsDefaultFailure = (error: string) => ({
+  type: AdministracionActionTypes.SET_AS_DEFAULT_FAILURE,
+  payload: error,
+});
