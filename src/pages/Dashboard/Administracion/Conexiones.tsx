@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaCheckCircle, FaEdit, FaTrash } from "react-icons/fa";
 import { RootState } from "../../../redux/store";
@@ -8,12 +8,49 @@ import {
   deleteConexionRequest,
   createConexionRequest,
   updateConexionRequest,
-  startSessionRequest,
   fetchQrRequest,
   clearQrCode,
   setAsDefaultRequest,
 } from "../../../redux/administracion/actions";
 import { Connection } from "../../../redux/administracion/types";
+
+const QrButton = memo(
+  ({
+    conn,
+    onShowQr,
+  }: {
+    conn: Connection;
+    onShowQr: (qr: string) => void;
+  }) => {
+    const dispatch = useDispatch();
+
+    if (conn.session_status === "ready") {
+      return (
+        <button
+          onClick={() =>
+            dispatch(disconnectConexionRequest(conn.connection_id))
+          }
+          className="text-red-600 hover:underline"
+        >
+          Cerrar sesión
+        </button>
+      );
+    }
+
+    if (conn.session_status === "pending" && conn.qr_code) {
+      return (
+        <button
+          onClick={() => onShowQr(conn.qr_code!)}
+          className="text-sky-600 hover:underline"
+        >
+          Leer QR
+        </button>
+      );
+    }
+
+    return <span className="text-gray-400">Esperando QR...</span>;
+  },
+);
 
 const Conexiones: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,6 +59,8 @@ const Conexiones: React.FC = () => {
   );
 
   const [showModal, setShowModal] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrImage, setQrImage] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -34,10 +73,6 @@ const Conexiones: React.FC = () => {
   useEffect(() => {
     dispatch(fetchConexionesRequest());
   }, [dispatch]);
-
-  const handleDisconnect = (connectionId: string) => {
-    dispatch(disconnectConexionRequest(connectionId));
-  };
 
   const handleRemove = (id: number) => {
     if (window.confirm("¿Eliminar esta conexión?")) {
@@ -102,49 +137,23 @@ const Conexiones: React.FC = () => {
     });
   };
 
-  const handleStartSession = (connectionId: string) => {
-    dispatch(startSessionRequest(connectionId));
-    dispatch(fetchQrRequest(connectionId));
+  const handleSetAsDefault = (id: number) => {
+    dispatch(setAsDefaultRequest(id));
   };
-
-  const qrCodeState = useSelector(
-    (state: RootState) => state.Administracion.qrCode,
-  );
 
   useEffect(() => {
-    if (list.some((c: Connection) => c.session_status === "ready")) {
-      dispatch(clearQrCode());
-    }
-  }, [list]);
+    const interval = setInterval(() => {
+      dispatch(fetchConexionesRequest());
+    }, 10000); // cada 10 segundos
 
-  const handleSetAsDefault = (id: number) => {
-    dispatch(setAsDefaultRequest(id)); // Aquí vas a lanzar tu nueva acción de Redux
-  };
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-center text-green-700 mb-8">
         Conexiones
       </h1>
-
-      {qrCodeState.loading && (
-        <p className="text-center text-sm text-gray-500 mb-4">
-          ⌛ Generando QR...
-        </p>
-      )}
-      {qrCodeState.qr && (
-        <div className="bg-white p-4 rounded-xl shadow text-center mb-6">
-          <img src={qrCodeState.qr} alt="QR Code" className="mx-auto w-48" />
-          <p className="text-sm text-gray-600 mt-2">
-            Escanea el código con WhatsApp
-          </p>
-        </div>
-      )}
-      {qrCodeState.error && (
-        <p className="text-red-500 text-sm text-center mb-4">
-          ⚠️ {qrCodeState.error}
-        </p>
-      )}
 
       <div className="bg-green-50 rounded-xl shadow overflow-hidden">
         {loading ? (
@@ -181,29 +190,21 @@ const Conexiones: React.FC = () => {
                     )}
                   </td>
                   <td className="px-6 py-3 text-center">
-                    {conn.session_status !== "ready" ? (
-                      <button
-                        onClick={() => handleStartSession(conn.connection_id)}
-                        className="text-sky-600 hover:underline"
-                      >
-                        Iniciar sesión
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleDisconnect(conn.connection_id)}
-                        className="text-red-600 hover:underline"
-                      >
-                        Cerrar sesión
-                      </button>
-                    )}
+                    <QrButton
+                      conn={conn}
+                      onShowQr={qr => {
+                        setQrImage(qr);
+                        setShowQrModal(true);
+                      }}
+                    />
                   </td>
                   <td className="px-6 py-3 text-center">
                     {formatDate(conn.updated_at)}
                   </td>
                   <td className="px-6 py-3 text-center">
-                    {conn.is_team_default ? (
+                    {conn.is_team_default && (
                       <FaCheckCircle className="text-emerald-500 mx-auto" />
-                    ) : null}
+                    )}
                   </td>
                   <td className="px-6 py-3 text-right space-x-2">
                     <button
@@ -240,14 +241,14 @@ const Conexiones: React.FC = () => {
         </p>
       )}
 
-<div className="flex justify-center mt-8">
-  <button
-    onClick={() => setShowModal(true)}
-    className="bg-green-500 hover:bg-green-600 text-black px-6 py-2 rounded-lg shadow font-semibold transition"
-  >
-    + Nueva Conexión
-  </button>
-</div>
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-green-500 hover:bg-green-600 text-black px-6 py-2 rounded-lg shadow font-semibold transition"
+        >
+          + Nueva Conexión
+        </button>
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
@@ -285,15 +286,6 @@ const Conexiones: React.FC = () => {
                 value={formData.off_hours_message}
                 className="w-full border p-2 rounded"
               />
-              {/* <label className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  name="is_team_default"
-                  checked={formData.is_team_default}
-                  onChange={handleChange}
-                />
-                <span>¿Es predeterminada del equipo?</span>
-              </label> */}
               <div className="flex justify-end gap-3">
                 <button
                   type="button"
@@ -310,6 +302,25 @@ const Conexiones: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {showQrModal && qrImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+            <h2 className="text-lg font-semibold mb-4">Escanea el código QR</h2>
+            <img src={qrImage} alt="QR Code" className="mx-auto w-48" />
+            <div className="mt-4">
+              <button
+                onClick={() => {
+                  setShowQrModal(false);
+                  setQrImage(null);
+                }}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}

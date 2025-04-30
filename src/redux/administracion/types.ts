@@ -45,6 +45,7 @@ export interface Connection {
   greeting_message?: string;
   farewell_message?: string;
   off_hours_message?: string;
+  qr_code?: string;
 }
 
 export interface AdministracionState {
@@ -56,6 +57,7 @@ export interface AdministracionState {
   qrCode: {
     qr: string | null;
     status: string | null;
+    connection_id: string | null;
     loading: boolean;
     error: string | null;
   };

@@ -9,6 +9,7 @@ import {
   fetchConexionesSuccess,
   fetchConexionesFailure,
   fetchConexionesRequest,
+  startSessionRequest,
 } from './actions';
 
 import {
@@ -54,8 +55,13 @@ function* deleteConexionSaga(action: { type: string; payload: number }): Generat
 
 function* createConexionSaga(action: { type: string; payload: object }): Generator<any, void, any> {
   try {
-    yield call(createConexion, action.payload); // ✅ usa el nombre correcto
+    const response: Connection = yield call(createConexion, action.payload); // ✅ importante capturar el objeto creado
     yield put({ type: AdministracionActionTypes.CREATE_CONEXION_SUCCESS });
+
+    // ⚡ Iniciar sesión automáticamente
+    yield put(startSessionRequest(response.connection_id));
+
+    // ⚡ Refrescar lista de conexiones
     yield put(fetchConexionesRequest());
   } catch (error: any) {
     yield put({
@@ -85,6 +91,7 @@ function* fetchQrSaga(action: { type: string; payload: string }): Generator<any,
       payload: {
         qr: qrResponse.qr,
         status: qrResponse.status,
+        connection_id: action.payload,
       },
     });
   } catch (error: any) {

@@ -97,3 +97,8 @@ export const setAsDefaultFailure = (error: string) => ({
   type: AdministracionActionTypes.SET_AS_DEFAULT_FAILURE,
   payload: error,
 });
+
+export const fetchQrSuccess = (qr: string, status: string, connection_id: string) => ({
+  type: AdministracionActionTypes.FETCH_QR_SUCCESS,
+  payload: { qr, status, connection_id },
+});

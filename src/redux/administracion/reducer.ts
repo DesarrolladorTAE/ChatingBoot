@@ -14,6 +14,7 @@ const initialState: AdministracionState = {
   qrCode: {
     qr: null,
     status: null,
+    connection_id: null,
     loading: false,
     error: null,
   },
@@ -47,9 +48,9 @@ type Action =
     }
   | { type: AdministracionActionTypes.FETCH_QR_REQUEST }
   | {
-      type: AdministracionActionTypes.FETCH_QR_SUCCESS;
-      payload: { qr: string; status: string };
-    }
+    type: AdministracionActionTypes.FETCH_QR_SUCCESS;
+    payload: { qr: string; status: string; connection_id: string };
+  }
   | {
       type: AdministracionActionTypes.FETCH_QR_FAILURE;
       payload: string;
@@ -126,6 +127,7 @@ const Administracion = (
         qrCode: {
           qr: null,
           status: null,
+          connection_id: null, // ✅ agrega esto
           loading: true,
           error: null,
         },
@@ -136,30 +138,36 @@ const Administracion = (
         qrCode: {
           qr: action.payload.qr,
           status: action.payload.status,
+          connection_id: action.payload.connection_id, // ✅ usa correctamente el payload
           loading: false,
           error: null,
         },
       };
+
     case AdministracionActionTypes.FETCH_QR_FAILURE:
       return {
         ...state,
         qrCode: {
           qr: null,
           status: null,
+          connection_id: null, // ✅ agrega esto
           loading: false,
           error: action.payload,
         },
       };
+
     case AdministracionActionTypes.CLEAR_QR_CODE:
       return {
         ...state,
         qrCode: {
           qr: null,
           status: null,
+          connection_id: null, // ✅ agrega esto
           loading: false,
           error: null,
         },
       };
+
     case AdministracionActionTypes.UPDATE_CONEXION_REQUEST:
       return {
         ...state,
