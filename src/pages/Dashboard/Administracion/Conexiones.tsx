@@ -13,6 +13,7 @@ import {
   setAsDefaultRequest,
 } from "../../../redux/administracion/actions";
 import { Connection } from "../../../redux/administracion/types";
+import echo from "../../../echo"; // Asegúrate de importar tu instancia de Echo correctamente
 
 const QrButton = memo(
   ({
@@ -23,6 +24,23 @@ const QrButton = memo(
     onShowQr: (qr: string) => void;
   }) => {
     const dispatch = useDispatch();
+
+    useEffect(() => {
+      if (!conn.connection_id) return;
+
+      const channel = echo.channel(`connection.${conn.connection_id}`);
+
+      channel.listen(".qr.updated", (e: any) => {
+        console.log("📡 QR actualizado para:", conn.name);
+        if (conn.session_status === "pending") {
+          dispatch(fetchConexionesRequest());
+        }
+      });
+
+      return () => {
+        echo.leave(`connection.${conn.connection_id}`);
+      };
+    }, [conn.connection_id, conn.session_status, dispatch]);
 
     if (conn.session_status === "ready") {
       return (
@@ -72,6 +90,19 @@ const Conexiones: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchConexionesRequest());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const channel = echo.channel("public-connections");
+
+    channel.listen(".ConnectionStatusUpdated", (e: any) => {
+      console.log("🔄 Evento recibido en frontend:", e);
+      dispatch(fetchConexionesRequest());
+    });
+
+    return () => {
+      echo.leave("public-connections");
+    };
   }, [dispatch]);
 
   const handleRemove = (id: number) => {
@@ -141,13 +172,27 @@ const Conexiones: React.FC = () => {
     dispatch(setAsDefaultRequest(id));
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      dispatch(fetchConexionesRequest());
-    }, 10000); // cada 10 segundos
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     dispatch(fetchConexionesRequest());
+  //   }, 10000); // cada 10 segundos
 
-    return () => clearInterval(interval);
-  }, [dispatch]);
+  //   return () => clearInterval(interval);
+  // }, [dispatch]);
+
+  useEffect(() => {
+    if (!qrImage || !showQrModal) return;
+
+    const match = list.find((conn: Connection) =>
+      conn.qr_code === qrImage && conn.session_status === "ready"
+    );    
+
+    if (match) {
+      console.log("✅ QR escaneado correctamente, cerrando modal...");
+      setShowQrModal(false);
+      setQrImage(null);
+    }
+  }, [list, qrImage, showQrModal]);
 
   return (
     <div className="p-6">
@@ -156,82 +201,84 @@ const Conexiones: React.FC = () => {
       </h1>
 
       <div className="bg-green-50 rounded-xl shadow overflow-hidden">
-        {loading ? (
-          <div className="py-12 text-center text-gray-500">
-            Cargando conexiones...
-          </div>
-        ) : list.length === 0 ? (
+        {list.length === 0 ? (
           <div className="py-16 text-center text-gray-400">
             <p className="text-lg">🚫 No hay conexiones registradas</p>
           </div>
         ) : (
-          <table className="min-w-full text-sm">
-            <thead className="bg-green-100 text-green-800">
-              <tr>
-                <th className="px-6 py-3 text-left">Nombre</th>
-                <th className="px-6 py-3">Estado</th>
-                <th className="px-6 py-3">Sesión</th>
-                <th className="px-6 py-3">Última actualización</th>
-                <th className="px-6 py-3">Predeterminada</th>
-                <th className="px-6 py-3 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {list.map((conn: Connection) => (
-                <tr key={conn.connection_id}>
-                  <td className="px-6 py-3">{conn.name}</td>
-                  <td className="px-6 py-3 text-center">
-                    {conn.session_status === "ready" ? (
-                      <span className="text-green-600 font-semibold">
-                        Conectado
-                      </span>
-                    ) : (
-                      <span className="text-yellow-600">Desconectado</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-3 text-center">
-                    <QrButton
-                      conn={conn}
-                      onShowQr={qr => {
-                        setQrImage(qr);
-                        setShowQrModal(true);
-                      }}
-                    />
-                  </td>
-                  <td className="px-6 py-3 text-center">
-                    {formatDate(conn.updated_at)}
-                  </td>
-                  <td className="px-6 py-3 text-center">
-                    {conn.is_team_default && (
-                      <FaCheckCircle className="text-emerald-500 mx-auto" />
-                    )}
-                  </td>
-                  <td className="px-6 py-3 text-right space-x-2">
-                    <button
-                      onClick={() => handleEdit(conn)}
-                      className="text-yellow-600"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleRemove(conn.id)}
-                      className="text-red-600"
-                    >
-                      <FaTrash />
-                    </button>
-                    {!conn.is_team_default && (
-                      <button
-                        onClick={() => handleSetAsDefault(conn.id)}
-                        className="text-emerald-600 underline ml-2"
-                      >
-                        Marcar predeterminada
-                      </button>
-                    )}
-                  </td>
+          <>
+            <div className="text-center text-sm text-gray-500 py-2 h-6">
+              {loading ? "⏳ Actualizando conexiones..." : "\u00A0"}
+            </div>
+
+            <table className="min-w-full text-sm">
+              <thead className="bg-green-100 text-green-800">
+                <tr>
+                  <th className="px-6 py-3 text-left">Nombre</th>
+                  <th className="px-6 py-3">Estado</th>
+                  <th className="px-6 py-3">Sesión</th>
+                  <th className="px-6 py-3">Última actualización</th>
+                  <th className="px-6 py-3">Predeterminada</th>
+                  <th className="px-6 py-3 text-right">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y">
+                {list.map((conn: Connection) => (
+                  <tr key={conn.connection_id}>
+                    <td className="px-6 py-3">{conn.name}</td>
+                    <td className="px-6 py-3 text-center">
+                      {conn.session_status === "ready" ? (
+                        <span className="text-green-600 font-semibold">
+                          Conectado
+                        </span>
+                      ) : (
+                        <span className="text-yellow-600">Desconectado</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      <QrButton
+                        conn={conn}
+                        onShowQr={qr => {
+                          setQrImage(qr);
+                          setShowQrModal(true);
+                        }}
+                      />
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      {formatDate(conn.updated_at)}
+                    </td>
+                    <td className="px-6 py-3 text-center">
+                      {conn.is_team_default && (
+                        <FaCheckCircle className="text-emerald-500 mx-auto" />
+                      )}
+                    </td>
+                    <td className="px-6 py-3 text-right space-x-2">
+                      <button
+                        onClick={() => handleEdit(conn)}
+                        className="text-yellow-600"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        onClick={() => handleRemove(conn.id)}
+                        className="text-red-600"
+                      >
+                        <FaTrash />
+                      </button>
+                      {!conn.is_team_default && (
+                        <button
+                          onClick={() => handleSetAsDefault(conn.id)}
+                          className="text-emerald-600 underline ml-2"
+                        >
+                          Marcar predeterminada
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
 
