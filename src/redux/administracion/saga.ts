@@ -16,6 +16,7 @@ import {
   getConexiones,
   disconnectConexion,
   deleteConexion,
+  logoutConexion,
   createConexion,
   startSesion,
   getQrCode,
@@ -48,6 +49,15 @@ function* deleteConexionSaga(action: { type: string; payload: number }): Generat
   try {
     yield call(deleteConexion, action.payload);
     yield put(fetchConexionesRequest());
+  } catch (error: any) {
+    yield put(fetchConexionesFailure(error.message));
+  }
+}
+
+function* logoutConexionSaga(action: { type: string; payload: string }): Generator<any, void, any> {
+  try {
+    yield call(logoutConexion, action.payload);
+    yield put(fetchConexionesRequest()); // 🔁 Recarga la lista de conexiones
   } catch (error: any) {
     yield put(fetchConexionesFailure(error.message));
   }
@@ -139,6 +149,7 @@ export default function* administracionSaga(): Generator {
     takeLatest(AdministracionActionTypes.FETCH_CONEXIONES_REQUEST, fetchConexionesSaga),
     takeLatest(AdministracionActionTypes.DISCONNECT_CONEXION_REQUEST, disconnectConexionSaga),
     takeLatest(AdministracionActionTypes.DELETE_CONEXION_REQUEST, deleteConexionSaga),
+    takeLatest(AdministracionActionTypes.LOGOUT_CONEXION_REQUEST, logoutConexionSaga),
     takeLatest(AdministracionActionTypes.CREATE_CONEXION_REQUEST, createConexionSaga),
     takeLatest(AdministracionActionTypes.START_SESSION_REQUEST, startSessionSaga),
     takeLatest(AdministracionActionTypes.FETCH_QR_REQUEST, fetchQrSaga),

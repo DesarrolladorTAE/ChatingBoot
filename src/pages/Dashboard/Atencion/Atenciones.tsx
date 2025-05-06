@@ -14,6 +14,8 @@ import AppSimpleBar from "../../../components/AppSimpleBar";
 import Loader from "../../../components/Loader";
 import Message from "../ConversationUser/Message";
 import { Link } from "react-router-dom";
+import ConversationPanel from "./ConversationPanel";
+import { useProfile } from "../../../hooks"; // Si no lo tienes ya
 
 // ✅ Tipado
 interface MessageMeta {
@@ -32,7 +34,6 @@ interface MessageMeta {
     profileImage?: string;
   };
 }
-
 
 interface MessageType {
   mId: number;
@@ -83,8 +84,7 @@ const sampleTickets: Ticket[] = [
             lastName: "Uno",
             profileImage: "/ruta/a/imagen.png",
           },
-        }
-        
+        },
       },
       {
         mId: 102,
@@ -105,8 +105,7 @@ const sampleTickets: Ticket[] = [
             lastName: "Uno",
             profileImage: "/ruta/a/imagen.png",
           },
-        }
-        
+        },
       },
     ],
   },
@@ -164,11 +163,13 @@ const sampleTickets: Ticket[] = [
   },
 ];
 
-
 const Atenciones: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"abiertos" | "resultados" | "buscar">("abiertos");
+  const [activeTab, setActiveTab] = useState<
+    "abiertos" | "resultados" | "buscar"
+  >("abiertos");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const { userProfile } = useProfile(); // Para identificar el uid del agente actual
 
   const scrollRef = useRef<any>(null);
 
@@ -189,8 +190,8 @@ const Atenciones: React.FC = () => {
     }
   }, [selectedTicket, scrollToBottom]);
 
-  const filteredTickets = sampleTickets.filter((ticket) =>
-    ticket.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTickets = sampleTickets.filter(ticket =>
+    ticket.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const toggleTab = (tab: typeof activeTab) => {
@@ -204,17 +205,26 @@ const Atenciones: React.FC = () => {
       <div className="border-end" style={{ width: "320px" }}>
         <Nav tabs className="bg-light">
           <NavItem>
-            <NavLink className={classnames({ active: activeTab === "abiertos" })} onClick={() => toggleTab("abiertos")}>
+            <NavLink
+              className={classnames({ active: activeTab === "abiertos" })}
+              onClick={() => toggleTab("abiertos")}
+            >
               Abiertos
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink className={classnames({ active: activeTab === "resultados" })} onClick={() => toggleTab("resultados")}>
+            <NavLink
+              className={classnames({ active: activeTab === "resultados" })}
+              onClick={() => toggleTab("resultados")}
+            >
               Resultados
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink className={classnames({ active: activeTab === "buscar" })} onClick={() => toggleTab("buscar")}>
+            <NavLink
+              className={classnames({ active: activeTab === "buscar" })}
+              onClick={() => toggleTab("buscar")}
+            >
               Buscar
             </NavLink>
           </NavItem>
@@ -223,7 +233,12 @@ const Atenciones: React.FC = () => {
         <TabContent activeTab={activeTab}>
           <TabPane tabId="abiertos">
             <div className="p-2">
-              <Input type="text" placeholder="Buscar..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <Input
+                type="text"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
             </div>
           </TabPane>
           <TabPane tabId="resultados">
@@ -233,14 +248,19 @@ const Atenciones: React.FC = () => {
           </TabPane>
           <TabPane tabId="buscar">
             <div className="p-2">
-              <Input type="text" placeholder="Buscar tickets..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <Input
+                type="text"
+                placeholder="Buscar tickets..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
             </div>
           </TabPane>
         </TabContent>
 
         <div style={{ height: "calc(100% - 150px)", overflowY: "auto" }}>
           {filteredTickets.length > 0 ? (
-            filteredTickets.map((ticket) => (
+            filteredTickets.map(ticket => (
               <Card
                 key={ticket.id}
                 className="m-2"
@@ -254,7 +274,9 @@ const Atenciones: React.FC = () => {
               </Card>
             ))
           ) : (
-            <div className="p-3 text-center text-muted">No se encontraron tickets.</div>
+            <div className="p-3 text-center text-muted">
+              No se encontraron tickets.
+            </div>
           )}
         </div>
       </div>
@@ -262,27 +284,26 @@ const Atenciones: React.FC = () => {
       {/* Lado derecho */}
       <div className="flex-grow-1 d-flex flex-column">
         {selectedTicket ? (
-          <AppSimpleBar scrollRef={scrollRef} className="chat-conversation p-3 p-lg-4 position-relative">
-            <Loader /> {/* Mostrar loader si estás cargando datos reales */}
-            <ul className="list-unstyled chat-conversation-list" id="chat-conversation-list">
-              {selectedTicket.messages.map((msg, key) => (
-                <Message
-                  key={key}
-                  message={msg}
-                  chatUserDetails={selectedTicket}
-                  onDelete={(id) => console.log("Eliminar mensaje", id)}
-                  onSetReplyData={(reply) => console.log("Reply:", reply)}
-                  isFromMe={msg.isFromMe}
-                  onOpenForward={(msg) => console.log("Forward:", msg)}
-                  isChannel={false}
-                  onDeleteImage={(messageId, imageId) => console.log("Eliminar imagen", messageId, imageId)}
-                />
-              ))}
-            </ul>
-          </AppSimpleBar>
+          <ConversationPanel
+            messages={selectedTicket.messages}
+            userProfile={userProfile}
+            chatUserDetails={selectedTicket}
+            isLoading={false} // o true si tienes carga real
+            isChannel={false}
+            onDelete={id => console.log("Eliminar mensaje", id)}
+            onSetReplyData={reply => console.log("Reply:", reply)}
+            onForward={({ message, contacts }) =>
+              console.log("Forward:", message, contacts)
+            }
+            onDeleteImage={(messageId, imageId) =>
+              console.log("Eliminar imagen", messageId, imageId)
+            }
+          />
         ) : (
           <div className="d-flex justify-content-center align-items-center h-100">
-            <h2 className="text-muted">Selecciona un ticket para ver la conversación</h2>
+            <h2 className="text-muted">
+              Selecciona un ticket para ver la conversación
+            </h2>
           </div>
         )}
       </div>

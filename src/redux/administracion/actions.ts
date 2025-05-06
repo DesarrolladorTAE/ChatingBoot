@@ -41,6 +41,11 @@ export const deleteConexionSuccess = () => ({
   type: AdministracionActionTypes.DELETE_CONEXION_SUCCESS,
 });
 
+export const logoutConexionRequest = (connectionId: string) => ({
+  type: AdministracionActionTypes.LOGOUT_CONEXION_REQUEST,
+  payload: connectionId,
+});
+
 export const createConexionRequest = (data: object) => ({
   type: AdministracionActionTypes.CREATE_CONEXION_REQUEST,
   payload: data,

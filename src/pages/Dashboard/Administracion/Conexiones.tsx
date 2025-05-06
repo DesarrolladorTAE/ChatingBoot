@@ -32,21 +32,24 @@ const QrButton = memo(
 
       channel.listen(".qr.updated", (e: any) => {
         console.log("📡 QR actualizado para:", conn.name);
-        if (conn.session_status === "pending") {
-          dispatch(fetchConexionesRequest());
-        }
+        dispatch(fetchConexionesRequest());
       });
 
       return () => {
         echo.leave(`connection.${conn.connection_id}`);
       };
-    }, [conn.connection_id, conn.session_status, dispatch]);
+    }, [conn.connection_id, dispatch]);
 
+    // ✅ Si está lista, muestra botón para cerrar sesión
     if (conn.session_status === "ready") {
       return (
         <button
           onClick={() =>
-            dispatch(disconnectConexionRequest(conn.connection_id))
+            // reemplaza disconnect por logout si ya lo tienes integrado
+            dispatch({
+              type: "@@administracion/LOGOUT_CONEXION_REQUEST",
+              payload: conn.connection_id,
+            })
           }
           className="text-red-600 hover:underline"
         >
@@ -55,6 +58,7 @@ const QrButton = memo(
       );
     }
 
+    // ✅ Si está esperando QR pero ya se generó, mostrar botón para escanear
     if (conn.session_status === "pending" && conn.qr_code) {
       return (
         <button
@@ -66,7 +70,13 @@ const QrButton = memo(
       );
     }
 
-    return <span className="text-gray-400">Esperando QR...</span>;
+    // ✅ Si está esperando QR y aún no se ha generado
+    if (conn.session_status === "pending") {
+      return <span className="text-gray-400">Esperando QR...</span>;
+    }
+
+    // 🔁 Por defecto
+    return <span className="text-gray-400">Estado desconocido</span>;
   },
 );
 
@@ -183,9 +193,10 @@ const Conexiones: React.FC = () => {
   useEffect(() => {
     if (!qrImage || !showQrModal) return;
 
-    const match = list.find((conn: Connection) =>
-      conn.qr_code === qrImage && conn.session_status === "ready"
-    );    
+    const match = list.find(
+      (conn: Connection) =>
+        conn.qr_code === qrImage && conn.session_status === "ready",
+    );
 
     if (match) {
       console.log("✅ QR escaneado correctamente, cerrando modal...");

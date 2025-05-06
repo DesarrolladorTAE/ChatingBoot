@@ -18,6 +18,11 @@ const disconnectConexion = (connectionId: string) => {
   return api.create(url.DISCONNECT_SESSION(connectionId));
 };
 
+// Cerrar sesión (logout) y reiniciar con nuevo QR
+const logoutConexion = (connectionId: string) => {
+  return api.create(url.LOGOUT_SESSION(connectionId));
+};
+
 // (Opcional) Editar conexión
 const updateConexion = (id: number, data: object) => {
   return api.update(url.UPDATE_CONEXION(id), data);
@@ -46,6 +51,7 @@ export {
   getConexiones,
   deleteConexion,
   disconnectConexion,
+  logoutConexion,
   createConexion,
   updateConexion,
   setAsDefault,

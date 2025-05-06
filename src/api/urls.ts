@@ -58,6 +58,8 @@ export const SET_CONEXION_DEFAULT = (id: number) => `/connections/${id}/set-defa
 
 // Acciones de sesión vía WA Controller
 export const DISCONNECT_SESSION = (id: string) => `/wa/disconnect/${id}`; // POST para desconectar sesión
+//cerrar sesión y reiniciar con QR
+export const LOGOUT_SESSION = (id: string) => `/wa/logoutcon/${id}`; // POST para cerrar sesión y reiniciar con QR
 // Iniciar sesión manualmente (Node.js backend inicia la sesión)
 export const START_SESSION = "/wa/start"; // POST con { connectionId }
 // Obtener código QR de una sesión
