@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState } from "react";
 import {
   Nav,
   NavItem,
@@ -10,156 +10,21 @@ import {
   Input,
 } from "reactstrap";
 import classnames from "classnames";
-import AppSimpleBar from "../../../components/AppSimpleBar";
-import Loader from "../../../components/Loader";
-import Message from "../ConversationUser/Message";
-import { Link } from "react-router-dom";
-import ConversationPanel from "./ConversationPanel";
-import { useProfile } from "../../../hooks"; // Si no lo tienes ya
+import { useProfile, useRedux } from "../../../hooks";
+import ConversationWithRedux from "./ConversationWithRedux";
+import { useEffect } from "react";
+import { ChatsActionTypes } from "../../../redux/chats/types";
 
-// ✅ Tipado
-interface MessageMeta {
-  sent: boolean;
-  received: boolean;
-  read: boolean;
-  isForwarded?: boolean;
-  sender: string;
-  receiver: string;
-  userData?: {
-    id: number;
-    email: string;
-    location: string;
-    firstName: string;
-    lastName: string;
-    profileImage?: string;
-  };
-}
-
-interface MessageType {
-  mId: number;
-  text: string;
-  time: string; // 👈 no Date ni string | Date
-  isFromMe: boolean;
-  meta: MessageMeta;
-  image?: any[];
-  attachments?: any[];
-  replyOf?: any;
-}
-
-interface Ticket {
-  id: number;
-  name: string;
-  lastMessage: string;
-  messages: MessageType[];
-  profileImage?: string;
-  firstName: string;
-  lastName: string;
-}
-
-const sampleTickets: Ticket[] = [
+const sampleTickets = [
   {
     id: 1,
     name: "Cliente A",
-    firstName: "Cliente",
-    lastName: "A",
     lastMessage: "Hola, necesito información.",
-    profileImage: "/ruta/a/imagen-predeterminada.png",
-    messages: [
-      {
-        mId: 101,
-        time: new Date().toISOString(),
-        text: "Hola, ¿en qué puedo ayudarte?",
-        isFromMe: false,
-        meta: {
-          sent: true,
-          received: true,
-          read: true,
-          sender: "cliente_1",
-          receiver: "soporte_1",
-          userData: {
-            id: 999,
-            email: "cliente1@correo.com",
-            location: "CDMX",
-            firstName: "Cliente",
-            lastName: "Uno",
-            profileImage: "/ruta/a/imagen.png",
-          },
-        },
-      },
-      {
-        mId: 102,
-        time: new Date().toISOString(),
-        text: "Necesito información sobre el producto X.",
-        isFromMe: true,
-        meta: {
-          sent: true,
-          received: true,
-          read: true,
-          sender: "cliente_1",
-          receiver: "soporte_1",
-          userData: {
-            id: 999,
-            email: "cliente1@correo.com",
-            location: "CDMX",
-            firstName: "Cliente",
-            lastName: "Uno",
-            profileImage: "/ruta/a/imagen.png",
-          },
-        },
-      },
-    ],
   },
   {
     id: 2,
     name: "Cliente B",
-    firstName: "Cliente",
-    lastName: "B",
     lastMessage: "Gracias por la ayuda.",
-    profileImage: "/ruta/a/imagen-predeterminada.png",
-    messages: [
-      {
-        mId: 201,
-        time: new Date().toISOString(),
-        text: "¿Puedo ayudarte en algo más?",
-        isFromMe: false,
-        meta: {
-          sent: true,
-          received: true,
-          read: false,
-          sender: "cliente_b",
-          receiver: "soporte_bot",
-          userData: {
-            id: 998,
-            email: "cliente2@correo.com",
-            location: "Monterrey",
-            firstName: "Cliente",
-            lastName: "B",
-            profileImage: "/ruta/a/imagen-predeterminada.png",
-          },
-        },
-      },
-      {
-        mId: 202,
-        time: new Date().toISOString(),
-        text: "No, muchas gracias.",
-        isFromMe: true,
-        meta: {
-          sent: true,
-          received: true,
-          read: false,
-          sender: "soporte_bot",
-          receiver: "cliente_b",
-          userData: {
-            id: 998,
-            email: "cliente2@correo.com",
-            location: "Monterrey",
-            firstName: "Cliente",
-            lastName: "B",
-            profileImage: "/ruta/a/imagen-predeterminada.png",
-          },
-        },
-      },
-    ],
   },
 ];
 
@@ -168,36 +33,52 @@ const Atenciones: React.FC = () => {
     "abiertos" | "resultados" | "buscar"
   >("abiertos");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const { userProfile } = useProfile(); // Para identificar el uid del agente actual
-
-  const scrollRef = useRef<any>(null);
-
-  const scrollToBottom = useCallback(() => {
-    if (scrollRef.current) {
-      const listEle = document.getElementById("chat-conversation-list");
-      const offsetHeight = listEle?.scrollHeight || 0;
-      scrollRef.current.getScrollElement().scrollTo({
-        top: offsetHeight,
-        behavior: "smooth",
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectedTicket && selectedTicket.messages.length > 0) {
-      scrollToBottom();
-    }
-  }, [selectedTicket, scrollToBottom]);
+  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const { dispatch } = useRedux();
+  const { userProfile } = useProfile();
 
   const filteredTickets = sampleTickets.filter(ticket =>
-    ticket.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    ticket.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleTab = (tab: typeof activeTab) => {
     setActiveTab(tab);
     setSelectedTicket(null);
   };
+
+  useEffect(() => {
+    if (selectedTicket) {
+      dispatch({
+        type: ChatsActionTypes.API_RESPONSE_SUCCESS,
+        payload: {
+          actionType: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+          data: [
+            {
+              mId: 101,
+              text: "Hola desde Redux!",
+              time: new Date().toISOString(),
+              isFromMe: false,
+              meta: {
+                sent: true,
+                received: true,
+                read: true,
+                sender: "cliente",
+                receiver: "agente",
+              },
+            },
+          ],
+        },
+      });
+
+      dispatch({
+        type: ChatsActionTypes.API_RESPONSE_SUCCESS,
+        payload: {
+          actionType: ChatsActionTypes.GET_CHAT_USER_DETAILS,
+          data: selectedTicket,
+        },
+      });
+    }
+  }, [selectedTicket, dispatch]);
 
   return (
     <div className="d-flex" style={{ height: "100%" }}>
@@ -284,21 +165,7 @@ const Atenciones: React.FC = () => {
       {/* Lado derecho */}
       <div className="flex-grow-1 d-flex flex-column">
         {selectedTicket ? (
-          <ConversationPanel
-            messages={selectedTicket.messages}
-            userProfile={userProfile}
-            chatUserDetails={selectedTicket}
-            isLoading={false} // o true si tienes carga real
-            isChannel={false}
-            onDelete={id => console.log("Eliminar mensaje", id)}
-            onSetReplyData={reply => console.log("Reply:", reply)}
-            onForward={({ message, contacts }) =>
-              console.log("Forward:", message, contacts)
-            }
-            onDeleteImage={(messageId, imageId) =>
-              console.log("Eliminar imagen", messageId, imageId)
-            }
-          />
+          <ConversationWithRedux selectedTicket={selectedTicket} />
         ) : (
           <div className="d-flex justify-content-center align-items-center h-100">
             <h2 className="text-muted">

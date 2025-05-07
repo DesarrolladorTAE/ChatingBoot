@@ -68,7 +68,12 @@ const Chats = (state = INIT_STATE, action: any) => {
             isUserMessageSent: false,
             isMessageDeleted: false,
             isMessageForwarded: false,
+            selectedConversation: {
+              messages: action.payload.data,
+              user: state.chatUserDetails,
+            },
           };
+
         case ChatsActionTypes.ON_SEND_MESSAGE:
           return {
             ...state,

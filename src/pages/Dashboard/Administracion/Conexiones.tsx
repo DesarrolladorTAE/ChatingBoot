@@ -302,7 +302,7 @@ const Conexiones: React.FC = () => {
       <div className="flex justify-center mt-8">
         <button
           onClick={() => setShowModal(true)}
-          className="bg-green-500 hover:bg-green-600 text-black px-6 py-2 rounded-lg shadow font-semibold transition"
+          className="!bg-green-500 hover:!bg-green-600 text-black px-6 py-2 rounded-lg shadow font-semibold transition"
         >
           + Nueva Conexión
         </button>

@@ -8,18 +8,22 @@ import { forwardMessage, deleteImage } from "../../../redux/actions";
 // El estado del store que necesita Conversation
 const selectChatState = createSelector(
   (state: any) => state.Chats,
-  (chats) => ({
+  chats => ({
     isLoading: chats.getUserConversationsLoading,
     messages: chats.selectedConversation?.messages || [],
     chatUserDetails: chats.selectedConversation?.user || {},
-  })
+  }),
 );
 
-const ConversationWithRedux = () => {
+interface Props {
+  selectedTicket: any;
+}
+
+const ConversationWithRedux = ({ selectedTicket }: Props) => {
   const { dispatch, useAppSelector } = useRedux();
   const { userProfile } = useProfile();
-
-  const { isLoading, messages, chatUserDetails } = useAppSelector(selectChatState);
+  const { isLoading, messages, chatUserDetails } =
+    useAppSelector(selectChatState);
 
   const handleDelete = (messageId: string | number) => {
     dispatch({ type: "DELETE_MESSAGE", payload: { messageId } });
@@ -33,7 +37,13 @@ const ConversationWithRedux = () => {
     dispatch(forwardMessage(data));
   };
 
-  const handleDeleteImage = (messageId: string | number, imageId: string | number) => {
+  // Opcional: log para verificar
+  console.log("🔁 Conversación activa para:", selectedTicket?.name);
+
+  const handleDeleteImage = (
+    messageId: string | number,
+    imageId: string | number,
+  ) => {
     dispatch(deleteImage(chatUserDetails.id, messageId, imageId));
   };
 
