@@ -8,6 +8,7 @@ export const INIT_STATE: ChatsState = {
   selectedChat: null,
   chatUserDetails: {},
   chatUserConversations: {},
+  selectedConversation: null, // ✅ << Añadido aquí
   isOpenUserDetails: false,
   channelDetails: {},
   archiveContacts: [],
@@ -69,8 +70,8 @@ const Chats = (state = INIT_STATE, action: any) => {
             isMessageDeleted: false,
             isMessageForwarded: false,
             selectedConversation: {
-              messages: action.payload.data,
-              user: state.chatUserDetails,
+              messages: action.payload.data.messages,
+              contact: action.payload.data.contact,
             },
           };
 

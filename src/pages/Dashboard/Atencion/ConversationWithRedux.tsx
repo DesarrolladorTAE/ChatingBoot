@@ -11,9 +11,10 @@ const selectChatState = createSelector(
   chats => ({
     isLoading: chats.getUserConversationsLoading,
     messages: chats.selectedConversation?.messages || [],
-    chatUserDetails: chats.selectedConversation?.user || {},
+    chatContactDetails: chats.selectedConversation?.contact || {},
   }),
 );
+
 
 interface Props {
   selectedTicket: any;
@@ -22,7 +23,7 @@ interface Props {
 const ConversationWithRedux = ({ selectedTicket }: Props) => {
   const { dispatch, useAppSelector } = useRedux();
   const { userProfile } = useProfile();
-  const { isLoading, messages, chatUserDetails } =
+  const { isLoading, messages, chatContactDetails } =
     useAppSelector(selectChatState);
 
   const handleDelete = (messageId: string | number) => {
@@ -44,14 +45,14 @@ const ConversationWithRedux = ({ selectedTicket }: Props) => {
     messageId: string | number,
     imageId: string | number,
   ) => {
-    dispatch(deleteImage(chatUserDetails.id, messageId, imageId));
+    dispatch(deleteImage(chatContactDetails.id, messageId, imageId));
   };
 
   return (
     <ConversationPanel
       messages={messages}
       userProfile={userProfile}
-      chatUserDetails={chatUserDetails}
+      chatContactDetails={chatContactDetails} // << nombre actualizado
       isLoading={isLoading}
       isChannel={false}
       onDelete={handleDelete}

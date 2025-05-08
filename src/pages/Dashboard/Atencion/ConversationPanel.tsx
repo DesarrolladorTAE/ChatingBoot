@@ -8,7 +8,7 @@ import { MessagesTypes } from "../../../data/messages";
 interface ConversationPanelProps {
   messages: MessagesTypes[];
   userProfile: any;
-  chatUserDetails: any;
+  chatContactDetails: any;
   isLoading: boolean;
   isChannel: boolean;
   onDelete: (messageId: string | number) => void;
@@ -20,7 +20,7 @@ interface ConversationPanelProps {
 const ConversationPanel = ({
   messages,
   userProfile,
-  chatUserDetails,
+  chatContactDetails,
   isLoading,
   isChannel,
   onDelete,
@@ -66,7 +66,7 @@ const ConversationPanel = ({
     }
   };
 
-  const safeChatUserDetails = chatUserDetails || {}; // fallback para evitar crash en Message
+  const safeChatContactDetails = chatContactDetails || {}; // fallback para evitar crash en Message
 
   return (
     <AppSimpleBar
@@ -79,7 +79,7 @@ const ConversationPanel = ({
           <Message
             key={key}
             message={message}
-            chatUserDetails={safeChatUserDetails}
+            chatContactDetails={safeChatContactDetails}
             onDelete={() => onDelete(message.mId)}
             onSetReplyData={onSetReplyData}
             isFromMe={message.meta.sender + "" === userProfile.uid + ""}
@@ -95,7 +95,7 @@ const ConversationPanel = ({
           isOpen={isOpenForward}
           onClose={onCloseForward}
           forwardData={forwardData}
-          chatUserDetails={safeChatUserDetails}
+          chatContactDetails={safeChatContactDetails}
           onForward={handleForwardMessage}
         />
       )}

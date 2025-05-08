@@ -36,6 +36,10 @@ export interface ChatsState {
   selectedChat: string | number | null;
   chatUserDetails: object;
   chatUserConversations: {};
+  selectedConversation: {
+    messages: Array<any>;
+    contact: any;
+  } | null;
   isOpenUserDetails: boolean;
   channelDetails: object;
   archiveContacts: Array<any>;
