@@ -20,13 +20,13 @@ import ForwardModal from "../../../components/ForwardModal";
 import { forwardMessage, deleteImage } from "../../../redux/actions";
 interface ConversationProps {
   chatUserConversations: any;
-  chatUserDetails: any;
+  chatContactDetails: any;
   onDelete: (messageId: string | number) => any;
   onSetReplyData: (reply: null | MessagesTypes | undefined) => void;
   isChannel: boolean;
 }
 const Conversation = ({
-  chatUserDetails,
+  chatContactDetails,
   chatUserConversations,
   onDelete,
   onSetReplyData,
@@ -115,7 +115,7 @@ const Conversation = ({
     messageId: string | number,
     imageId: string | number
   ) => {
-    dispatch(deleteImage(chatUserDetails.id, messageId, imageId));
+    dispatch(deleteImage(chatContactDetails.id, messageId, imageId));
   };
   return (
     <AppSimpleBar
@@ -133,7 +133,7 @@ const Conversation = ({
             <Message
               message={message}
               key={key}
-              chatUserDetails={chatUserDetails}
+              chatContactDetails={chatContactDetails}
               onDelete={onDelete}
               onSetReplyData={onSetReplyData}
               isFromMe={isFromMe}
@@ -150,7 +150,7 @@ const Conversation = ({
           isOpen={isOpenForward}
           onClose={onCloseForward}
           forwardData={forwardData}
-          chatUserDetails={chatUserDetails}
+          chatContactDetails={chatContactDetails}
           onForward={onForwardMessage}
         />
       )}

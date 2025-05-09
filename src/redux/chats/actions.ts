@@ -15,8 +15,14 @@ export const getFavourites = () => ({
   type: ChatsActionTypes.GET_FAVOURITES,
 });
 
-export const getDirectMessages = () => ({
+// export const getDirectMessages = (conversationId: string | number) => ({
+//   type: ChatsActionTypes.GET_DIRECT_MESSAGES,
+//   payload: conversationId,
+// });
+
+export const getDirectMessages = (conversationId: string | number) => ({
   type: ChatsActionTypes.GET_DIRECT_MESSAGES,
+  payload: conversationId,
 });
 
 export const getChannels = () => ({
@@ -44,16 +50,21 @@ export const changeSelectedChat = (selectedChat: string | number | null) => ({
   payload: selectedChat,
 });
 
-export const getChatUserDetails = (selectedChat: string | number | null) => ({
-  type: ChatsActionTypes.GET_CHAT_USER_DETAILS,
+export const getchatContactDetails = (selectedChat: string | number | null) => ({
+  type: ChatsActionTypes.GET_CHAT_CONTACT_DETAILS,
   payload: selectedChat,
 });
 
-export const getChatUserConversations = (
-  selectedChat: string | number | null
-) => ({
+// export const getChatUserConversations = (
+//   selectedChat: string | number | null
+// ) => ({
+//   type: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+//   payload: selectedChat,
+// });
+
+export const getChatUserConversations = (id: string | number) => ({
   type: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-  payload: selectedChat,
+  payload: id,
 });
 
 export const toggleUserDetailsTab = (value: boolean) => ({

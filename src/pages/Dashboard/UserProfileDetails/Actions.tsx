@@ -8,14 +8,14 @@ import {
 } from "reactstrap";
 import classnames from "classnames";
 interface AttachedFilesProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
   onOpenVideo: () => void;
   onOpenAudio: () => void;
   onToggleFavourite: () => void;
   onToggleArchive: () => void;
 }
 const AttachedFiles = ({
-  chatUserDetails,
+  chatContactDetails,
   onOpenVideo,
   onOpenAudio,
   onToggleFavourite,
@@ -47,7 +47,7 @@ const AttachedFiles = ({
                 "avatar-sm",
                 "p-0",
                 "favourite-btn",
-                { active: chatUserDetails.isFavourite }
+                { active: chatContactDetails.isFavourite }
               )}
               onClick={onToggleFavourite}
             >
@@ -112,7 +112,7 @@ const AttachedFiles = ({
                   to="#"
                   onClick={onToggleArchive}
                 >
-                  {chatUserDetails.isArchived ? (
+                  {chatContactDetails.isArchived ? (
                     <>
                       Un-Archive{" "}
                       <i className="bx bx-archive-out text-muted"></i>

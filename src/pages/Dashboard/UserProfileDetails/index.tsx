@@ -8,7 +8,7 @@ import { useRedux } from "../../../hooks/index";
 import {
   toggleUserDetailsTab,
   toggleFavouriteContact,
-  getChatUserDetails,
+  getchatContactDetails,
   toggleArchiveContact,
 } from "../../../redux/actions";
 
@@ -37,20 +37,20 @@ const Index = ({ isChannel }: IndexProps) => {
     (state : any) => state.Chats,
    
     (state) => ({
-      chatUserDetails: state.chatUserDetails,
+      chatContactDetails: state.chatContactDetails,
       getUserDetailsLoading: state.getUserDetailsLoading,
       isOpenUserDetails: state.isOpenUserDetails,
       isFavouriteContactToggled: state.isFavouriteContactToggled,
     })
   );
   // Inside your component
-  const { chatUserDetails,getUserDetailsLoading,isOpenUserDetails,isFavouriteContactToggled } = useAppSelector(errorData);
+  const { chatContactDetails,getUserDetailsLoading,isOpenUserDetails,isFavouriteContactToggled } = useAppSelector(errorData);
 
   useEffect(() => {
     if (isFavouriteContactToggled) {
-      dispatch(getChatUserDetails(chatUserDetails.id));
+      dispatch(getchatContactDetails(chatContactDetails.id));
     }
-  }, [dispatch, isFavouriteContactToggled, chatUserDetails.id]);
+  }, [dispatch, isFavouriteContactToggled, chatContactDetails.id]);
 
   /*
   close tab
@@ -85,14 +85,14 @@ const Index = ({ isChannel }: IndexProps) => {
   favourite
   */
   const onToggleFavourite = () => {
-    dispatch(toggleFavouriteContact(chatUserDetails.id));
+    dispatch(toggleFavouriteContact(chatContactDetails.id));
   };
 
   /*
   archive
   */
   const onToggleArchive = () => {
-    dispatch(toggleArchiveContact(chatUserDetails.id));
+    dispatch(toggleArchiveContact(chatContactDetails.id));
   };
 
   return (
@@ -107,7 +107,7 @@ const Index = ({ isChannel }: IndexProps) => {
 
           <ProfileUser
             onCloseUserDetails={onCloseUserDetails}
-            chatUserDetails={chatUserDetails}
+            chatContactDetails={chatContactDetails}
             onOpenVideo={onOpenVideo}
             onOpenAudio={onOpenAudio}
           />
@@ -118,43 +118,43 @@ const Index = ({ isChannel }: IndexProps) => {
             {" "}
             {/* simplebar */}
             <Actions
-              chatUserDetails={chatUserDetails}
+              chatContactDetails={chatContactDetails}
               onOpenVideo={onOpenVideo}
               onOpenAudio={onOpenAudio}
               onToggleFavourite={onToggleFavourite}
               onToggleArchive={onToggleArchive}
             />
-            <Status about={chatUserDetails.about} />
+            <Status about={chatContactDetails.about} />
             {!isChannel ? (
               <>
-                <BasicDetails chatUserDetails={chatUserDetails} />
+                <BasicDetails chatContactDetails={chatContactDetails} />
                 <hr className="my-4" />
-                <Groups chatUserDetails={chatUserDetails} />
+                <Groups chatContactDetails={chatContactDetails} />
                 <hr className="my-4" />
               </>
             ) : (
               <>
-                <Members chatUserDetails={chatUserDetails} />
+                <Members chatContactDetails={chatContactDetails} />
                 <hr className="my-4" />
               </>
             )}
-            <Media media={chatUserDetails.media} limit={3} />
+            <Media media={chatContactDetails.media} limit={3} />
             <hr className="my-4" />
-            <AttachedFiles attachedFiles={chatUserDetails.attachedFiles} />
+            <AttachedFiles attachedFiles={chatContactDetails.attachedFiles} />
           </AppSimpleBar>
           {/* <!-- end user-profile-desc --> */}
           {isOpenAudioModal && (
             <AudioCallModal
               isOpen={isOpenAudioModal}
               onClose={onCloseAudio}
-              user={chatUserDetails}
+              user={chatContactDetails}
             />
           )}
           {isOpenVideoModal && (
             <VideoCallModal
               isOpen={isOpenVideoModal}
               onClose={onCloseVideo}
-              user={chatUserDetails}
+              user={chatContactDetails}
             />
           )}
         </div>

@@ -1,11 +1,11 @@
 import React from "react";
 
 interface BasicDetailsProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
 }
-const BasicDetails = ({ chatUserDetails }: BasicDetailsProps) => {
-  const fullName = chatUserDetails.firstName
-    ? `${chatUserDetails.firstName} ${chatUserDetails.lastName}`
+const BasicDetails = ({ chatContactDetails }: BasicDetailsProps) => {
+  const fullName = chatContactDetails.firstName
+    ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}`
     : "-";
 
   return (
@@ -28,14 +28,14 @@ const BasicDetails = ({ chatUserDetails }: BasicDetailsProps) => {
       <div className="mt-4">
         <p className="text-muted font-size-14 mb-1">Email</p>
         <h5 className="font-size-14">
-          {chatUserDetails.email ? chatUserDetails.email : "-"}
+          {chatContactDetails.email ? chatContactDetails.email : "-"}
         </h5>
       </div>
 
       <div className="mt-4">
         <p className="text-muted font-size-14 mb-1">Location</p>
         <h5 className="font-size-14 mb-0">
-          {chatUserDetails.location ? chatUserDetails.location : "-"}
+          {chatContactDetails.location ? chatContactDetails.location : "-"}
         </h5>
       </div>
     </div>

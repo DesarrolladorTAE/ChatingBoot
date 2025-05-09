@@ -85,23 +85,23 @@ const useConversationUserType = () => {
   // global store
   const { useAppSelector } = useRedux();
 
-  // const { chatUserDetails } = useAppSelector(state => ({
-  //   chatUserDetails: state.Chats.chatUserDetails,
+  // const { chatContactDetails } = useAppSelector(state => ({
+  //   chatContactDetails: state.Chats.chatContactDetails,
   // }));
 
   const errorData = createSelector(
     (state: any) => state.Chats,
     state => ({
-      chatUserDetails: state.chatUserDetails,
+      chatContactDetails: state.chatContactDetails,
     }),
   );
   // Inside your component
-  const { chatUserDetails } = useAppSelector(errorData);
+  const { chatContactDetails } = useAppSelector(errorData);
 
   const [isChannel, setIsChannel] = useState<boolean>(false);
   useEffect(() => {
-    setIsChannel(chatUserDetails.isChannel ? true : false);
-  }, [chatUserDetails]);
+    setIsChannel(chatContactDetails.isChannel ? true : false);
+  }, [chatContactDetails]);
 
   return { isChannel };
 };

@@ -346,15 +346,15 @@ const fakeBackend = () => {
     });
   });
 
-  mock.onGet(url.GET_DIRECT_MESSAGES).reply(config => {
-    return new Promise((resolve, reject) => {
-      if (directMessages) {
-        resolve([200, directMessages]);
-      } else {
-        reject(["Some thing went wrong!"]);
-      }
-    });
+ mock.onGet(url.GET_DIRECT_MESSAGES(123)).reply(config => {
+  return new Promise((resolve, reject) => {
+    if (directMessages) {
+      resolve([200, directMessages]);
+    } else {
+      reject(["Something went wrong!"]);
+    }
   });
+});
 
   mock.onGet(url.GET_CHANNELS).reply(config => {
     return new Promise((resolve, reject) => {
@@ -406,7 +406,7 @@ const fakeBackend = () => {
     });
   });
 
-  mock.onGet(new RegExp(`${url.GET_CHAT_USER_DETAILS}/*`)).reply(config => {
+  mock.onGet(new RegExp(`${url.GET_CHAT_CONTACT_DETAILS}/*`)).reply(config => {
     const { params } = config;
     let data: any;
     if (params.id && contacts.length !== 0) {

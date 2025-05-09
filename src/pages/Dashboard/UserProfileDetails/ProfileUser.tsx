@@ -15,28 +15,28 @@ import imagePlaceholder from "../../../assets/images/users/user-dummy-img.jpg";
 import { STATUS_TYPES } from "../../../constants";
 interface ProfileUserProps {
   onCloseUserDetails: () => any;
-  chatUserDetails: any;
+  chatContactDetails: any;
   onOpenVideo: () => void;
   onOpenAudio: () => void;
 }
 const ProfileUser = ({
   onCloseUserDetails,
-  chatUserDetails,
+  chatContactDetails,
   onOpenAudio,
   onOpenVideo,
 }: ProfileUserProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggle = () => setDropdownOpen(!dropdownOpen);
 
-  const profile = chatUserDetails.profileImage
-    ? chatUserDetails.profileImage
+  const profile = chatContactDetails.profileImage
+    ? chatContactDetails.profileImage
     : imagePlaceholder;
   const fullName =
-    chatUserDetails.name === undefined
-      ? chatUserDetails.firstName
-        ? `${chatUserDetails.firstName} ${chatUserDetails.lastName}`
+    chatContactDetails.name === undefined
+      ? chatContactDetails.firstName
+        ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}`
         : "-"
-      : chatUserDetails.name;
+      : chatContactDetails.name;
 
   return (
     <div className="p-3 border-bottom">
@@ -118,7 +118,7 @@ const ProfileUser = ({
           </div>
           <div className="mt-auto p-3">
             <h5 className="user-name mb-1 text-truncate">{fullName}</h5>
-            {chatUserDetails.status && (
+            {chatContactDetails.status && (
               <p className="font-size-14 text-truncate mb-0">
                 <i
                   className={classnames(
@@ -129,19 +129,19 @@ const ProfileUser = ({
                     "ms-0",
                     {
                       "text-success":
-                        chatUserDetails.status === STATUS_TYPES.ACTIVE,
+                        chatContactDetails.status === STATUS_TYPES.ACTIVE,
                     },
                     {
                       "text-warning":
-                        chatUserDetails.status === STATUS_TYPES.AWAY,
+                        chatContactDetails.status === STATUS_TYPES.AWAY,
                     },
                     {
                       "text-danger":
-                        chatUserDetails.status === STATUS_TYPES.DO_NOT_DISTURB,
+                        chatContactDetails.status === STATUS_TYPES.DO_NOT_DISTURB,
                     }
                   )}
                 ></i>{" "}
-                {chatUserDetails.status}
+                {chatContactDetails.status}
               </p>
             )}
           </div>

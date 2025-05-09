@@ -17,7 +17,7 @@ import {
   inviteContact,
   resetContacts,
   getChannelDetails,
-  getChatUserDetails,
+  getchatContactDetails,
   getChatUserConversations,
   changeSelectedChat,
 } from "../../../redux/actions";
@@ -108,7 +108,7 @@ const Index = (props: IndexProps) => {
     if (isChannel) {
       dispatch(getChannelDetails(id));
     } else {
-      dispatch(getChatUserDetails(id));
+      dispatch(getchatContactDetails(id));
     }
     dispatch(getChatUserConversations(id));
     dispatch(changeSelectedChat(id));

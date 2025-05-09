@@ -19,16 +19,16 @@ import { DivideByKeyResultTypes, divideByKey } from "../utils";
 import EmptyStateContacts from "./EmptyStateResult";
 interface ForwardMessageProps {
   forwardData: null | MessagesTypes | undefined;
-  chatUserDetails: any;
+  chatContactDetails: any;
 }
 const ForwardMessage = ({
   forwardData,
-  chatUserDetails,
+  chatContactDetails,
 }: ForwardMessageProps) => {
   const { userProfile } = useProfile();
 
-  const replyUserName = chatUserDetails.firstName
-    ? `${chatUserDetails.firstName} ${chatUserDetails.lastName}`
+  const replyUserName = chatContactDetails.firstName
+    ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}`
     : "-";
   const isReplyFromMe =
     forwardData && forwardData.meta.sender + "" === userProfile.uid + "";
@@ -145,14 +145,14 @@ interface ForwardModalProps {
   isOpen: boolean;
   onClose: () => void;
   forwardData: null | MessagesTypes | undefined;
-  chatUserDetails: any;
+  chatContactDetails: any;
   onForward: (data: any) => void;
 }
 const ForwardModal = ({
   isOpen,
   onClose,
   forwardData,
-  chatUserDetails,
+  chatContactDetails,
   onForward,
 }: ForwardModalProps) => {
   // global store
@@ -260,7 +260,7 @@ const ForwardModal = ({
         <div>
           <ForwardMessage
             forwardData={forwardData}
-            chatUserDetails={chatUserDetails}
+            chatContactDetails={chatContactDetails}
           />
           <textarea
             className="form-control"

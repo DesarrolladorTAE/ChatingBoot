@@ -40,7 +40,7 @@ const Index = ({ isChannel }: IndexProps) => {
   const errorData = createSelector(
     (state : any) => state.Chats,
     (state) => ({
-      chatUserDetails: state.chatUserDetails,
+      chatContactDetails: state.chatContactDetails,
       chatUserConversations: state.chatUserConversations,
       isUserMessageSent: state.isUserMessageSent,
       isMessageDeleted: state.isMessageDeleted,
@@ -50,7 +50,7 @@ const Index = ({ isChannel }: IndexProps) => {
     })
   );
   // Inside your component
-  const {chatUserDetails,chatUserConversations,isUserMessageSent, isMessageDeleted,isMessageForwarded ,isUserMessagesDeleted,
+  const {chatContactDetails,chatUserConversations,isUserMessageSent, isMessageDeleted,isMessageForwarded ,isUserMessagesDeleted,
     isImageDeleted} = useAppSelector(errorData);
 
   const onOpenUserDetails = () => {
@@ -83,7 +83,7 @@ const Index = ({ isChannel }: IndexProps) => {
       newimage: data.newimage && data.newimage,
       attachments: data.attachments && data.attachments,
       meta: {
-        receiver: chatUserDetails.id,
+        receiver: chatContactDetails.id,
         sender: userProfile.uid,
       },
     };
@@ -95,13 +95,13 @@ const Index = ({ isChannel }: IndexProps) => {
     dispatch(onSendMessage(params));
     if (!isChannel) {
       setTimeout(() => {
-        dispatch(receiveMessage(chatUserDetails.id));
+        dispatch(receiveMessage(chatContactDetails.id));
       }, 1000);
       setTimeout(() => {
-        dispatch(readMessage(chatUserDetails.id));
+        dispatch(readMessage(chatContactDetails.id));
       }, 1500);
       setTimeout(() => {
-        dispatch(receiveMessageFromUser(chatUserDetails.id));
+        dispatch(receiveMessageFromUser(chatContactDetails.id));
       }, 2000);
     }
     setReplyData(null);
@@ -116,12 +116,12 @@ const Index = ({ isChannel }: IndexProps) => {
       isUserMessagesDeleted ||
       isImageDeleted
     ) {
-      dispatch(getChatUserConversations(chatUserDetails.id));
+      dispatch(getChatUserConversations(chatContactDetails.id));
     }
   }, [
     dispatch,
     isUserMessageSent,
-    chatUserDetails,
+    chatContactDetails,
     isMessageDeleted,
     isMessageForwarded,
     isUserMessagesDeleted,
@@ -129,20 +129,20 @@ const Index = ({ isChannel }: IndexProps) => {
   ]);
 
   const onDeleteMessage = (messageId: string | number) => {
-    dispatch(deleteMessage(chatUserDetails.id, messageId));
+    dispatch(deleteMessage(chatContactDetails.id, messageId));
   };
 
   const onDeleteUserMessages = () => {
-    dispatch(deleteUserMessages(chatUserDetails.id));
+    dispatch(deleteUserMessages(chatContactDetails.id));
   };
 
   const onToggleArchive = () => {
-    dispatch(toggleArchiveContact(chatUserDetails.id));
+    dispatch(toggleArchiveContact(chatContactDetails.id));
   };
   return (
     <>
       <UserHead
-        chatUserDetails={chatUserDetails}
+        chatContactDetails={chatContactDetails}
         pinnedTabs={pinnedTabs}
         onOpenUserDetails={onOpenUserDetails}
         onDelete={onDeleteUserMessages}
@@ -151,7 +151,7 @@ const Index = ({ isChannel }: IndexProps) => {
       />
       <Conversation
         chatUserConversations={chatUserConversations}
-        chatUserDetails={chatUserDetails}
+        chatContactDetails={chatContactDetails}
         onDelete={onDeleteMessage}
         onSetReplyData={onSetReplyData}
         isChannel={isChannel}
@@ -160,7 +160,7 @@ const Index = ({ isChannel }: IndexProps) => {
         onSend={onSend}
         replyData={replyData}
         onSetReplyData={onSetReplyData}
-        chatUserDetails={chatUserDetails}
+        chatContactDetails={chatContactDetails}
       />
     </>
   );

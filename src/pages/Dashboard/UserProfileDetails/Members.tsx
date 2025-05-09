@@ -10,7 +10,7 @@ import { useContacts } from "../../../hooks";
 // actions
 import {
   getChannelDetails,
-  getChatUserDetails,
+  getchatContactDetails,
   getChatUserConversations,
   changeSelectedChat,
 } from "../../../redux/actions";
@@ -61,7 +61,7 @@ const Member = ({ member }: GroupProps) => {
     if (isChannel) {
       dispatch(getChannelDetails(id));
     } else {
-      dispatch(getChatUserDetails(id));
+      dispatch(getchatContactDetails(id));
     }
     dispatch(getChatUserConversations(id));
     dispatch(changeSelectedChat(id));
@@ -117,13 +117,13 @@ const Member = ({ member }: GroupProps) => {
   );
 };
 interface GroupsProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
 }
-const Members = ({ chatUserDetails }: GroupsProps) => {
+const Members = ({ chatContactDetails }: GroupsProps) => {
   const groups =
-    chatUserDetails.members &&
-    chatUserDetails.members.length &&
-    chatUserDetails.members;
+    chatContactDetails.members &&
+    chatContactDetails.members.length &&
+    chatContactDetails.members;
   return (
     <div>
       <div className="d-flex">

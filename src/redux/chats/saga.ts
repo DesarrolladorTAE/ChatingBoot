@@ -10,7 +10,7 @@ import {
   getChannels as getChannelsApi,
   addContacts as addContactsApi,
   createChannel as createChannelApi,
-  getChatUserDetails as getChatUserDetailsApi,
+  getchatContactDetails as getchatContactDetailsApi,
   getChatUserConversations as getChatUserConversationsApi,
   sendMessage,
   receiveMessage as receiveMessageApi,
@@ -43,22 +43,26 @@ function* getFavourites() {
   try {
     const response: Promise<any> = yield call(getFavouritesApi);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.GET_FAVOURITES, response)
+      chatsApiResponseSuccess(ChatsActionTypes.GET_FAVOURITES, response),
     );
   } catch (error: any) {
     yield put(chatsApiResponseError(ChatsActionTypes.GET_FAVOURITES, error));
   }
 }
 
-function* getDirectMessages() {
+function* getDirectMessages({
+  payload: conversationId,
+}: {
+  payload: string | number;
+}): Generator<any, void, any> {
   try {
-    const response: Promise<any> = yield call(getDirectMessagesApi);
+    const response: any = yield call(getDirectMessagesApi, conversationId);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, response)
+      chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, response),
     );
   } catch (error: any) {
     yield put(
-      chatsApiResponseError(ChatsActionTypes.GET_DIRECT_MESSAGES, error)
+      chatsApiResponseError(ChatsActionTypes.GET_DIRECT_MESSAGES, error),
     );
   }
 }
@@ -86,7 +90,7 @@ function* createChannel({ payload: channelData }: any) {
   try {
     const response: Promise<any> = yield call(createChannelApi, channelData);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.CREATE_CHANNEL, response)
+      chatsApiResponseSuccess(ChatsActionTypes.CREATE_CHANNEL, response),
     );
     yield call(showSuccessNotification, response + "");
   } catch (error: any) {
@@ -95,31 +99,37 @@ function* createChannel({ payload: channelData }: any) {
   }
 }
 
-function* getChatUserDetails({ payload: id }: any) {
+function* getchatContactDetails({ payload: id }: any) {
   try {
-    const response: Promise<any> = yield call(getChatUserDetailsApi, id);
+    const response: Promise<any> = yield call(getchatContactDetailsApi, id);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.GET_CHAT_USER_DETAILS, response)
+      chatsApiResponseSuccess(
+        ChatsActionTypes.GET_CHAT_CONTACT_DETAILS,
+        response,
+      ),
     );
   } catch (error: any) {
     yield put(
-      chatsApiResponseError(ChatsActionTypes.GET_CHAT_USER_DETAILS, error)
+      chatsApiResponseError(ChatsActionTypes.GET_CHAT_CONTACT_DETAILS, error),
     );
   }
 }
 
-function* getChatUserConversations({ payload: id }: any) {
+function* getChatUserConversations(): Generator<any, void, any> {
   try {
-    const response: Promise<any> = yield call(getChatUserConversationsApi, id);
+    const response: any = yield call(getChatUserConversationsApi);
     yield put(
       chatsApiResponseSuccess(
         ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-        response
-      )
+        response,
+      ),
     );
   } catch (error: any) {
     yield put(
-      chatsApiResponseError(ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS, error)
+      chatsApiResponseError(
+        ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+        error,
+      ),
     );
   }
 }
@@ -128,7 +138,7 @@ function* onSendMessage({ payload: data }: any) {
   try {
     const response: Promise<any> = yield call(sendMessage, data);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.ON_SEND_MESSAGE, response)
+      chatsApiResponseSuccess(ChatsActionTypes.ON_SEND_MESSAGE, response),
     );
   } catch (error: any) {
     yield put(chatsApiResponseError(ChatsActionTypes.ON_SEND_MESSAGE, error));
@@ -139,7 +149,7 @@ function* receiveMessage({ payload: id }: any) {
   try {
     const response: Promise<any> = yield call(receiveMessageApi, id);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.RECEIVE_MESSAGE, response)
+      chatsApiResponseSuccess(ChatsActionTypes.RECEIVE_MESSAGE, response),
     );
   } catch (error: any) {
     yield put(chatsApiResponseError(ChatsActionTypes.RECEIVE_MESSAGE, error));
@@ -161,12 +171,12 @@ function* receiveMessageFromUser({ payload: id }: any) {
     yield put(
       chatsApiResponseSuccess(
         ChatsActionTypes.RECEIVE_MESSAGE_FROM_USER,
-        response
-      )
+        response,
+      ),
     );
   } catch (error: any) {
     yield put(
-      chatsApiResponseError(ChatsActionTypes.RECEIVE_MESSAGE_FROM_USER, error)
+      chatsApiResponseError(ChatsActionTypes.RECEIVE_MESSAGE_FROM_USER, error),
     );
   }
 }
@@ -176,10 +186,10 @@ function* deleteMessage({ payload: { userId, messageId } }: any) {
     const response: Promise<any> = yield call(
       deleteMessageApi,
       userId,
-      messageId
+      messageId,
     );
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.DELETE_MESSAGE, response)
+      chatsApiResponseSuccess(ChatsActionTypes.DELETE_MESSAGE, response),
     );
   } catch (error: any) {
     yield put(chatsApiResponseError(ChatsActionTypes.DELETE_MESSAGE, error));
@@ -190,7 +200,7 @@ function* forwardMessage({ payload: data }: any) {
   try {
     const response: Promise<any> = yield call(forwardMessageApi, data);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.FORWARD_MESSAGE, response)
+      chatsApiResponseSuccess(ChatsActionTypes.FORWARD_MESSAGE, response),
     );
     yield call(showSuccessNotification, response + "");
   } catch (error: any) {
@@ -203,13 +213,13 @@ function* deleteUserMessages({ payload: userId }: any) {
   try {
     const response: Promise<any> = yield call(deleteUserMessagesApi, userId);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.DELETE_USER_MESSAGES, response)
+      chatsApiResponseSuccess(ChatsActionTypes.DELETE_USER_MESSAGES, response),
     );
     yield call(showSuccessNotification, response + "");
   } catch (error: any) {
     yield call(showErrorNotification, error + "");
     yield put(
-      chatsApiResponseError(ChatsActionTypes.DELETE_USER_MESSAGES, error)
+      chatsApiResponseError(ChatsActionTypes.DELETE_USER_MESSAGES, error),
     );
   }
 }
@@ -218,11 +228,11 @@ function* getChannelDetails({ payload: id }: any) {
   try {
     const response: Promise<any> = yield call(getChannelDetailsApi, id);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.GET_CHANNEL_DETAILS, response)
+      chatsApiResponseSuccess(ChatsActionTypes.GET_CHANNEL_DETAILS, response),
     );
   } catch (error: any) {
     yield put(
-      chatsApiResponseError(ChatsActionTypes.GET_CHANNEL_DETAILS, error)
+      chatsApiResponseError(ChatsActionTypes.GET_CHANNEL_DETAILS, error),
     );
   }
 }
@@ -233,14 +243,14 @@ function* toggleFavouriteContact({ payload: id }: any) {
     yield put(
       chatsApiResponseSuccess(
         ChatsActionTypes.TOGGLE_FAVOURITE_CONTACT,
-        response
-      )
+        response,
+      ),
     );
     yield call(showSuccessNotification, response + "");
   } catch (error: any) {
     yield call(showErrorNotification, error + "");
     yield put(
-      chatsApiResponseError(ChatsActionTypes.TOGGLE_FAVOURITE_CONTACT, error)
+      chatsApiResponseError(ChatsActionTypes.TOGGLE_FAVOURITE_CONTACT, error),
     );
   }
 }
@@ -249,11 +259,11 @@ function* getArchiveContact() {
   try {
     const response: Promise<any> = yield call(getArchiveContactApi);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.GET_ARCHIVE_CONTACT, response)
+      chatsApiResponseSuccess(ChatsActionTypes.GET_ARCHIVE_CONTACT, response),
     );
   } catch (error: any) {
     yield put(
-      chatsApiResponseError(ChatsActionTypes.GET_ARCHIVE_CONTACT, error)
+      chatsApiResponseError(ChatsActionTypes.GET_ARCHIVE_CONTACT, error),
     );
   }
 }
@@ -262,24 +272,31 @@ function* toggleArchiveContact({ payload: id }: any) {
   try {
     const response: Promise<any> = yield call(toggleArchiveContactApi, id);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.TOGGLE_ARCHIVE_CONTACT, response)
+      chatsApiResponseSuccess(
+        ChatsActionTypes.TOGGLE_ARCHIVE_CONTACT,
+        response,
+      ),
     );
     yield call(showSuccessNotification, response + "");
   } catch (error: any) {
     yield call(showErrorNotification, error + "");
     yield put(
-      chatsApiResponseError(ChatsActionTypes.TOGGLE_ARCHIVE_CONTACT, error)
+      chatsApiResponseError(ChatsActionTypes.TOGGLE_ARCHIVE_CONTACT, error),
     );
   }
 }
 
-function* readConversation({ payload: id }: any) {
+function* readConversation({
+  payload: id,
+}: {
+  payload: string | number;
+}): Generator<any, void, any> {
   try {
-    const response: Promise<any> = yield call(readConversationApi, id);
+    const response: any = yield call(readConversationApi, id);
     yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.READ_CONVERSATION, response)
+      chatsApiResponseSuccess(ChatsActionTypes.READ_CONVERSATION, response),
     );
-    yield put(getDirectMessagesAction());
+    yield put(getDirectMessagesAction(id)); // ✅ ahora sí le pasas el conversationId correcto
     yield put(getFavouritesAction());
     yield put(getChannelsAction());
   } catch (error: any) {
@@ -293,7 +310,7 @@ function* deleteImage({ payload: { userId, messageId, imageId } }: any) {
       deleteImageApi,
       userId,
       messageId,
-      imageId
+      imageId,
     );
     yield put(chatsApiResponseSuccess(ChatsActionTypes.DELETE_IMAGE, response));
   } catch (error: any) {
@@ -305,8 +322,8 @@ export function* watchGetFavourites() {
   yield takeEvery(ChatsActionTypes.GET_FAVOURITES, getFavourites);
 }
 
-export function* watchGetDirectMessages() {
-  yield takeEvery(ChatsActionTypes.GET_DIRECT_MESSAGES, getDirectMessages);
+export function* watchGetDirectMessages(): Generator {
+  yield takeEvery("@@chats/GET_DIRECT_MESSAGES" as any, getDirectMessages);
 }
 export function* watchGetChannels() {
   yield takeEvery(ChatsActionTypes.GET_CHANNELS, getChannels);
@@ -317,13 +334,16 @@ export function* watchAddContacts() {
 export function* watchCreateChannel() {
   yield takeEvery(ChatsActionTypes.CREATE_CHANNEL, createChannel);
 }
-export function* watchGetChatUserDetails() {
-  yield takeEvery(ChatsActionTypes.GET_CHAT_USER_DETAILS, getChatUserDetails);
+export function* watchGetchatContactDetails() {
+  yield takeEvery(
+    ChatsActionTypes.GET_CHAT_CONTACT_DETAILS,
+    getchatContactDetails,
+  );
 }
 export function* watchGetChatUserConversations() {
   yield takeEvery(
     ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-    getChatUserConversations
+    getChatUserConversations,
   );
 }
 export function* watchOnSendMessage() {
@@ -338,7 +358,7 @@ export function* watchReadMessage() {
 export function* watchReceiveMessageFromUser() {
   yield takeEvery(
     ChatsActionTypes.RECEIVE_MESSAGE_FROM_USER,
-    receiveMessageFromUser
+    receiveMessageFromUser,
   );
 }
 export function* watchDeleteMessage() {
@@ -356,7 +376,7 @@ export function* watchGetChannelDetails() {
 export function* watchToggleFavouriteContact() {
   yield takeEvery(
     ChatsActionTypes.TOGGLE_FAVOURITE_CONTACT,
-    toggleFavouriteContact
+    toggleFavouriteContact,
   );
 }
 export function* watchGetArchiveContact() {
@@ -365,11 +385,11 @@ export function* watchGetArchiveContact() {
 export function* watchToggleArchiveContact() {
   yield takeEvery(
     ChatsActionTypes.TOGGLE_ARCHIVE_CONTACT,
-    toggleArchiveContact
+    toggleArchiveContact,
   );
 }
 export function* watchReadConversation() {
-  yield takeEvery(ChatsActionTypes.READ_CONVERSATION, readConversation);
+  yield takeEvery(ChatsActionTypes.READ_CONVERSATION as any, readConversation);
 }
 export function* watchDeleteImage() {
   yield takeEvery(ChatsActionTypes.DELETE_IMAGE, deleteImage);
@@ -382,7 +402,7 @@ function* chatsSaga() {
     fork(watchGetChannels),
     fork(watchAddContacts),
     fork(watchCreateChannel),
-    fork(watchGetChatUserDetails),
+    fork(watchGetchatContactDetails),
     fork(watchGetChatUserConversations),
     fork(watchOnSendMessage),
     fork(watchReceiveMessage),

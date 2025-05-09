@@ -6,7 +6,7 @@ export const INIT_STATE: ChatsState = {
   directMessages: [],
   channels: [],
   selectedChat: null,
-  chatUserDetails: {},
+  chatContactDetails: {},
   chatUserConversations: {},
   selectedConversation: null, // ✅ << Añadido aquí
   isOpenUserDetails: false,
@@ -53,10 +53,10 @@ const Chats = (state = INIT_STATE, action: any) => {
             isChannelCreated: true,
             createChannelLoading: false,
           };
-        case ChatsActionTypes.GET_CHAT_USER_DETAILS:
+        case ChatsActionTypes.GET_CHAT_CONTACT_DETAILS:
           return {
             ...state,
-            chatUserDetails: action.payload.data,
+            chatContactDetails: action.payload.data,
             isUserDetailsFetched: true,
             getUserDetailsLoading: false,
           };
@@ -110,7 +110,7 @@ const Chats = (state = INIT_STATE, action: any) => {
         case ChatsActionTypes.GET_CHANNEL_DETAILS:
           return {
             ...state,
-            chatUserDetails: { ...action.payload.data, isChannel: true },
+            chatContactDetails: { ...action.payload.data, isChannel: true },
             isChannelDetailsFetched: true,
             getUserDetailsLoading: false,
           };
@@ -172,7 +172,7 @@ const Chats = (state = INIT_STATE, action: any) => {
             isChannelCreated: false,
             createChannelLoading: false,
           };
-        case ChatsActionTypes.GET_CHAT_USER_DETAILS:
+        case ChatsActionTypes.GET_CHAT_CONTACT_DETAILS:
           return {
             ...state,
             isUserDetailsFetched: false,
@@ -277,7 +277,7 @@ const Chats = (state = INIT_STATE, action: any) => {
         ...state,
         selectedChat: action.payload,
       };
-    case ChatsActionTypes.GET_CHAT_USER_DETAILS:
+    case ChatsActionTypes.GET_CHAT_CONTACT_DETAILS:
       return {
         ...state,
         isUserDetailsFetched: false,

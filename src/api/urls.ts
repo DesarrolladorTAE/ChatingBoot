@@ -30,17 +30,19 @@ export const UPDATE_BOOKMARK = "/bookmarks-update";
 
 // chats
 export const GET_FAVOURITES = "/get-favourites";
-export const GET_DIRECT_MESSAGES = "/get-direct-messages";
+export const GET_DIRECT_MESSAGES = (id: string | number) =>
+  `/messages/conversation/${id}`;
 export const GET_CHANNELS = "/get-channles";
 export const ADD_CONTACTS = "/add-contact";
 export const CREATE_CHANNEL = "/create-channel";
-export const GET_CHAT_USER_DETAILS = "/get-user-details";
-export const GET_CHAT_USER_CONVERSATIONS = "/get-user-conversations";
-export const SEND_MESSAGE = "/send-message";
+export const GET_CHAT_CONTACT_DETAILS = (id: string | number) =>
+  `/contacts/${id}`;
+export const GET_CHAT_USER_CONVERSATIONS = "/conversations";
+export const SEND_MESSAGE = "/messages"; // (POST, con conversation_id, content, etc.)
 export const RECEIVE_MESSAGE = "/receive-message";
 export const READ_MESSAGE = "/read-message";
 export const RECEIVE_MESSAGE_FROM_USER = "/receive-message-from-user";
-export const DELETE_MESSAGE = "/delete-message";
+export const DELETE_MESSAGE = (id: string | number) => `/messages/${id}`;  //delete
 export const FORWARD_MESSAGE = "/forward-message";
 export const DELETE_USER_MESSAGES = "/delete-user-messages";
 export const TOGGLE_FAVOURITE_CONTACT = "/toggle-favourite-contact";
@@ -54,7 +56,8 @@ export const GET_CONEXIONES = "/connections"; // GET todas las conexiones
 export const CREATE_CONEXION = "/connections"; // POST nueva conexión
 export const DELETE_CONEXION = (id: number) => `/connections/${id}`; // DELETE por ID
 export const UPDATE_CONEXION = (id: number) => `/connections/${id}`; // PUT por ID
-export const SET_CONEXION_DEFAULT = (id: number) => `/connections/${id}/set-default`; // POST para hacerla predeterminada
+export const SET_CONEXION_DEFAULT = (id: number) =>
+  `/connections/${id}/set-default`; // POST para hacerla predeterminada
 
 // Acciones de sesión vía WA Controller
 export const DISCONNECT_SESSION = (id: string) => `/wa/disconnect/${id}`; // POST para desconectar sesión
@@ -64,7 +67,6 @@ export const LOGOUT_SESSION = (id: string) => `/wa/logoutcon/${id}`; // POST par
 export const START_SESSION = "/wa/start"; // POST con { connectionId }
 // Obtener código QR de una sesión
 export const GET_QR_CODE = (id: string) => `/wa/qr/${id}`; // GET
-
 
 // groups
 export const GET_CHANNEL_DETAILS = "/get-channel-details";

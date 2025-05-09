@@ -31,32 +31,32 @@ import { changeSelectedChat } from "../../../redux/actions";
 // constants
 import { STATUS_TYPES } from "../../../constants";
 interface ProfileImageProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
   onCloseConversation: () => any;
   onOpenUserDetails: () => any;
   isChannel: boolean;
 }
 const ProfileImage = ({
-  chatUserDetails,
+  chatContactDetails,
   onCloseConversation,
   onOpenUserDetails,
   isChannel,
 }: ProfileImageProps) => {
   // const fullName = !isChannel
-  //   ? chatUserDetails.firstName
-  //     ? `${chatUserDetails.firstName} ${chatUserDetails.lastName}`
+  //   ? chatContactDetails.firstName
+  //     ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}`
   //     : "-"
-  //   : chatUserDetails.name;
+  //   : chatContactDetails.name;
   const fullName = !isChannel 
   ? 
-  chatUserDetails.firstName ? `${chatUserDetails.firstName} ${chatUserDetails.lastName}` : "-"
+  chatContactDetails.firstName ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}` : "-"
   : 
-  chatUserDetails.name;
+  chatContactDetails.name;
   const shortName = !isChannel
-  ? chatUserDetails.firstName
-  ? `${chatUserDetails.firstName.charAt(
+  ? chatContactDetails.firstName
+  ? `${chatContactDetails.firstName.charAt(
     0
-    )}${chatUserDetails.lastName.charAt(0)}`
+    )}${chatContactDetails.lastName.charAt(0)}`
     : "-"
     : "#";
 
@@ -72,9 +72,9 @@ const ProfileImage = ({
   const [color] = useState(Math.floor(Math.random() * colors.length));
 
   const isOnline =
-    chatUserDetails.status && chatUserDetails.status === STATUS_TYPES.ACTIVE;
+    chatContactDetails.status && chatContactDetails.status === STATUS_TYPES.ACTIVE;
 
-  const members = (chatUserDetails.members || []).length;
+  const members = (chatContactDetails.members || []).length;
   return (
     <div className="d-flex align-items-center">
       <div className="flex-shrink-0 d-block d-lg-none me-2">
@@ -98,10 +98,10 @@ const ProfileImage = ({
               { online: isOnline }
             )}
           >
-            {chatUserDetails.profileImage ? (
+            {chatContactDetails.profileImage ? (
               <>
                 <img
-                  src={chatUserDetails.profileImage}
+                  src={chatContactDetails.profileImage}
                   className="rounded-circle avatar-sm"
                   alt=""
                 />
@@ -110,15 +110,15 @@ const ProfileImage = ({
                     "user-status",
                     {
                       "bg-success":
-                        chatUserDetails.status === STATUS_TYPES.ACTIVE,
+                        chatContactDetails.status === STATUS_TYPES.ACTIVE,
                     },
                     {
                       "bg-warning":
-                        chatUserDetails.status === STATUS_TYPES.AWAY,
+                        chatContactDetails.status === STATUS_TYPES.AWAY,
                     },
                     {
                       "bg-danger":
-                        chatUserDetails.status === STATUS_TYPES.DO_NOT_DISTURB,
+                        chatContactDetails.status === STATUS_TYPES.DO_NOT_DISTURB,
                     }
                   )}
                 ></span>
@@ -154,7 +154,7 @@ const ProfileImage = ({
               {isChannel ? (
                 <small>{members} Members</small>
               ) : (
-                <small>{chatUserDetails.status}</small>
+                <small>{chatContactDetails.status}</small>
               )}
             </p>
           </div>
@@ -296,7 +296,7 @@ const PinnedAlert = ({ onOpenPinnedTab }: PinnedAlertProps) => {
   );
 };
 interface UserHeadProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
   pinnedTabs: Array<PinTypes>;
   onOpenUserDetails: () => void;
   onDelete: () => void;
@@ -304,7 +304,7 @@ interface UserHeadProps {
   onToggleArchive: () => void;
 }
 const UserHead = ({
-  chatUserDetails,
+  chatContactDetails,
   pinnedTabs,
   onOpenUserDetails,
   onDelete,
@@ -359,7 +359,7 @@ const UserHead = ({
       <Row className="align-items-center">
         <Col sm={4} className="col-8">
           <ProfileImage
-            chatUserDetails={chatUserDetails}
+            chatContactDetails={chatContactDetails}
             onCloseConversation={onCloseConversation}
             onOpenUserDetails={onOpenUserDetails}
             isChannel={isChannel}
@@ -412,7 +412,7 @@ const UserHead = ({
                 onOpenAudio={onOpenAudio}
                 onOpenVideo={onOpenVideo}
                 onDelete={onDelete}
-                isArchive={chatUserDetails.isArchived}
+                isArchive={chatContactDetails.isArchived}
                 onToggleArchive={onToggleArchive}
               />
             </li>
@@ -424,14 +424,14 @@ const UserHead = ({
         <AudioCallModal
           isOpen={isOpenAudioModal}
           onClose={onCloseAudio}
-          user={chatUserDetails}
+          user={chatContactDetails}
         />
       )}
       {isOpenVideoModal && (
         <VideoCallModal
           isOpen={isOpenVideoModal}
           onClose={onCloseVideo}
-          user={chatUserDetails}
+          user={chatContactDetails}
         />
       )}
       {isOpenPinnedTabModal && (

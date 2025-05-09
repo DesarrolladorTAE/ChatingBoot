@@ -7,7 +7,7 @@ import { useRedux } from "../../../hooks/index";
 // actions
 import {
   getChannelDetails,
-  getChatUserDetails,
+  getchatContactDetails,
   getChatUserConversations,
   changeSelectedChat,
 } from "../../../redux/actions";
@@ -23,7 +23,7 @@ const Group = ({ group }: GroupProps) => {
     if (isChannel) {
       dispatch(getChannelDetails(id));
     } else {
-      dispatch(getChatUserDetails(id));
+      dispatch(getchatContactDetails(id));
     }
     dispatch(getChatUserConversations(id));
     dispatch(changeSelectedChat(id));
@@ -47,13 +47,13 @@ const Group = ({ group }: GroupProps) => {
   );
 };
 interface GroupsProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
 }
-const Groups = ({ chatUserDetails }: GroupsProps) => {
+const Groups = ({ chatContactDetails }: GroupsProps) => {
   const groups =
-    chatUserDetails.channels &&
-    chatUserDetails.channels.length &&
-    chatUserDetails.channels;
+    chatContactDetails.channels &&
+    chatContactDetails.channels.length &&
+    chatContactDetails.channels;
   return (
     <div>
       <div className="d-flex">

@@ -317,7 +317,7 @@ const Typing = () => {
 };
 interface MessageProps {
   message: MessagesTypes;
-  chatUserDetails: any;
+    chatContactDetails: any;
   onDelete: (messageId: string | number) => any;
   onSetReplyData: (reply: null | MessagesTypes | undefined) => void;
   isFromMe: boolean;
@@ -328,7 +328,7 @@ interface MessageProps {
 }
 const Message = ({
   message,
-  chatUserDetails,
+  chatContactDetails,
   onDelete,
   onSetReplyData,
   isFromMe,
@@ -352,8 +352,8 @@ const Message = ({
   const hasText = message.text;
   const isTyping = false;
 
-  const chatUserFullName = chatUserDetails.firstName
-    ? `${chatUserDetails.firstName} ${chatUserDetails.lastName}`
+  const chatUserFullName = chatContactDetails.firstName
+    ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}`
     : "-";
 
     const myProfile = userProfile && userProfile.profileImage
@@ -365,23 +365,23 @@ const Message = ({
   //     : imagePlaceholder;
   const channeluserProfile =
     message.meta.userData?.profileImage || imagePlaceholder;
-  // const chatUserprofile = chatUserDetails.profileImage
-  //   ? chatUserDetails.profileImage
+  // const chatUserprofile = chatContactDetails.profileImage
+  //   ? chatContactDetails.profileImage
   //   : imagePlaceholder;
   const chatUserprofile =
-    chatUserDetails &&
-    typeof chatUserDetails === "object" &&
-    "profileImage" in chatUserDetails
-      ? chatUserDetails.profileImage || imagePlaceholder
+    chatContactDetails &&
+    typeof chatContactDetails === "object" &&
+    "profileImage" in chatContactDetails
+      ? chatContactDetails.profileImage || imagePlaceholder
       : imagePlaceholder;
 
   // const profile = isChannel ? channeluserProfile : chatUserprofile;
   const profile = isChannel
     ? (message.meta.userData?.profileImage ?? imagePlaceholder)
-    : chatUserDetails &&
-        typeof chatUserDetails === "object" &&
-        "profileImage" in chatUserDetails
-      ? chatUserDetails.profileImage || imagePlaceholder
+    : chatContactDetails &&
+        typeof chatContactDetails === "object" &&
+        "profileImage" in chatContactDetails
+      ? chatContactDetails.profileImage || imagePlaceholder
       : imagePlaceholder;
 
   const date = formateDate(message.time, "hh:mmaaa");
@@ -410,12 +410,12 @@ const Message = ({
     onDeleteImage(message.mId, imageId);
   };
 
-  if (!chatUserDetails || typeof chatUserDetails !== "object") {
+  if (!chatContactDetails || typeof chatContactDetails !== "object") {
     console.warn(
-      "⛔ No se puede renderizar Message porque 'chatUserDetails' es inválido:",
+      "⛔ No se puede renderizar Message porque 'chatContactDetails' es inválido:",
       {
         message,
-        chatUserDetails,
+        chatContactDetails,
       },
     );
     return null;

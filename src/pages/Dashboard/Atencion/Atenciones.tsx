@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Nav,
   NavItem,
@@ -12,7 +12,6 @@ import {
 import classnames from "classnames";
 import { useProfile, useRedux } from "../../../hooks";
 import ConversationWithRedux from "./ConversationWithRedux";
-import { useEffect } from "react";
 import { ChatsActionTypes } from "../../../redux/chats/types";
 
 const sampleTickets = [
@@ -38,7 +37,7 @@ const Atenciones: React.FC = () => {
   const { userProfile } = useProfile();
 
   const filteredTickets = sampleTickets.filter(ticket =>
-    ticket.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ticket.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const toggleTab = (tab: typeof activeTab) => {
@@ -52,29 +51,24 @@ const Atenciones: React.FC = () => {
         type: ChatsActionTypes.API_RESPONSE_SUCCESS,
         payload: {
           actionType: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-          data: [
-            {
-              mId: 101,
-              text: "Hola desde Redux!",
-              time: new Date().toISOString(),
-              isFromMe: false,
-              meta: {
-                sent: true,
-                received: true,
-                read: true,
-                sender: "cliente",
-                receiver: "agente",
+          data: {
+            messages: [
+              {
+                mId: 101,
+                text: "Hola desde Redux!",
+                time: new Date().toISOString(),
+                isFromMe: false,
+                meta: {
+                  sent: true,
+                  received: true,
+                  read: true,
+                  sender: "cliente",
+                  receiver: "agente",
+                },
               },
-            },
-          ],
-        },
-      });
-
-      dispatch({
-        type: ChatsActionTypes.API_RESPONSE_SUCCESS,
-        payload: {
-          actionType: ChatsActionTypes.GET_CHAT_USER_DETAILS,
-          data: selectedTicket,
+            ],
+            contact: selectedTicket,
+          },
         },
       });
     }

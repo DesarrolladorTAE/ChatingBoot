@@ -15,13 +15,13 @@ interface IndexProps {
   onSend: (data: any) => void;
   replyData: null | MessagesTypes | undefined;
   onSetReplyData: (reply: null | MessagesTypes | undefined) => void;
-  chatUserDetails: any;
+  chatContactDetails: any;
 }
 const Index = ({
   onSend,
   replyData,
   onSetReplyData,
-  chatUserDetails,
+  chatContactDetails,
 }: IndexProps) => {
   /*
   more menu collapse
@@ -174,7 +174,7 @@ const Index = ({
       <Reply
         reply={replyData}
         onSetReplyData={onSetReplyData}
-        chatUserDetails={chatUserDetails}
+        chatContactDetails={chatContactDetails}
       />
     </div>
   );

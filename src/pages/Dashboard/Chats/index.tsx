@@ -4,7 +4,7 @@ import { Button, Form, Input, UncontrolledTooltip } from "reactstrap";
 import { Link } from "react-router-dom";
 // hooks
 import { useRedux } from "../../../hooks/index";
-
+import { useSelector } from "react-redux";
 // actions
 import {
   inviteContact,
@@ -15,7 +15,7 @@ import {
   addContacts,
   createChannel,
   changeSelectedChat,
-  getChatUserDetails,
+  getchatContactDetails,
   getChatUserConversations,
   getChannelDetails,
   getArchiveContact,
@@ -57,27 +57,31 @@ const Index = (props: IndexProps) => {
         isFavouriteContactToggled: props.isFavouriteContactToggled,
         archiveContacts: props.archiveContacts,
         isContactArchiveToggled: props.isContactArchiveToggled,
-        chatUserDetails:props.chatUserDetails,
+        chatContactDetails:props.chatContactDetails,
     })
   );
 
   // Inside your component
   const {isContactInvited, favourites, directMessages, channels, isContactsAdded, isChannelCreated, selectedChat, isFavouriteContactToggled,
-    archiveContacts, isContactArchiveToggled, chatUserDetails} = useAppSelector(errorData);
+    archiveContacts, isContactArchiveToggled, chatContactDetails} = useAppSelector(errorData);
   
   // get data
 
   useEffect(() => {
-    dispatch(getFavourites());
-    dispatch(getDirectMessages());
-    dispatch(getChannels());
-  }, [dispatch]);
+  dispatch(getFavourites());
+  if (selectedChat) {
+    dispatch(getDirectMessages(selectedChat));
+  }
+  dispatch(getChannels());
+}, [dispatch, selectedChat]);
+
   useEffect(() => {
-    if (isFavouriteContactToggled) {
-      dispatch(getFavourites());
-      dispatch(getDirectMessages());
-    }
-  }, [dispatch, isFavouriteContactToggled]);
+  if (isFavouriteContactToggled && selectedChat) {
+    dispatch(getFavourites());
+    dispatch(getDirectMessages(selectedChat));
+  }
+}, [dispatch, isFavouriteContactToggled, selectedChat]);
+
 
   /*
   invite contact modal handeling
@@ -119,12 +123,13 @@ const Index = (props: IndexProps) => {
   const onAddContact = (contacts: Array<string | number>) => {
     dispatch(addContacts(contacts));
   };
-  useEffect(() => {
-    if (isContactsAdded) {
-      setIsOpenAddContact(false);
-      dispatch(getDirectMessages());
-    }
-  }, [dispatch, isContactsAdded]);
+useEffect(() => {
+  if (isContactsAdded && selectedChat) {
+    setIsOpenAddContact(false);
+    dispatch(getDirectMessages(selectedChat));
+  }
+}, [dispatch, isContactsAdded, selectedChat]);
+
 
   /*
   channel creation handeling
@@ -157,7 +162,7 @@ const Index = (props: IndexProps) => {
     if (isChannel) {
       dispatch(getChannelDetails(id));
     } else {
-      dispatch(getChatUserDetails(id));
+      dispatch(getchatContactDetails(id));
     }
     dispatch(readConversation(id));
     dispatch(getChatUserConversations(id));
@@ -180,14 +185,15 @@ const Index = (props: IndexProps) => {
     dispatch(getArchiveContact());
   }, [dispatch]);
   useEffect(() => {
-    if (isContactArchiveToggled) {
-      dispatch(getArchiveContact());
-      dispatch(getFavourites());
-      dispatch(getDirectMessages());
-      dispatch(getChannels());
-      dispatch(getChatUserDetails(chatUserDetails.id));
-    }
-  }, [dispatch, isContactArchiveToggled, chatUserDetails.id]);
+  if (isContactArchiveToggled && selectedChat) {
+    dispatch(getArchiveContact());
+    dispatch(getFavourites());
+    dispatch(getDirectMessages(selectedChat));
+    dispatch(getChannels());
+    dispatch(getchatContactDetails(chatContactDetails.id));
+  }
+}, [dispatch, isContactArchiveToggled, selectedChat, chatContactDetails.id]);
+
 
   //serach recent user
   const searchUsers = () => {

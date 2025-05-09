@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 interface AttachedFilesProps {
-  chatUserDetails: any;
+  chatContactDetails: any;
 }
-const AttachedFiles = ({ chatUserDetails }: AttachedFilesProps) => {
+const AttachedFiles = ({ chatContactDetails }: AttachedFilesProps) => {
   return (
     <div>
       <div>
