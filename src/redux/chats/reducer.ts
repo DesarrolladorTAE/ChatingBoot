@@ -1,18 +1,23 @@
 // types
 import { ChatsActionTypes, ChatsState } from "./types";
+import type { Contact, ConversationTicket, Message } from "../../data";
 
 export const INIT_STATE: ChatsState = {
   favourites: [],
   directMessages: [],
   channels: [],
   selectedChat: null,
-  chatContactDetails: {},
-  chatUserConversations: {},
-  selectedConversation: null, // ✅ << Añadido aquí
+  chatContactDetails: {} as Contact,
+
+  conversations: [], // ✅ nuevo estado
+
+  selectedConversation: null,
   isOpenUserDetails: false,
   channelDetails: {},
   archiveContacts: [],
+  chatUserConversations: {}, // ← opcional si planeas migrarlo
 };
+
 
 const Chats = (state = INIT_STATE, action: any) => {
   switch (action.type) {

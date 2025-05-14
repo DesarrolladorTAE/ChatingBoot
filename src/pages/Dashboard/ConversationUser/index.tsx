@@ -116,7 +116,7 @@ const Index = ({ isChannel }: IndexProps) => {
       isUserMessagesDeleted ||
       isImageDeleted
     ) {
-      dispatch(getChatUserConversations(chatContactDetails.id));
+      dispatch(getChatUserConversations());
     }
   }, [
     dispatch,

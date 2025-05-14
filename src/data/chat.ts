@@ -13,6 +13,46 @@ export interface UserTypes {
     status?: STATUS_TYPES;
   };
 }
+
+export type Contact = {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  phone: string;
+  profile_image?: string;
+};
+
+export type Agent = {
+  id: number;
+  name: string;
+};
+
+export type ConversationTicket = {
+  id: number;
+  contact: Contact;
+  agent?: Agent;
+  created_at: string;
+  updated_at: string;
+  [key: string]: any;
+};
+
+export type MessageMeta = {
+  sender: string | number;
+  receiver: string | number;
+  sent: boolean;
+  received: boolean;
+  read: boolean;
+};
+
+export type Message = {
+  mId: string | number;
+  text: string;
+  time: string;
+  isFromMe: boolean;
+  meta: MessageMeta;
+  attachments?: any[]; // Tipar si ya tienes estructura
+};
+
 let favourites: Array<UserTypes> = [
   {
     ...contacts[4],

@@ -1,3 +1,5 @@
+import type { Contact, ConversationTicket, Message } from "../../data";
+
 export enum ChatsActionTypes {
   API_RESPONSE_SUCCESS = "@@chats/API_RESPONSE_SUCCESS",
   API_RESPONSE_ERROR = "@@chats/API_RESPONSE_ERROR",
@@ -33,14 +35,23 @@ export interface ChatsState {
   favourites: Array<any>;
   directMessages: Array<any>;
   channels: Array<any>;
+
   selectedChat: string | number | null;
-  chatContactDetails: object;
-  chatUserConversations: {};
+  chatContactDetails: Contact;
+
+  // ✅ NUEVO: lista de todas las conversaciones
+  conversations: ConversationTicket[];
+
+  // 💬 Chat activo (mensajes + contacto)
   selectedConversation: {
-    messages: Array<any>;
-    contact: any;
+    messages: Message[];
+    contact: Contact;
   } | null;
+
   isOpenUserDetails: boolean;
   channelDetails: object;
   archiveContacts: Array<any>;
+
+  // Puedes ir eliminando esto si ya no se usa
+  chatUserConversations: any;
 }

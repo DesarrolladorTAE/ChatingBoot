@@ -110,7 +110,7 @@ const Index = (props: IndexProps) => {
     } else {
       dispatch(getchatContactDetails(id));
     }
-    dispatch(getChatUserConversations(id));
+    dispatch(getChatUserConversations());
     dispatch(changeSelectedChat(id));
   };
 

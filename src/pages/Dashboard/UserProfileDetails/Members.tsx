@@ -63,7 +63,7 @@ const Member = ({ member }: GroupProps) => {
     } else {
       dispatch(getchatContactDetails(id));
     }
-    dispatch(getChatUserConversations(id));
+    dispatch(getChatUserConversations());
     dispatch(changeSelectedChat(id));
   };
 

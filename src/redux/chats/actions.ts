@@ -1,4 +1,5 @@
 import { ChatsActionTypes } from "./types";
+import type { ConversationTicket } from "../../data";
 
 // common success
 export const chatsApiResponseSuccess = (actionType: string, data: any) => ({
@@ -20,9 +21,17 @@ export const getFavourites = () => ({
 //   payload: conversationId,
 // });
 
-export const getDirectMessages = (conversationId: string | number) => ({
+// export const getDirectMessages = (conversationId: string | number) => ({
+//   type: ChatsActionTypes.GET_DIRECT_MESSAGES,
+//   payload: conversationId,
+// });
+
+export const getDirectMessages = (payload: {
+  id: number | string;
+  contact: ConversationTicket["contact"];
+}) => ({
   type: ChatsActionTypes.GET_DIRECT_MESSAGES,
-  payload: conversationId,
+  payload,
 });
 
 export const getChannels = () => ({
@@ -62,9 +71,13 @@ export const getchatContactDetails = (selectedChat: string | number | null) => (
 //   payload: selectedChat,
 // });
 
-export const getChatUserConversations = (id: string | number) => ({
+// export const getChatUserConversations = (id: string | number) => ({
+//   type: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+//   payload: id,
+// });
+
+export const getChatUserConversations = () => ({
   type: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-  payload: id,
 });
 
 export const toggleUserDetailsTab = (value: boolean) => ({

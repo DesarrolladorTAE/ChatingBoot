@@ -165,7 +165,7 @@ useEffect(() => {
       dispatch(getchatContactDetails(id));
     }
     dispatch(readConversation(id));
-    dispatch(getChatUserConversations(id));
+    dispatch(getChatUserConversations());
     dispatch(changeSelectedChat(id));
 
   };

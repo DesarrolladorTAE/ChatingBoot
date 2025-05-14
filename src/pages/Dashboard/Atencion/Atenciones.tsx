@@ -13,6 +13,10 @@ import classnames from "classnames";
 import { useProfile, useRedux } from "../../../hooks";
 import ConversationWithRedux from "./ConversationWithRedux";
 import { ChatsActionTypes } from "../../../redux/chats/types";
+import {
+  getChatUserConversations,
+  getDirectMessages,
+} from "../../../redux/chats/actions";
 
 const sampleTickets = [
   {
@@ -27,52 +31,54 @@ const sampleTickets = [
   },
 ];
 
+type ConversationTicket = {
+  id: number;
+  contact: {
+    id: number;
+    first_name: string;
+    last_name?: string;
+    phone: string;
+    profile_image?: string;
+  };
+  agent?: {
+    id: number;
+    name: string;
+  };
+  created_at: string;
+  updated_at: string;
+  [key: string]: any; // opcional para permitir otros campos
+};
+
 const Atenciones: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
     "abiertos" | "resultados" | "buscar"
   >("abiertos");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState<any>(null);
+  const [selectedTicket, setSelectedTicket] = useState<ConversationTicket | null>(null);
   const { dispatch } = useRedux();
   const { userProfile } = useProfile();
+  const { useAppSelector } = useRedux();
 
-  const filteredTickets = sampleTickets.filter(ticket =>
-    ticket.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  const tickets = useAppSelector(
+    state => state.Chats.chatUserConversations || [],
   );
+  const filteredTickets = tickets.filter((ticket: ConversationTicket) =>
+  ticket.contact?.first_name.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   const toggleTab = (tab: typeof activeTab) => {
     setActiveTab(tab);
     setSelectedTicket(null);
   };
 
+  const handleSelectTicket = (ticket: ConversationTicket) => {
+    setSelectedTicket(ticket);
+    dispatch(getDirectMessages({ id: ticket.id, contact: ticket.contact }));
+  };
+
   useEffect(() => {
-    if (selectedTicket) {
-      dispatch({
-        type: ChatsActionTypes.API_RESPONSE_SUCCESS,
-        payload: {
-          actionType: ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-          data: {
-            messages: [
-              {
-                mId: 101,
-                text: "Hola desde Redux!",
-                time: new Date().toISOString(),
-                isFromMe: false,
-                meta: {
-                  sent: true,
-                  received: true,
-                  read: true,
-                  sender: "cliente",
-                  receiver: "agente",
-                },
-              },
-            ],
-            contact: selectedTicket,
-          },
-        },
-      });
-    }
-  }, [selectedTicket, dispatch]);
+    dispatch(getChatUserConversations());
+  }, [dispatch]);
 
   return (
     <div className="d-flex" style={{ height: "100%" }}>
@@ -135,11 +141,11 @@ const Atenciones: React.FC = () => {
 
         <div style={{ height: "calc(100% - 150px)", overflowY: "auto" }}>
           {filteredTickets.length > 0 ? (
-            filteredTickets.map(ticket => (
+            filteredTickets.map((ticket: ConversationTicket) => (
               <Card
                 key={ticket.id}
                 className="m-2"
-                onClick={() => setSelectedTicket(ticket)}
+                onClick={() => handleSelectTicket(ticket)}
                 style={{ cursor: "pointer" }}
               >
                 <CardBody>

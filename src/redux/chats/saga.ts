@@ -50,20 +50,42 @@ function* getFavourites() {
   }
 }
 
+// function* getDirectMessages({
+//   payload: conversationId,
+// }: {
+//   payload: string | number;
+// }): Generator<any, void, any> {
+//   try {
+//     const response: any = yield call(getDirectMessagesApi, conversationId);
+//     yield put(
+//       chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, response),
+//     );
+//   } catch (error: any) {
+//     yield put(
+//       chatsApiResponseError(ChatsActionTypes.GET_DIRECT_MESSAGES, error),
+//     );
+//   }
+// }
+
 function* getDirectMessages({
-  payload: conversationId,
+  payload: conversation,
 }: {
-  payload: string | number;
+  payload: { id: number; contact: any };
 }): Generator<any, void, any> {
   try {
-    const response: any = yield call(getDirectMessagesApi, conversationId);
-    yield put(
-      chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, response),
-    );
+    const messages = yield call(getDirectMessagesApi, conversation.id);
+    yield put(chatsApiResponseSuccess(
+      ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+      {
+        messages,
+        contact: conversation.contact || { id: conversation.id }, // puedes enriquecer luego
+      }
+    ));
   } catch (error: any) {
-    yield put(
-      chatsApiResponseError(ChatsActionTypes.GET_DIRECT_MESSAGES, error),
-    );
+    yield put(chatsApiResponseError(
+      ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+      error.response?.data || error.message
+    ));
   }
 }
 
@@ -115,23 +137,33 @@ function* getchatContactDetails({ payload: id }: any) {
   }
 }
 
+// function* getChatUserConversations(): Generator<any, void, any> {
+//   try {
+//     const response: any = yield call(getChatUserConversationsApi);
+//     yield put(
+//       chatsApiResponseSuccess(
+//         ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+//         response,
+//       ),
+//     );
+//   } catch (error: any) {
+//     yield put(
+//       chatsApiResponseError(
+//         ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+//         error,
+//       ),
+//     );
+//   }
+// }
+
 function* getChatUserConversations(): Generator<any, void, any> {
-  try {
-    const response: any = yield call(getChatUserConversationsApi);
-    yield put(
-      chatsApiResponseSuccess(
-        ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-        response,
-      ),
-    );
-  } catch (error: any) {
-    yield put(
-      chatsApiResponseError(
-        ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-        error,
-      ),
-    );
-  }
+  const response = yield call(getChatUserConversationsApi); // sin id
+  yield put(
+    chatsApiResponseSuccess(
+      ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+      response.data // o solo `response` si ya lo retornas limpio
+    )
+  );
 }
 
 function* onSendMessage({ payload: data }: any) {
@@ -286,6 +318,24 @@ function* toggleArchiveContact({ payload: id }: any) {
   }
 }
 
+// function* readConversation({
+//   payload: id,
+// }: {
+//   payload: string | number;
+// }): Generator<any, void, any> {
+//   try {
+//     const response: any = yield call(readConversationApi, id);
+//     yield put(
+//       chatsApiResponseSuccess(ChatsActionTypes.READ_CONVERSATION, response),
+//     );
+//     yield put(getDirectMessagesAction(id)); // ✅ ahora sí le pasas el conversationId correcto
+//     yield put(getFavouritesAction());
+//     yield put(getChannelsAction());
+//   } catch (error: any) {
+//     yield put(chatsApiResponseError(ChatsActionTypes.READ_CONVERSATION, error));
+//   }
+// }
+
 function* readConversation({
   payload: id,
 }: {
@@ -293,10 +343,17 @@ function* readConversation({
 }): Generator<any, void, any> {
   try {
     const response: any = yield call(readConversationApi, id);
+
     yield put(
       chatsApiResponseSuccess(ChatsActionTypes.READ_CONVERSATION, response),
     );
-    yield put(getDirectMessagesAction(id)); // ✅ ahora sí le pasas el conversationId correcto
+
+    // 👇 Aquí extraemos contact desde el response de la conversación
+    const conversation = response;
+    const contact = conversation.contact;
+
+    yield put(getDirectMessagesAction({ id, contact }));
+
     yield put(getFavouritesAction());
     yield put(getChannelsAction());
   } catch (error: any) {
