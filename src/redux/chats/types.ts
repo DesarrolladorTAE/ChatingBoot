@@ -53,5 +53,5 @@ export interface ChatsState {
   archiveContacts: Array<any>;
 
   // Puedes ir eliminando esto si ya no se usa
-  chatUserConversations: any;
+  chatUserConversations?: any; // ✅ hazlo opcional o elimínalo si ya no se usará
 }

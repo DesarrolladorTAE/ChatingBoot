@@ -54,17 +54,20 @@ const Atenciones: React.FC = () => {
     "abiertos" | "resultados" | "buscar"
   >("abiertos");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState<ConversationTicket | null>(null);
+  const [selectedTicket, setSelectedTicket] =
+    useState<ConversationTicket | null>(null);
   const { dispatch } = useRedux();
   const { userProfile } = useProfile();
   const { useAppSelector } = useRedux();
 
-  const tickets = useAppSelector(
-    state => state.Chats.chatUserConversations || [],
+  const tickets = useAppSelector(state =>
+    Array.isArray(state.Chats.conversations) ? state.Chats.conversations : [],
   );
-  const filteredTickets = tickets.filter((ticket: ConversationTicket) =>
-  ticket.contact?.first_name.toLowerCase().includes(searchTerm.toLowerCase())
-);
+
+  const filteredTickets = (tickets || []).filter(
+    (ticket: ConversationTicket) =>
+      !!ticket && !!ticket.id && ticket.contact && ticket.contact.first_name,
+  );
 
   const toggleTab = (tab: typeof activeTab) => {
     setActiveTab(tab);
@@ -72,6 +75,11 @@ const Atenciones: React.FC = () => {
   };
 
   const handleSelectTicket = (ticket: ConversationTicket) => {
+    console.log("🏷️ Ticket seleccionado:", ticket);
+    if (!ticket || !ticket.id) {
+      console.error("🚨 Intento de seleccionar ticket inválido", ticket);
+      return;
+    }
     setSelectedTicket(ticket);
     dispatch(getDirectMessages({ id: ticket.id, contact: ticket.contact }));
   };
@@ -140,20 +148,30 @@ const Atenciones: React.FC = () => {
         </TabContent>
 
         <div style={{ height: "calc(100% - 150px)", overflowY: "auto" }}>
-          {filteredTickets.length > 0 ? (
-            filteredTickets.map((ticket: ConversationTicket) => (
-              <Card
-                key={ticket.id}
-                className="m-2"
-                onClick={() => handleSelectTicket(ticket)}
-                style={{ cursor: "pointer" }}
-              >
-                <CardBody>
-                  <strong>{ticket.name}</strong>
-                  <div className="small text-muted">{ticket.lastMessage}</div>
-                </CardBody>
-              </Card>
-            ))
+          {Array.isArray(filteredTickets) &&
+          filteredTickets.filter(t => t && t.id).length > 0 ? (
+            filteredTickets
+              .filter(ticket => !!ticket && !!ticket.id) // 🛡️ Solo válidos
+              .map((ticket: ConversationTicket) => (
+                <Card
+                  key={ticket.id}
+                  className="m-2"
+                  onClick={() => handleSelectTicket(ticket)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <CardBody>
+                    <strong>
+                      {ticket.contact?.first_name ?? "Sin nombre"}
+                    </strong>
+                    <div className="small text-muted">
+                      Última actualización:{" "}
+                      {ticket.updated_at
+                        ? new Date(ticket.updated_at).toLocaleString()
+                        : "Sin fecha"}
+                    </div>
+                  </CardBody>
+                </Card>
+              ))
           ) : (
             <div className="p-3 text-center text-muted">
               No se encontraron tickets.

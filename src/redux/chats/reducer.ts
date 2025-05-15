@@ -15,13 +15,13 @@ export const INIT_STATE: ChatsState = {
   isOpenUserDetails: false,
   channelDetails: {},
   archiveContacts: [],
-  chatUserConversations: {}, // ← opcional si planeas migrarlo
+  // chatUserConversations: {}, // ← opcional si planeas migrarlo
 };
-
 
 const Chats = (state = INIT_STATE, action: any) => {
   switch (action.type) {
     case ChatsActionTypes.API_RESPONSE_SUCCESS:
+      console.log("🛑 Reducer recibe", action.payload.actionType, action.payload.data);
       switch (action.payload.actionType) {
         case ChatsActionTypes.GET_FAVOURITES:
           return {
@@ -33,11 +33,11 @@ const Chats = (state = INIT_STATE, action: any) => {
         case ChatsActionTypes.GET_DIRECT_MESSAGES:
           return {
             ...state,
-            directMessages: action.payload.data,
+            selectedConversation: action.payload, // <<--- aquí guardas { messages, contact }
             isDirectMessagesFetched: true,
             getDirectMessagesLoading: false,
-            isContactsAdded: false,
           };
+
         case ChatsActionTypes.GET_CHANNELS:
           return {
             ...state,
@@ -65,19 +65,28 @@ const Chats = (state = INIT_STATE, action: any) => {
             isUserDetailsFetched: true,
             getUserDetailsLoading: false,
           };
+        // case ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS:
+        //   return {
+        //     ...state,
+        //     chatUserConversations: action.payload.data,
+        //     isUserConversationsFetched: true,
+        //     getUserConversationsLoading: false,
+        //     isUserMessageSent: false,
+        //     isMessageDeleted: false,
+        //     isMessageForwarded: false,
+        //     selectedConversation: {
+        //       messages: action.payload.data.messages,
+        //       contact: action.payload.data.contact,
+        //     },
+        //   };
+
         case ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS:
+          console.log("🤖 conversations recibidas:", action.payload);
           return {
             ...state,
-            chatUserConversations: action.payload.data,
+            conversations: action.payload, // ✅ Aquí guardas el array de conversaciones
             isUserConversationsFetched: true,
             getUserConversationsLoading: false,
-            isUserMessageSent: false,
-            isMessageDeleted: false,
-            isMessageForwarded: false,
-            selectedConversation: {
-              messages: action.payload.data.messages,
-              contact: action.payload.data.contact,
-            },
           };
 
         case ChatsActionTypes.ON_SEND_MESSAGE:
@@ -89,13 +98,13 @@ const Chats = (state = INIT_STATE, action: any) => {
         case ChatsActionTypes.RECEIVE_MESSAGE_FROM_USER:
           return {
             ...state,
-            chatUserConversations: action.payload.data,
+            // chatUserConversations: action.payload.data,
           };
         case ChatsActionTypes.READ_MESSAGE:
           return {
             ...state,
             isMessageRead: true,
-            chatUserConversations: action.payload.data,
+            // chatUserConversations: action.payload.data,
           };
         case ChatsActionTypes.DELETE_MESSAGE:
           return {
@@ -186,11 +195,11 @@ const Chats = (state = INIT_STATE, action: any) => {
         case ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS:
           return {
             ...state,
-            chatUserConversations: {},
+            conversations: [], // ✅ en caso de error, vacía el array
             isUserConversationsFetched: false,
             getUserConversationsLoading: false,
-            isUserMessageSent: false,
           };
+
         case ChatsActionTypes.ON_SEND_MESSAGE:
           return {
             ...state,

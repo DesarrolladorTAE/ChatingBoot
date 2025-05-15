@@ -31,7 +31,8 @@ import {
   showSuccessNotification,
   showErrorNotification,
 } from "../../helpers/notifications";
-
+import type { AxiosResponse } from "axios";
+import type { ConversationTicket } from "../../data";
 //actions
 import {
   getDirectMessages as getDirectMessagesAction,
@@ -73,19 +74,27 @@ function* getDirectMessages({
   payload: { id: number; contact: any };
 }): Generator<any, void, any> {
   try {
+    console.log("✅ getDirectMessages recibe payload:", conversation);
+    if (!conversation || !conversation.id) {
+      throw new Error("conversation o conversation.id es undefined");
+    }
     const messages = yield call(getDirectMessagesApi, conversation.id);
-    yield put(chatsApiResponseSuccess(
-      ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-      {
+    console.log("✅ getDirectMessagesApi devuelve:", messages);
+
+    yield put(
+      chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, {
         messages,
-        contact: conversation.contact || { id: conversation.id }, // puedes enriquecer luego
-      }
-    ));
+        contact: conversation.contact || { id: conversation.id },
+      }),
+    );
   } catch (error: any) {
-    yield put(chatsApiResponseError(
-      ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-      error.response?.data || error.message
-    ));
+    console.error("❌ Error en saga getDirectMessages:", error);
+    yield put(
+      chatsApiResponseError(
+        ChatsActionTypes.GET_DIRECT_MESSAGES,
+        error.response?.data || error.message,
+      ),
+    );
   }
 }
 
@@ -157,13 +166,35 @@ function* getchatContactDetails({ payload: id }: any) {
 // }
 
 function* getChatUserConversations(): Generator<any, void, any> {
-  const response = yield call(getChatUserConversationsApi); // sin id
-  yield put(
-    chatsApiResponseSuccess(
-      ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
-      response.data // o solo `response` si ya lo retornas limpio
-    )
-  );
+  try {
+    const response = yield call(getChatUserConversationsApi);
+    // 🔥 Filtra la data ANTES de mandarla al reducer
+    const cleanedData = Array.isArray(response.data)
+      ? response.data.filter(
+          (c: any) =>
+            c &&
+            typeof c === "object" &&
+            !!c.id &&
+            c.contact &&
+            c.contact.first_name,
+        )
+      : [];
+
+    yield put(
+      chatsApiResponseSuccess(
+        ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+        cleanedData,
+      ),
+    );
+  } catch (error: any) {
+    console.error("Error en saga getChatUserConversations: ", error);
+    yield put(
+      chatsApiResponseError(
+        ChatsActionTypes.GET_CHAT_USER_CONVERSATIONS,
+        error.message || "Error inesperado en la saga.",
+      ),
+    );
+  }
 }
 
 function* onSendMessage({ payload: data }: any) {
