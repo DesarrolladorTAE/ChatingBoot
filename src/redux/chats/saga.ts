@@ -175,8 +175,11 @@ function* getChatUserConversations(): Generator<any, void, any> {
             c &&
             typeof c === "object" &&
             !!c.id &&
-            c.contact &&
-            c.contact.first_name,
+            !!(
+              c.contact &&
+              typeof c.contact === "object" &&
+              c.contact.first_name
+            ),
         )
       : [];
 
