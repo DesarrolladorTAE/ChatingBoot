@@ -15,7 +15,6 @@ const selectChatState = createSelector(
   }),
 );
 
-
 interface Props {
   selectedTicket: any;
 }
@@ -47,6 +46,9 @@ const ConversationWithRedux = ({ selectedTicket }: Props) => {
   ) => {
     dispatch(deleteImage(chatContactDetails.id, messageId, imageId));
   };
+
+  console.log("🔎 Mensajes que llegan del store:", messages);
+  console.log("🧑 Contacto en chatContactDetails:", chatContactDetails);
 
   return (
     <ConversationPanel

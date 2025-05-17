@@ -64,10 +64,14 @@ const Atenciones: React.FC = () => {
     Array.isArray(state.Chats.conversations) ? state.Chats.conversations : [],
   );
 
+  console.log("🎫 Tickets en Atenciones:", tickets);
+
   const filteredTickets = (tickets || []).filter(
     (ticket: ConversationTicket) =>
       !!ticket && !!ticket.id && ticket.contact && ticket.contact.first_name,
   );
+
+  console.log("🟡 filteredTickets:", filteredTickets);
 
   const toggleTab = (tab: typeof activeTab) => {
     setActiveTab(tab);

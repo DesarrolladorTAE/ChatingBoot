@@ -304,7 +304,8 @@
     .ctext-content {
       word-wrap: break-word;
       word-break: break-word;
-      color: $chat-text-color;
+      color: #000 !important; // Negro
+      // color: $chat-text-color;
     }
 
     .ctext-wrap-content {

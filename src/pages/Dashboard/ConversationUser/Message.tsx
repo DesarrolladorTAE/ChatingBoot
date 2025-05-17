@@ -340,7 +340,7 @@ const Message = ({
     message: message,
     isFromMe: isFromMe,
     hasImages: message.image && message.image.length,
-    hasText: message.text,
+    hasText: message.content,
   });
   const { userProfile } = useProfile();
   if (!userProfile) {
@@ -349,7 +349,7 @@ const Message = ({
   
   const hasImages = message.image && message.image.length;
   const hasAttachments = message.attachments && message.attachments.length;
-  const hasText = message.text;
+  const hasText = message.content;
   const isTyping = false;
 
   const chatUserFullName = chatContactDetails.firstName
@@ -384,7 +384,10 @@ const Message = ({
       ? chatContactDetails.profileImage || imagePlaceholder
       : imagePlaceholder;
 
-  const date = formateDate(message.time, "hh:mmaaa");
+  const date = formateDate(
+  message.sent_at ? message.sent_at.replace(" ", "T") : "",
+  "hh:mmaaa"
+);
   const isSent = message.meta.sent;
   const isReceived = message.meta.received;
   const isRead = message.meta.read;
@@ -435,10 +438,10 @@ const Message = ({
         </div>
 
         <div className="user-chat-content">
-          {hasImages && message.text && (
+          {hasImages && message.content && (
             <div className="ctext-wrap">
               <div className="ctext-wrap-content">
-                <p className="mb-0 ctext-content">{message.text}</p>
+                <p className="mb-0 ctext-content">{message.content}</p>
               </div>
             </div>
           )}
@@ -489,7 +492,7 @@ const Message = ({
                   )}
 
                   {hasText && (
-                    <p className="mb-0 ctext-content">{message.text}</p>
+                    <p className="mb-0 ctext-content">{message.content}</p>
                   )}
 
                   {/* typing start */}

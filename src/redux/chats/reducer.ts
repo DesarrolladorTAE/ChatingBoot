@@ -21,7 +21,11 @@ export const INIT_STATE: ChatsState = {
 const Chats = (state = INIT_STATE, action: any) => {
   switch (action.type) {
     case ChatsActionTypes.API_RESPONSE_SUCCESS:
-      console.log("🛑 Reducer recibe", action.payload.actionType, action.payload.data);
+      console.log(
+        "🛑 Reducer recibe",
+        action.payload.actionType,
+        action.payload.data,
+      );
       switch (action.payload.actionType) {
         case ChatsActionTypes.GET_FAVOURITES:
           return {
@@ -31,9 +35,13 @@ const Chats = (state = INIT_STATE, action: any) => {
             getFavouritesLoading: false,
           };
         case ChatsActionTypes.GET_DIRECT_MESSAGES:
+          console.log("🎯 Reducer recibe:", action.payload);
           return {
             ...state,
-            selectedConversation: action.payload, // <<--- aquí guardas { messages, contact }
+            selectedConversation: {
+              messages: action.payload.data?.messages ?? [],
+              contact: action.payload.data?.contact ?? {},
+            },
             isDirectMessagesFetched: true,
             getDirectMessagesLoading: false,
           };
@@ -84,7 +92,7 @@ const Chats = (state = INIT_STATE, action: any) => {
           console.log("🤖 conversations recibidas:", action.payload);
           return {
             ...state,
-            conversations: action.payload, // ✅ Aquí guardas el array de conversaciones
+            conversations: action.payload.data, // ✅ SOLO el array
             isUserConversationsFetched: true,
             getUserConversationsLoading: false,
           };

@@ -75,15 +75,23 @@ function* getDirectMessages({
 }): Generator<any, void, any> {
   try {
     console.log("✅ getDirectMessages recibe payload:", conversation);
-    if (!conversation || !conversation.id) {
+    if (!conversation || typeof conversation !== "object" || !conversation.id) {
+      console.error("🚨 Acción mal enviada:", conversation);
       throw new Error("conversation o conversation.id es undefined");
     }
-    const messages = yield call(getDirectMessagesApi, conversation.id);
+    const messages: any = yield call(getDirectMessagesApi, conversation.id);
     console.log("✅ getDirectMessagesApi devuelve:", messages);
+
+    // 🔥 MAPEA LOS MENSAJES A LA ESTRUCTURA QUE TU COMPONENTE ESPERA
+    const mappedMessages = (Array.isArray(messages) ? messages : []).map(msg => ({
+      ...msg,
+      mId: msg.id, // El componente usa mId como key
+      meta: { sender: msg.sender_id }, // El componente usa meta.sender para saber si es "de mi"
+    }));
 
     yield put(
       chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, {
-        messages,
+        messages: mappedMessages,
         contact: conversation.contact || { id: conversation.id },
       }),
     );
@@ -92,7 +100,7 @@ function* getDirectMessages({
     yield put(
       chatsApiResponseError(
         ChatsActionTypes.GET_DIRECT_MESSAGES,
-        error.response?.data || error.message,
+        (error as any).response?.data || (error as any).message,
       ),
     );
   }
@@ -168,9 +176,11 @@ function* getchatContactDetails({ payload: id }: any) {
 function* getChatUserConversations(): Generator<any, void, any> {
   try {
     const response = yield call(getChatUserConversationsApi);
-    // 🔥 Filtra la data ANTES de mandarla al reducer
-    const cleanedData = Array.isArray(response.data)
-      ? response.data.filter(
+    console.log("🟢 Respuesta cruda getChatUserConversationsApi:", response);
+
+    // CORRIGE: Usa response directamente
+    const cleanedData = Array.isArray(response)
+      ? response.filter(
           (c: any) =>
             c &&
             typeof c === "object" &&
