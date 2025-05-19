@@ -79,20 +79,25 @@ function* getDirectMessages({
       console.error("🚨 Acción mal enviada:", conversation);
       throw new Error("conversation o conversation.id es undefined");
     }
-    const messages: any = yield call(getDirectMessagesApi, conversation.id);
-    console.log("✅ getDirectMessagesApi devuelve:", messages);
 
-    // 🔥 MAPEA LOS MENSAJES A LA ESTRUCTURA QUE TU COMPONENTE ESPERA
-    const mappedMessages = (Array.isArray(messages) ? messages : []).map(msg => ({
+    // Aquí llamas tu API y obtienes el objeto completo de la conversación
+    const response: any = yield call(getDirectMessagesApi, conversation.id);
+    console.log("✅ getDirectMessagesApi devuelve:", response);
+
+    // Mapear los mensajes correctamente desde response.messages
+    const mappedMessages = (
+      Array.isArray(response.messages) ? response.messages : []
+    ).map((msg: any) => ({
       ...msg,
-      mId: msg.id, // El componente usa mId como key
-      meta: { sender: msg.sender_id }, // El componente usa meta.sender para saber si es "de mi"
+      mId: msg.id,
+      meta: { sender: msg.sender_id },
     }));
 
     yield put(
       chatsApiResponseSuccess(ChatsActionTypes.GET_DIRECT_MESSAGES, {
+        id: response.id, // El id correcto de la conversación
         messages: mappedMessages,
-        contact: conversation.contact || { id: conversation.id },
+        contact: response.contact || { id: response.id },
       }),
     );
   } catch (error: any) {

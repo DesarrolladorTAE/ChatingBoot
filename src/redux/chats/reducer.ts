@@ -39,6 +39,7 @@ const Chats = (state = INIT_STATE, action: any) => {
           return {
             ...state,
             selectedConversation: {
+              id: action.payload.data?.id,  
               messages: action.payload.data?.messages ?? [],
               contact: action.payload.data?.contact ?? {},
             },

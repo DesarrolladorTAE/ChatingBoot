@@ -50,6 +50,14 @@ const ConversationWithRedux = ({ selectedTicket }: Props) => {
   console.log("🔎 Mensajes que llegan del store:", messages);
   console.log("🧑 Contacto en chatContactDetails:", chatContactDetails);
 
+  if (!userProfile || !userProfile.uid) {
+    return (
+      <div className="text-center text-muted py-5">
+        Debes iniciar sesión o seleccionar un usuario válido.
+      </div>
+    );
+  }
+
   return (
     <ConversationPanel
       messages={messages}

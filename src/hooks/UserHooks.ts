@@ -23,7 +23,12 @@ const useProfile = () => {
   const image = settings.basicDetails && settings.basicDetails.profile;
 
   const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<any>(null);
+
+  // const [userProfile, setUserProfile] = useState<any>(null);}
+
+  // Cambia a objeto vacío
+  const [userProfile, setUserProfile] = useState<any>({});
+
 
   useEffect(() => {
     const userProfileSession = getLoggedinUser();
@@ -32,9 +37,16 @@ const useProfile = () => {
     console.log("👤 getLoggedinUser():", userProfileSession);
 
     if (userProfileSession) {
-      setUserProfile({ ...userProfileSession, profileImage: image });
-    } else {
-      setUserProfile(null);
+  setUserProfile({
+    ...userProfileSession,
+    uid: userProfileSession.uid || userProfileSession.id,
+    profileImage: image,
+  });
+}else {
+      // setUserProfile(null);
+
+      // Pon objeto vacío en vez de null
+      setUserProfile({});
     }
 
     setLoading(false); // ✅ aquí marcamos que terminó de cargar
