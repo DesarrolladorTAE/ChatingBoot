@@ -16,9 +16,11 @@ export interface ImageTypes {
 }
 export interface MessagesTypes {
   mId: number;
+  type: 'text' | 'file' | 'sticker'; // Agregamos el tipo de mensaje (text, file o sticker)
   text?: string;
   time: string;
-  content: string; // <-- Agrega esto
+  content: string;
+  download_link?: string; // Agregamos el enlace de descarga para los archivos o stickers
   meta: {
     receiver: string | number;
     sender: string | number;
@@ -26,14 +28,15 @@ export interface MessagesTypes {
     sent: boolean;
     received: boolean;
     read: boolean;
-    isForwarded?: boolean;
+    isForwarded?: boolean;  // Añadir isForwarded
   };
   sent_at: string;
   attachments?: AttachmentTypes[];
-  image?: ImageTypes[];
-  newimage?: ImageTypes[];
-  replyOf?: MessagesTypes;
+  image?: ImageTypes[]; // Si es una imagen
+  newimage?: ImageTypes[]; // Si es una nueva imagen
+  replyOf?: MessagesTypes; // Mensaje al que se está respondiendo
 }
+
 export interface ConversationTypes {
   conversationId: string | number;
   userId: string;

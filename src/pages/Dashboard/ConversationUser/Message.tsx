@@ -172,18 +172,16 @@ const Image = ({
   const onDelete = () => {
     onDeleteImg(image.id);
   };
-  const onClickReply = () => {
-    console.log("Se hizo clic en Reply para la imagen con id:", image.id);
-    let multiimages: any = message["image"];
 
+  const onClickReply = () => {
+    let multiimages: any = message["image"];
     let results = multiimages.filter(
       (multiimage: any) => multiimage.id === image.id,
     );
-
     message["newimage"] = results;
-
     onSetReplyData(message);
   };
+
   return (
     <React.Fragment>
       <div className="message-img-list">
@@ -193,7 +191,12 @@ const Image = ({
             to={"#"}
             onClick={() => onImageClick(index)}
           >
-            <img src={image.downloadLink} alt="" className="rounded border" />
+            <img
+              src={image.downloadLink}
+              alt="image"
+              className="rounded border"
+            />{" "}
+            {/* Asegúrate de usar downloadLink */}
           </Link>
         </div>
         <ImageMoreMenu
@@ -213,7 +216,7 @@ interface ImagesProps {
 }
 const Images = ({
   message,
-  images,
+  images = [], // Asignamos un array vacío por defecto si images es undefined
   onSetReplyData,
   onDeleteImg,
 }: ImagesProps) => {
@@ -230,12 +233,12 @@ const Images = ({
   return (
     <>
       <div className="message-img mb-0">
-        {(images || []).map((image: ImageTypes, key: number) => (
+        {images.map((image: ImageTypes, index: number) => (
           <Image
+            key={image.id} // Usamos un ID único para cada imagen
             message={message}
             image={image}
-            key={key}
-            index={key}
+            index={index} // Pasamos el índice como propiedad
             onImageClick={onImageClick}
             onSetReplyData={onSetReplyData}
             onDeleteImg={onDeleteImg}
@@ -317,7 +320,7 @@ const Typing = () => {
 };
 interface MessageProps {
   message: MessagesTypes;
-    chatContactDetails: any;
+  chatContactDetails: any;
   onDelete: (messageId: string | number) => any;
   onSetReplyData: (reply: null | MessagesTypes | undefined) => void;
   isFromMe: boolean;
@@ -336,66 +339,26 @@ const Message = ({
   isChannel,
   onDeleteImage,
 }: MessageProps) => {
-  console.log("Renderizando Message", {
-    message: message,
-    isFromMe: isFromMe,
-    hasImages: message.image && message.image.length,
-    hasText: message.content,
-  });
   const { userProfile } = useProfile();
+
+  // Verificamos si userProfile existe
   if (!userProfile) {
-    console.warn("⚠️ userProfile llegó como null o undefined en Message.tsx", { message });
+    console.warn("⚠️ userProfile llegó como null o undefined en Message.tsx", {
+      message,
+    });
+    return null;
   }
-  
-  const hasImages = message.image && message.image.length;
-  const hasAttachments = message.attachments && message.attachments.length;
+
+  const isSticker = message.type === "sticker";
+  const hasImages = message.image && message.image.length > 0;
   const hasText = message.content;
-  const isTyping = false;
-
-  const chatUserFullName = chatContactDetails.firstName
-    ? `${chatContactDetails.firstName} ${chatContactDetails.lastName}`
-    : "-";
-
-    const myProfile = userProfile && userProfile.profileImage
-    ? userProfile.profileImage
-    : imagePlaceholder;  
-  // const channeluserProfile =
-  //   message.meta.userData && message.meta.userData.profileImage
-  //     ? message.meta.userData.profileImage
-  //     : imagePlaceholder;
-  const channeluserProfile =
-    message.meta.userData?.profileImage || imagePlaceholder;
-  // const chatUserprofile = chatContactDetails.profileImage
-  //   ? chatContactDetails.profileImage
-  //   : imagePlaceholder;
-  const chatUserprofile =
-    chatContactDetails &&
-    typeof chatContactDetails === "object" &&
-    "profileImage" in chatContactDetails
-      ? chatContactDetails.profileImage || imagePlaceholder
-      : imagePlaceholder;
-
-  // const profile = isChannel ? channeluserProfile : chatUserprofile;
-  const profile = isChannel
-    ? (message.meta.userData?.profileImage ?? imagePlaceholder)
-    : chatContactDetails &&
-        typeof chatContactDetails === "object" &&
-        "profileImage" in chatContactDetails
-      ? chatContactDetails.profileImage || imagePlaceholder
-      : imagePlaceholder;
+  const hasAttachments = message.attachments && message.attachments.length;
 
   const date = formateDate(
-  message.sent_at ? message.sent_at.replace(" ", "T") : "",
-  "hh:mmaaa"
-);
-  const isSent = message.meta.sent;
-  const isReceived = message.meta.received;
-  const isRead = message.meta.read;
-  const isForwarded = message.meta.isForwarded;
-  const channdelSenderFullname = message.meta.userData
-    ? `${message.meta.userData.firstName} ${message.meta.userData.lastName}`
-    : "-";
-  const fullName = isChannel ? channdelSenderFullname : chatUserFullName;
+    message.sent_at ? message.sent_at.replace(" ", "T") : "",
+    "hh:mmaaa",
+  );
+
   const onDeleteMessage = () => {
     onDelete(message.mId);
   };
@@ -403,7 +366,6 @@ const Message = ({
   const onClickReply = () => {
     onSetReplyData(message);
   };
-  const isRepliedMessage = message.replyOf;
 
   const onForwardMessage = () => {
     onOpenForward(message);
@@ -413,39 +375,31 @@ const Message = ({
     onDeleteImage(message.mId, imageId);
   };
 
-  if (!chatContactDetails || typeof chatContactDetails !== "object") {
-    console.warn(
-      "⛔ No se puede renderizar Message porque 'chatContactDetails' es inválido:",
-      {
-        message,
-        chatContactDetails,
-      },
-    );
-    return null;
-  }
-
   return (
-    <li
-      className={classnames(
-        "chat-list",
-        { right: isFromMe },
-        { reply: isRepliedMessage },
-      )}
-    >
+    <li className={classnames("chat-list", { right: isFromMe })}>
       <div className="conversation-list">
         <div className="chat-avatar">
-          <img src={isFromMe ? myProfile : profile} alt="" />
+          <img
+            src={
+              isFromMe
+                ? userProfile.profileImage || imagePlaceholder
+                : chatContactDetails?.profileImage || imagePlaceholder
+            }
+            alt="Profile"
+          />
         </div>
 
-        <div className="user-chat-content">
-          {hasImages && message.content && (
-            <div className="ctext-wrap">
-              <div className="ctext-wrap-content">
-                <p className="mb-0 ctext-content">{message.content}</p>
-              </div>
-            </div>
-          )}
-          {isForwarded && (
+        <div
+          className={classnames("user-chat-content", {
+            "bg-light-gray": !isFromMe, // Fondo claro para mensajes recibidos
+            "bg-dark-blue": isFromMe, // Fondo oscuro para mensajes enviados
+            "border-radius": true, // Bordes redondeados
+            "p-2": true, // Padding para espaciado
+            "box-shadow": true, // Sombra alrededor de los mensajes
+          })}
+        >
+          {/* Mensaje reenviado */}
+          {message.meta?.isForwarded && (
             <span
               className={classnames(
                 "me-1",
@@ -468,86 +422,77 @@ const Message = ({
           )}
 
           <div className="ctext-wrap">
-            {/* text message end */}
+            <div className="ctext-wrap-content">
+              {/* Sticker */}
+              {isSticker &&
+                message.attachments &&
+                message.attachments.length > 0 && (
+                  <img
+                    src={message.attachments[0].downloadLink} // Utiliza el link de descarga
+                    alt="Sticker"
+                    className="message-sticker"
+                  />
+                )}
 
-            {/* image message start */}
-            {hasImages ? (
-              <>
+              {/* Texto (solo si no es sticker o tiene contenido específico) */}
+              {hasText && !isSticker && (
+                <p className="mb-0 ctext-content">{message.content}</p>
+              )}
+
+              {/* Imágenes */}
+              {hasImages && (
                 <Images
-                  images={message.image!}
+                  images={message.image || []} // Si message.image es undefined, pasamos un array vacío
                   message={message}
                   onSetReplyData={onSetReplyData}
                   onDeleteImg={onDeleteImg}
                 />
-              </>
-            ) : (
-              <>
-                <div className="ctext-wrap-content">
-                  {isRepliedMessage && (
-                    <RepliedMessage
-                      fullName={fullName}
-                      message={message}
-                      isFromMe={isFromMe}
-                    />
-                  )}
+              )}
 
-                  {hasText && (
-                    <p className="mb-0 ctext-content">{message.content}</p>
-                  )}
-
-                  {/* typing start */}
-                  {isTyping && <Typing />}
-
-                  {/* typing end */}
-                  {/* files message start */}
-                  {hasAttachments && (
-                    <Attachments attachments={message.attachments} />
-                  )}
-                  {/* files message end */}
-                </div>
-                {console.log("Renderizando Menu en mensaje sin imágenes")}
-                <Menu
-                  onForward={onForwardMessage}
-                  onDelete={onDeleteMessage}
-                  onReply={onClickReply}
-                />
-              </>
-            )}
-
-            {/* image message end */}
+              {/* Archivos adjuntos */}
+              {hasAttachments && (
+                <Attachments attachments={message.attachments} />
+              )}
+            </div>
           </div>
-          <div className="conversation-name">
-            {isFromMe ? (
-              <>
-                <span
+
+          {/* Menú para opciones de mensaje */}
+          <Menu
+            onForward={onForwardMessage}
+            onDelete={onDeleteMessage}
+            onReply={onClickReply}
+          />
+        </div>
+
+        <div className="conversation-name">
+          {isFromMe ? (
+            <>
+              <span
+                className={classnames("me-1", {
+                  "text-success": message.meta?.read,
+                })}
+              >
+                <i
                   className={classnames(
-                    "me-1",
-                    { "text-success": isRead },
-                    { "text-muted": (isSent || isReceived) && !isRead },
+                    "bx",
+                    { "bx-check-double": message.meta?.read },
+                    { "bx-check": message.meta?.sent },
                   )}
-                >
-                  <i
-                    className={classnames(
-                      "bx",
-                      { "bx-check-double": isRead || isReceived },
-                      { "bx-check": isSent },
-                    )}
-                  ></i>
-                </span>
-                <small className={classnames("text-muted", "mb-0", "me-2")}>
-                  {date}
-                </small>
-                You
-              </>
-            ) : (
-              <>
-                {fullName}
-                <small className={classnames("text-muted", "mb-0", "ms-2")}>
-                  {date}
-                </small>
-              </>
-            )}
-          </div>
+                ></i>
+              </span>
+              <small className={classnames("text-muted", "mb-0", "me-2")}>
+                {date}
+              </small>
+              You
+            </>
+          ) : (
+            <>
+              {chatContactDetails.firstName}
+              <small className={classnames("text-muted", "mb-0", "ms-2")}>
+                {date}
+              </small>
+            </>
+          )}
         </div>
       </div>
     </li>

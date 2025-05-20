@@ -24,10 +24,10 @@ const useProfile = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // const [userProfile, setUserProfile] = useState<any>(null);}
+  const [userProfile, setUserProfile] = useState<any>(null); 
 
   // Cambia a objeto vacío
-  const [userProfile, setUserProfile] = useState<any>({});
+  // const [userProfile, setUserProfile] = useState<any>({});
 
 
   useEffect(() => {
@@ -43,10 +43,10 @@ const useProfile = () => {
     profileImage: image,
   });
 }else {
-      // setUserProfile(null);
+      setUserProfile(null); // <- Usar null
 
       // Pon objeto vacío en vez de null
-      setUserProfile({});
+      // setUserProfile({});
     }
 
     setLoading(false); // ✅ aquí marcamos que terminó de cargar

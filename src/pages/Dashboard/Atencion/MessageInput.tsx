@@ -48,6 +48,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
   const handleSend = () => {
     if (!message.trim() && !file) return;
 
+    console.log("Enviando datos", {
+      message,
+      type: file ? "file" : "text", // Determinamos el tipo de mensaje
+    });
+
     if (file) {
       const formData = new FormData();
       formData.append("conversation_id", conversationId.toString());
