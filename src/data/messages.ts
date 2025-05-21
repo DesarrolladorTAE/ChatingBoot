@@ -6,13 +6,13 @@ import img2 from "../assets/images/small/img-2.jpg";
 export interface AttachmentTypes {
   id: number;
   name: string;
-  downloadLink: string;
+  download_link: string;
   desc: string;
 }
 
 export interface ImageTypes {
   id: number;
-  downloadLink: string;
+  download_link: string;
 }
 export interface MessagesTypes {
   mId: number;

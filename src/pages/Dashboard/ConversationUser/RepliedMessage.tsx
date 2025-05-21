@@ -47,7 +47,7 @@ function RepliedMessage({ isFromMe, message, fullName }: RepliedMessageProps) {
                 <div className="message-img-list">
                   <div>
                     <a className="popup-img d-inline-block" href="/dashboard">
-                      <img src={message.replyOf?.newimage[0].downloadLink} alt="" className="rounded border" />
+                      <img src={message.replyOf?.newimage[0].download_link} alt="" className="rounded border" />
                     </a>
                   </div>
                 </div>

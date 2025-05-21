@@ -5,7 +5,7 @@ import config from "../config";
 axios.defaults.baseURL = config.API_URL;
 
 // content type
-axios.defaults.headers.post["Content-Type"] = "application/json";
+// axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // intercepting to capture errors
 // axios.interceptors.response.use(
@@ -98,11 +98,26 @@ class APIClient {
   /**
    * post given data to url
    */
-  create = (url: string, data?: {}) => {
+  // create = (url: string, data?: {}) => {
+  //   return axios.post(url, data, {
+  //     withCredentials: false,
+  //   });
+  // };
+
+  create = (url: string, data?: any) => {
+  if (data instanceof FormData) {
+    // Deja que axios lo maneje, no pongas headers
     return axios.post(url, data, {
       withCredentials: false,
     });
-  };
+  }
+  // Si NO es FormData, entonces sí pon el header para JSON
+  return axios.post(url, data, {
+    withCredentials: false,
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
 
   /**
    * Updates data

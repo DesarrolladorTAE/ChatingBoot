@@ -28,6 +28,14 @@ import { useProfile } from "../../../hooks";
 import { formateDate } from "../../../utils";
 import RepliedMessage from "./RepliedMessage";
 
+function isImageOrSticker(filename: string = ""): boolean {
+  return /\.(webp|png|jpg|jpeg|gif)$/i.test(filename);
+}
+
+function isArchivoRecibido(text?: string) {
+  return text && text.trim() === "[Archivo recibido]";
+}
+
 interface MenuProps {
   onDelete: () => any;
   onReply: () => any;
@@ -192,7 +200,7 @@ const Image = ({
             onClick={() => onImageClick(index)}
           >
             <img
-              src={image.downloadLink}
+              src={image.download_link}
               alt="image"
               className="rounded border"
             />{" "}
@@ -200,7 +208,7 @@ const Image = ({
           </Link>
         </div>
         <ImageMoreMenu
-          imagelink={image.downloadLink}
+          imagelink={image.download_link}
           onReply={onClickReply}
           onDelete={onDelete}
         />
@@ -289,7 +297,7 @@ const Attachments = ({ attachments }: AttachmentsProps) => {
                 <div>
                   <a
                     href={
-                      attachment.downloadLink ? attachment.downloadLink : "#"
+                      attachment.download_link ? attachment.download_link : "#"
                     }
                     className="text-muted"
                     download
@@ -421,39 +429,54 @@ const Message = ({
             </span>
           )}
 
-          <div className="ctext-wrap">
-            <div className="ctext-wrap-content">
-              {/* Sticker */}
-              {isSticker &&
-                message.attachments &&
-                message.attachments.length > 0 && (
-                  <img
-                    src={message.attachments[0].downloadLink} // Utiliza el link de descarga
-                    alt="Sticker"
-                    className="message-sticker"
-                  />
-                )}
-
-              {/* Texto (solo si no es sticker o tiene contenido específico) */}
-              {hasText && !isSticker && (
-                <p className="mb-0 ctext-content">{message.content}</p>
-              )}
-
-              {/* Imágenes */}
-              {hasImages && (
-                <Images
-                  images={message.image || []} // Si message.image es undefined, pasamos un array vacío
-                  message={message}
-                  onSetReplyData={onSetReplyData}
-                  onDeleteImg={onDeleteImg}
+          <div className="ctext-wrap-content">
+            {/* Sticker: SOLO una vez, cuando el tipo es sticker */}
+            {isSticker &&
+              message.attachments &&
+              message.attachments.length > 0 && (
+                <img
+                  src={message.attachments[0].download_link}
+                  alt="Sticker"
+                  className="message-sticker"
+                  style={{ maxWidth: 180, borderRadius: 8, margin: 8 }}
                 />
               )}
 
-              {/* Archivos adjuntos */}
-              {hasAttachments && (
-                <Attachments attachments={message.attachments} />
-              )}
-            </div>
+            {/* Imágenes recibidas (solo si NO es sticker) */}
+            {!isSticker &&
+              message.attachments &&
+              message.attachments.length > 0 &&
+              message.attachments
+                .filter(att => isImageOrSticker(att.name))
+                .map((att, idx) => (
+                  <img
+                    key={idx}
+                    src={att.download_link}
+                    alt={att.name}
+                    className="message-image"
+                    style={{ maxWidth: 180, borderRadius: 8, margin: 8 }}
+                  />
+                ))}
+
+            {/* Texto (solo si NO es sticker y el texto no es "[Archivo recibido]") */}
+            {hasText && !isSticker && !isArchivoRecibido(message.content) && (
+              <p className="mb-0 ctext-content">{message.content}</p>
+            )}
+
+            {/* Imágenes (compatibilidad con legacy Images[]) */}
+            {hasImages && (
+              <Images
+                images={message.image || []}
+                message={message}
+                onSetReplyData={onSetReplyData}
+                onDeleteImg={onDeleteImg}
+              />
+            )}
+
+            {/* Archivos adjuntos (los no-imagen) */}
+            {hasAttachments && (
+              <Attachments attachments={message.attachments} />
+            )}
           </div>
 
           {/* Menú para opciones de mensaje */}
