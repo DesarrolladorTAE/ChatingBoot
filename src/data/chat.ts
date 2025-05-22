@@ -1,7 +1,7 @@
 import { STATUS_TYPES } from "../constants";
 
-import { contacts } from "./contacts";
-import { userChannels } from "./channels";
+// import { contacts } from "./contacts";
+// import { userChannels } from "./channels";
 export interface UserTypes {
   id: string | number;
   firstName: string;
@@ -53,89 +53,89 @@ export type Message = {
   attachments?: any[]; // Tipar si ya tienes estructura
 };
 
-let favourites: Array<UserTypes> = [
-  {
-    ...contacts[4],
-    meta: {
-      unRead: 3,
-      status: STATUS_TYPES.ACTIVE,
-    },
-  },
-  {
-    ...contacts[5],
-    meta: {
-      status: STATUS_TYPES.ACTIVE,
-    },
-  },
-  {
-    ...contacts[6],
-  },
-  {
-    ...contacts[7],
-    meta: {
-      status: STATUS_TYPES.ACTIVE,
-    },
-  },
-];
+// let favourites: Array<UserTypes> = [
+//   {
+//     ...contacts[4],
+//     meta: {
+//       unRead: 3,
+//       status: STATUS_TYPES.ACTIVE,
+//     },
+//   },
+//   {
+//     ...contacts[5],
+//     meta: {
+//       status: STATUS_TYPES.ACTIVE,
+//     },
+//   },
+//   {
+//     ...contacts[6],
+//   },
+//   {
+//     ...contacts[7],
+//     meta: {
+//       status: STATUS_TYPES.ACTIVE,
+//     },
+//   },
+// ];
 
-let directMessages: Array<UserTypes> = [
-  {
-    ...contacts[16],
-  },
-  {
-    ...contacts[17],
-  },
-  {
-    ...contacts[8],
-    meta: {
-      unRead: 5,
-    },
-  },
-  {
-    ...contacts[18],
-  },
-  {
-    ...contacts[3],
-  },
-  {
-    ...contacts[11],
-  },
-];
+// let directMessages: Array<UserTypes> = [
+//   {
+//     ...contacts[16],
+//   },
+//   {
+//     ...contacts[17],
+//   },
+//   {
+//     ...contacts[8],
+//     meta: {
+//       unRead: 5,
+//     },
+//   },
+//   {
+//     ...contacts[18],
+//   },
+//   {
+//     ...contacts[3],
+//   },
+//   {
+//     ...contacts[11],
+//   },
+// ];
 
-const onChangeDirectMessages = (newData: Array<UserTypes>) => {
-  directMessages = newData;
-};
-export interface ChannelTypes {
-  id: number | string;
-  name: string;
-  meta?: {
-    unRead: number;
-  };
-}
-let channels: Array<ChannelTypes> = [
-  {
-    ...userChannels[0],
-    meta: {
-      unRead: 12,
-    },
-  },
-  {
-    ...userChannels[1],
-  },
-  {
-    ...userChannels[2],
-    meta: {
-      unRead: 85,
-    },
-  },
-  {
-    ...userChannels[3],
-  },
-];
+// const onChangeDirectMessages = (newData: Array<UserTypes>) => {
+//   directMessages = newData;
+// };
+// export interface ChannelTypes {
+//   id: number | string;
+//   name: string;
+//   meta?: {
+//     unRead: number;
+//   };
+// }
+// let channels: Array<ChannelTypes> = [
+//   {
+//     ...userChannels[0],
+//     meta: {
+//       unRead: 12,
+//     },
+//   },
+//   {
+//     ...userChannels[1],
+//   },
+//   {
+//     ...userChannels[2],
+//     meta: {
+//       unRead: 85,
+//     },
+//   },
+//   {
+//     ...userChannels[3],
+//   },
+// ];
 
-const onChangeChannels = (newData: Array<ChannelTypes>) => {
-  channels = newData;
-};
+// const onChangeChannels = (newData: Array<ChannelTypes>) => {
+//   channels = newData;
+// };
 
 export interface PinTypes {
   id: number;
@@ -207,30 +207,30 @@ const pinnedTabs: Array<PinTypes> = [
   },
 ];
 
-const archiveContacts = (contacts || []).filter((cn: any) => cn.isArchived);
+// const archiveContacts = (contacts || []).filter((cn: any) => cn.isArchived);
 
-let archiveChats: Array<any> = [
-  ...archiveContacts,
-  {
-    ...userChannels[1],
-    isChannel: true,
-  },
-];
-const onChangeFavourite = (newData: Array<UserTypes>) => {
-  favourites = newData;
-};
-const onChangeArchives = (newData: Array<any>) => {
-  archiveChats = newData;
-};
+// let archiveChats: Array<any> = [
+//   ...archiveContacts,
+//   {
+//     ...userChannels[1],
+//     isChannel: true,
+//   },
+// ];
+// const onChangeFavourite = (newData: Array<UserTypes>) => {
+//   favourites = newData;
+// };
+// const onChangeArchives = (newData: Array<any>) => {
+//   archiveChats = newData;
+// };
 
 export {
-  favourites,
-  directMessages,
-  channels,
-  onChangeDirectMessages,
-  onChangeChannels,
-  onChangeFavourite,
+//   favourites,
+//   directMessages,
+//   channels,
+//   onChangeDirectMessages,
+//   onChangeChannels,
+//   onChangeFavourite,
   pinnedTabs,
-  archiveChats,
-  onChangeArchives,
+//   archiveChats,
+//   onChangeArchives,
 };

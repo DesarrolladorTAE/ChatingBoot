@@ -1,6 +1,12 @@
 import { ChatsActionTypes } from "./types";
 import type { ConversationTicket } from "../../data";
 
+
+export const createConversation = (contactId: string | number) => ({
+  type: ChatsActionTypes.CREATE_CONVERSATION,
+  payload: { contactId },
+});
+
 // common success
 export const chatsApiResponseSuccess = (actionType: string, data: any) => ({
   type: ChatsActionTypes.API_RESPONSE_SUCCESS,

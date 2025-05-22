@@ -39,14 +39,26 @@ const Chats = (state = INIT_STATE, action: any) => {
           return {
             ...state,
             selectedConversation: {
-              id: action.payload.data?.id,  
+              id: action.payload.data?.id,
               messages: action.payload.data?.messages ?? [],
               contact: action.payload.data?.contact ?? {},
             },
             isDirectMessagesFetched: true,
             getDirectMessagesLoading: false,
           };
-
+        case ChatsActionTypes.CREATE_CONVERSATION:
+          // Si tu backend responde con la conversación creada en data
+          return {
+            ...state,
+            // Opcional: puedes agregar la nueva conversación a la lista
+            conversations: [...state.conversations, action.payload.data],
+            // También podrías setearla como la conversación seleccionada:
+            selectedConversation: {
+              messages: [],
+              contact: action.payload.data.contact,
+            },
+            // O cualquier flag personalizado que quieras manejar
+          };
         case ChatsActionTypes.GET_CHANNELS:
           return {
             ...state,
@@ -176,6 +188,13 @@ const Chats = (state = INIT_STATE, action: any) => {
             ...state,
             isDirectMessagesFetched: false,
             getDirectMessagesLoading: false,
+          };
+        case ChatsActionTypes.CREATE_CONVERSATION:
+          return {
+            ...state,
+            isConversationCreated: false,
+            createConversationLoading: false,
+            conversationError: action.payload.error, // opcional para mostrar el mensaje de error
           };
         case ChatsActionTypes.GET_CHANNELS:
           return {

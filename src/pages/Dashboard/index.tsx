@@ -14,6 +14,7 @@ import Welcome from "./ConversationUser/Welcome";
 //Atención
 import Atenciones from "./Atencion/Atenciones";
 import RespuestasRapidas from "./Atencion/RespuestasRapidas";
+import Contactos from "./Atencion/Contactos";
 //Administración
 import Conexiones from "./Administracion/Conexiones";
 // redux actions
@@ -65,15 +66,18 @@ const Index = (props: IndexProps) => {
     
     // Handle sections - use lowercase consistently for comparison
     switch (selectedSection?.toLowerCase()) {
-      case "atenciones":
-        return <Atenciones />;
-      case "respuestas rapidas":
-        return <RespuestasRapidas />;
-      case "conexiones":
-        return <Conexiones />;
-      default:
-        return <Welcome />;
-    }
+  case "atenciones":
+    return <Atenciones />;
+  case "respuestas rapidas":
+    return <RespuestasRapidas />;
+  case "contactos":
+    return <Contactos />;
+  case "conexiones":
+    return <Conexiones />; // Aquí va tu lista de contactos
+  default:
+    return <Welcome />;
+}
+
   };
 
   const { userProfile, loading } = useProfile();

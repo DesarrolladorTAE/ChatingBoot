@@ -25,6 +25,7 @@ import {
   toggleArchiveContact as toggleArchiveContactApi,
   readConversation as readConversationApi,
   deleteImage as deleteImageApi,
+  createConversationApi,
 } from "../../api/index";
 
 import {
@@ -48,6 +49,26 @@ function* getFavourites() {
     );
   } catch (error: any) {
     yield put(chatsApiResponseError(ChatsActionTypes.GET_FAVOURITES, error));
+  }
+}
+
+function* createConversation({ payload }: any): Generator<any, void, any> {
+  try {
+    const response: any = yield call(createConversationApi, payload.contactId);
+
+    // Si el backend devuelve error porque ya existe, puedes mostrar el toast aquí:
+    if (response.error) {
+      yield call(showErrorNotification, response.error);
+      yield put(chatsApiResponseError(ChatsActionTypes.CREATE_CONVERSATION, response.error));
+    } else {
+      yield put(chatsApiResponseSuccess(ChatsActionTypes.CREATE_CONVERSATION, response));
+      yield call(showSuccessNotification, "Conversación creada correctamente");
+      // Opcional: Puedes redirigir a la conversación nueva desde aquí o despachar otra acción
+      // yield put(getChatUserConversations());
+    }
+  } catch (error: any) {
+    yield call(showErrorNotification, error.message || "Error inesperado al crear la conversación");
+    yield put(chatsApiResponseError(ChatsActionTypes.CREATE_CONVERSATION, error));
   }
 }
 
@@ -424,6 +445,10 @@ function* deleteImage({ payload: { userId, messageId, imageId } }: any) {
   }
 }
 
+export function* watchCreateConversation() {
+  yield takeEvery(ChatsActionTypes.CREATE_CONVERSATION, createConversation);
+}
+
 export function* watchGetFavourites() {
   yield takeEvery(ChatsActionTypes.GET_FAVOURITES, getFavourites);
 }
@@ -503,6 +528,7 @@ export function* watchDeleteImage() {
 
 function* chatsSaga() {
   yield all([
+    fork(watchCreateConversation),
     fork(watchGetFavourites),
     fork(watchGetDirectMessages),
     fork(watchGetChannels),

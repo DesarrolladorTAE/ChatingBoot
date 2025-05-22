@@ -3,6 +3,10 @@ import * as url from "./urls";
 
 const api = new APIClient();
 
+export const createConversationApi = (contactId: string | number) => {
+  return api.create(url.CREATE_CONVERSATION, { contact_id: contactId });
+};
+
 const getFavourites = () => {
   return api.get(url.GET_FAVOURITES);
 };

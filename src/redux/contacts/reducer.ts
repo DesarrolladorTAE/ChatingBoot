@@ -10,6 +10,7 @@ const Contacts = (state = INIT_STATE, action: any) => {
     case ContactsActionTypes.API_RESPONSE_SUCCESS:
       switch (action.payload.actionType) {
         case ContactsActionTypes.GET_CONTACTS:
+          console.log("Contactos en redux:", Contacts);
           return {
             ...state,
             contacts: action.payload.data,

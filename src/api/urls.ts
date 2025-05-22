@@ -17,8 +17,15 @@ export const GET_USER_SETTINGS = "/user-settings";
 export const UPDATE_ETTINGS = "/update-user-settings";
 
 // contacts
-export const GET_CONTACTS = "/user-contacts";
-export const INVITE_CONTACT = "/invite-contact";
+// export const GET_CONTACTS = "/user-contacts";
+// export const INVITE_CONTACT = "/invite-contact";
+
+// contacts (estos SÍ existen en tu backend Laravel)
+export const GET_CONTACTS = "/contacts";             // GET todos
+export const CREATE_CONTACT = "/contacts";           // POST
+export const UPDATE_CONTACT = (id: string | number) => `/contacts/${id}`; // PUT
+export const DELETE_CONTACT = (id: string | number) => `/contacts/${id}`; // DELETE
+export const GET_CONTACT = (id: string | number) => `/contacts/${id}`;    // GET uno
 
 // calls
 export const GET_CALLS_LIST = "/calls-list";
@@ -38,6 +45,7 @@ export const CREATE_CHANNEL = "/create-channel";
 export const GET_CHAT_CONTACT_DETAILS = (id: string | number) =>
   `/contacts/${id}`;
 export const GET_CHAT_USER_CONVERSATIONS = "/conversations";
+export const CREATE_CONVERSATION = "/conversations"; // POST para iniciar conversación
 export const SEND_MESSAGE = "/messages"; // (POST, con conversation_id, content, etc.)
 export const RECEIVE_MESSAGE = "/receive-message";
 export const READ_MESSAGE = "/read-message";

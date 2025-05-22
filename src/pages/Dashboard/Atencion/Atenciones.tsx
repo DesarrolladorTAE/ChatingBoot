@@ -95,7 +95,10 @@ const Atenciones: React.FC = () => {
   return (
     <div className="d-flex" style={{ height: "100%" }}>
       {/* Lado izquierdo */}
-      <div className="border-end" style={{ width: "320px" }}>
+      <div
+        className="border-end d-flex flex-column"
+        style={{ width: "320px", height: "100vh", minHeight: 0 }}
+      >
         <Nav tabs className="bg-light">
           <NavItem>
             <NavLink
