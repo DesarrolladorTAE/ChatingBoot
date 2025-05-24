@@ -15,7 +15,7 @@ const postFakeLogin = (data: any) => api.create(url.POST_FAKE_LOGIN, data);
 
 const postFakeLogout = () => api.create(url.POST_FAKE_LOGOUT);
 
-const postLogout = () => api.create("/logout");
+// const postLogout = () => api.create("/logout");
 
 const postJwtLogin = (data: any) => api.create(url.POST_JWT_LOGIN, data);
 
@@ -35,9 +35,21 @@ const postFakeRegister = (data: any) => {
 //   return api.create(url.JWT_REGISTER, data);
 // };
 
+// const postJwtRegister = (data: any) => {
+//   return api.create("/register", data);
+// };
+
 const postJwtRegister = (data: any) => {
-  return api.create("/register", data);
+  return api.create(url.POST_JWT_REGISTER, data);  // Corrected to use the updated URL for POST_JWT_REGISTER
 };
+
+// Add postVerifyCode to handle verification code submission
+const postVerifyCode = (code: string) => {
+  return api.create(url.VERIFICATION, { code });
+};
+
+// Logout Method (Corrected to use POST_JWT_LOGOUT)
+const postLogout = () => api.create(url.POST_JWT_LOGOUT);
 
 const changePassword = (data: object) => {
   return api.update(url.USER_CHANGE_PASSWORD, data);
@@ -57,4 +69,5 @@ export {
   changePassword,
   postSocialLogin,
   postLogout,
+  postVerifyCode,
 };

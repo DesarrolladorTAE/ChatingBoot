@@ -1,5 +1,13 @@
 import { AuthRegisterActionTypes } from "./types";
 
+// Acción para la verificación del código
+export const verifyCode = (code: string) => {
+  return {
+    type: AuthRegisterActionTypes.VERIFY_CODE,
+    payload: { code },
+  };
+};
+
 // common success
 export const authRegisterApiResponseSuccess = (
   actionType: string,

@@ -9,6 +9,10 @@ export const SOCIAL_LOGIN = "/social-login";
 export const JWT_REGISTER = "/post-jwt-register";
 export const POST_FAKE_REGISTER = "/post-fake-register";
 
+export const POST_JWT_REGISTER = "/register";
+export const VERIFICATION = "/verificar-codigo"
+export const POST_JWT_LOGOUT = "/logout";
+
 export const USER_CHANGE_PASSWORD = "/user-change-password";
 
 // profile & settings
