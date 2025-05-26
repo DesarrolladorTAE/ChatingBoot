@@ -8,23 +8,47 @@ import {
 import { postJwtRegister, postVerifyCode } from "../../../api/index";
 
 // Saga para manejar el registro de usuario
+// function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
+//   try {
+//     console.log("Iniciando registro con los datos del usuario:", user);
+//     const response = yield call(postJwtRegister, user);
+
+//     console.log("Respuesta del registro:", response);
+
+//     // Guardamos el token y usuario en localStorage
+//     localStorage.setItem(
+//       "authUser",
+//       JSON.stringify({ ...response.user, token: response.token }),
+//     );
+
+//     // Establecer el token de autorización
+//     setAuthorization(response.token);
+
+//     // Despachamos la respuesta exitosa al store
+//     yield put(
+//       authRegisterApiResponseSuccess(
+//         AuthRegisterActionTypes.REGISTER_USER,
+//         response,
+//       ),
+//     );
+//   } catch (error: any) {
+//     console.error("Error al registrar el usuario:", error);
+//     yield put(
+//       authRegisterApiResponseError(
+//         AuthRegisterActionTypes.REGISTER_USER,
+//         error,
+//       ),
+//     );
+//   }
+// }
+
 function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
   try {
-    console.log("Iniciando registro con los datos del usuario:", user);
     const response = yield call(postJwtRegister, user);
 
-    console.log("Respuesta del registro:", response);
+    // Solo guardamos usuario, no token
+    localStorage.setItem("authUser", JSON.stringify(response.user));
 
-    // Guardamos el token y usuario en localStorage
-    localStorage.setItem(
-      "authUser",
-      JSON.stringify({ ...response.user, token: response.token }),
-    );
-
-    // Establecer el token de autorización
-    setAuthorization(response.token);
-
-    // Despachamos la respuesta exitosa al store
     yield put(
       authRegisterApiResponseSuccess(
         AuthRegisterActionTypes.REGISTER_USER,
@@ -32,7 +56,6 @@ function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
       ),
     );
   } catch (error: any) {
-    console.error("Error al registrar el usuario:", error);
     yield put(
       authRegisterApiResponseError(
         AuthRegisterActionTypes.REGISTER_USER,
@@ -46,15 +69,31 @@ function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
 function* verifyCode({ payload: { code } }: any): Generator<any, void, any> {
   try {
     console.log("Verificando el código:", code);
-    const response = yield call(postVerifyCode, code);
+    const response: any = yield call(postVerifyCode, code);
 
-    // Verificamos si la respuesta es exitosa
-    if (response.status === 200) {
-      console.log("Código verificado correctamente:", response);
+    console.log("Respuesta de verificación:", response);
+
+    // Aquí validamos que venga token y user directamente en response
+    if (response.token && response.user) {
+      const { token, user } = response;
+
+      // Guardar usuario y token en localStorage
+      localStorage.setItem(
+        "authUser",
+        JSON.stringify({
+          ...user,
+          token,
+        }),
+      );
+
+      // Establecer token como header por defecto
+      setAuthorization(token);
+
+      // Dispatch de éxito con la data completa
       yield put(
         authRegisterApiResponseSuccess(
           AuthRegisterActionTypes.VERIFY_CODE,
-          response.data, // Suponiendo que la respuesta del backend está en `response.data`
+          response,
         ),
       );
     } else {
@@ -68,10 +107,19 @@ function* verifyCode({ payload: { code } }: any): Generator<any, void, any> {
     }
   } catch (error: any) {
     console.error("Error al verificar el código:", error);
+
+    let message = "Error al verificar el código";
+
+    if (error.type === "validation") {
+      message = error.errors?.code?.[0] || error.message;
+    } else if (error.type === "general") {
+      message = error.message;
+    }
+
     yield put(
       authRegisterApiResponseError(
         AuthRegisterActionTypes.VERIFY_CODE,
-        "Error al verificar el código",
+        message,
       ),
     );
   }

@@ -1,5 +1,5 @@
-// import Echo from 'laravel-echo';
-// import Pusher from 'pusher-js';
+// import Echo from "laravel-echo";
+// import Pusher from "pusher-js";
 
 // declare global {
 //   interface Window {
@@ -9,39 +9,48 @@
 
 // window.Pusher = Pusher;
 
+// // Cambia esto por la IP PÚBLICA de tu VPS
+// const WS_SERVER_IP = "205.234.134.34";
+
 // const echo = new Echo({
-//   broadcaster: 'pusher',
-//   key: 'byron',
-//   wsHost: 'chatingbot.com.mx',
+//   broadcaster: "pusher",
+//   key: "byron",
+//   cluster: "mt1",
+//   wsHost: WS_SERVER_IP, // SOLO IP, JAMÁS 'localhost'
 //   wsPort: 6001,
-//   forceTLS: false,
+//   forceTLS: false, // SOLO ws://, NUNCA wss:// en dev
 //   encrypted: false,
+//   wsPath: "app", // SOLO /app, nada más
+//   enabledTransports: ["ws"], // SOLO ws
 //   disableStats: true,
-//   cluster: '',
-//   enabledTransports: ['ws'],
 // });
 
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
+// export default echo;
 
-(window as any).Pusher = Pusher;
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
-console.log('Pusher Key:', process.env.REACT_APP_PUSHER_APP_KEY); // <-- para debug
+declare global {
+  interface Window {
+    Pusher: any;
+  }
+}
 
-const isLocalhost = window.location.hostname === 'localhost';
+window.Pusher = Pusher;
 
 const echo = new Echo({
-  broadcaster: 'pusher',
-  key: process.env.REACT_APP_PUSHER_APP_KEY || '',
-  cluster: process.env.REACT_APP_PUSHER_APP_CLUSTER || 'mt1',
-  wsHost: process.env.REACT_APP_PUSHER_HOST || (isLocalhost ? 'localhost' : 'chatingbot.com.mx'),
-  wsPort: Number(process.env.REACT_APP_PUSHER_PORT) || 6001,
-  forceTLS: !isLocalhost, // fuerza TLS solo en producción
-  encrypted: !isLocalhost,
+  broadcaster: "pusher",
+  key: "byron",
+  cluster: "mt1",
+  wsHost: "chatingbot.com.mx",
+  wsPort: 443,
+  wssPort: 443,
+  forceTLS: true,         // HTTPS obligatorio en producción
+  encrypted: true,
+  wsPath: "soketi/app",   // OJO: SIN el slash inicial, para que quede /soketi/app/byron
+  enabledTransports: ["ws", "wss"],
   disableStats: true,
-  enabledTransports: ['ws', 'wss'],
 });
-
 
 export default echo;
 

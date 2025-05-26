@@ -17,7 +17,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser, verifyCode } from "../../redux/actions";
 
-// Definición de la interfaz para el formulario
 interface RegisterFormValues {
   name: string;
   email: string;
@@ -29,20 +28,18 @@ interface RegisterFormValues {
 const Register: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [verificationCode, setVerificationCode] = useState<string>("");
-
-  // Obtener el estado de Redux
   const {
     registrationError,
+    verificationError,
     regLoading,
     user,
     isUserRegistered,
     codeVerified,
   } = useSelector((state: any) => state.Register);
 
-  // Validaciones de formulario con Yup
   const resolver = yupResolver(
     yup.object({
       name: yup.string().required("El nombre es obligatorio"),
@@ -65,127 +62,115 @@ const Register: React.FC = () => {
     }),
   );
 
-  // Hook de react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormValues>({
-    resolver,
-  });
+  } = useForm<RegisterFormValues>({ resolver });
 
-  // Función de envío del formulario
   const onSubmitForm: SubmitHandler<RegisterFormValues> = values => {
-    const { confirmPassword, ...user } = values;
-    console.log("Formulario enviado con datos: ", user);
-    dispatch(registerUser(user)); // Despachamos la acción para registrar al usuario
+    const { confirmPassword, ...userData } = values;
+    dispatch(registerUser(userData));
   };
 
-  // Función para verificar el código
   const onVerifyCode = () => {
-    console.log("Verificando código: ", verificationCode);
-    dispatch(verifyCode(verificationCode)); // Despachamos la acción para verificar el código
+    dispatch(verifyCode(verificationCode));
   };
-  
+
   useEffect(() => {
-    console.log("Estado de usuario registrado: ", isUserRegistered);
-    console.log("Usuario registrado: ", user);
     if (isUserRegistered && user) {
-      setIsModalOpen(true); // Mostrar el modal de verificación después de registrar
+      setIsModalOpen(true);
     }
   }, [isUserRegistered, user]);
 
-  // **Redirección al dashboard** solo si el código es verificado
   useEffect(() => {
-    console.log("Estado de código verificado:", codeVerified); // Verifica el valor de codeVerified
     if (codeVerified) {
-      console.log("Código verificado, cerrando el modal y redirigiendo...");
-      setIsModalOpen(false); // Cerrar el modal
-      navigate("/dashboard"); // Redirigir al dashboard si el código es verificado
+      const token = localStorage.getItem("authUser");
+      if (token) {
+        setIsModalOpen(false);
+        navigate("/dashboard");
+      }
     }
-  }, [codeVerified, navigate]); // Escucha los cambios de `codeVerified` y `navigate`
+  }, [codeVerified, navigate]);
 
   return (
     <>
-      <Row className="justify-content-center my-auto">
-        <Col sm={8} lg={6} xl={5} className="col-xxl-4">
-          <div className="py-md-5 py-4">
-            <h3 className="text-center mb-4">Register Account</h3>
+      <Row className="justify-content-center min-vh-100 align-items-center bg-light">
+        <Col sm={10} md={8} lg={6} xl={5}>
+          <div className="shadow-lg rounded-4 bg-white p-4 p-md-5">
+            <h3 className="text-center mb-4 fw-bold">Crear cuenta</h3>
 
             {user && (
               <Alert color="success">
-                ✅ Registro exitoso. Te enviamos un código por WhatsApp para
-                verificar tu número.
+                ✅ Registro exitoso. Te enviamos un código por WhatsApp para verificar tu número.
               </Alert>
             )}
 
             {registrationError && (
-              <Alert color="danger">{registrationError}</Alert>
+              <Alert color="danger">
+                {typeof registrationError === "string"
+                  ? registrationError
+                  : registrationError.message || JSON.stringify(registrationError)}
+              </Alert>
             )}
 
             <Form onSubmit={handleSubmit(onSubmitForm)}>
               <div className="mb-3">
-                <label>Nombre</label>
+                <label className="form-label fw-semibold">Nombre completo</label>
                 <input
                   {...register("name")}
-                  className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                  className={`form-control rounded-3 ${errors.name ? "is-invalid" : ""}`}
                   placeholder="Ej. Juan Pérez"
                 />
-                {errors.name && (
-                  <div className="invalid-feedback">{errors.name.message}</div>
-                )}
+                {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
+              </div>
 
-                <label>Correo electrónico</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Correo electrónico</label>
                 <input
                   {...register("email")}
-                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  className={`form-control rounded-3 ${errors.email ? "is-invalid" : ""}`}
                   placeholder="ejemplo@correo.com"
                 />
-                {errors.email && (
-                  <div className="invalid-feedback">{errors.email.message}</div>
-                )}
+                {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
+              </div>
 
-                <label>Número de WhatsApp</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Número de WhatsApp</label>
                 <input
                   {...register("number")}
-                  className={`form-control ${errors.number ? "is-invalid" : ""}`}
+                  className={`form-control rounded-3 ${errors.number ? "is-invalid" : ""}`}
                   placeholder="5512345678"
                 />
-                {errors.number && (
-                  <div className="invalid-feedback">
-                    {errors.number.message}
-                  </div>
-                )}
+                {errors.number && <div className="invalid-feedback">{errors.number.message}</div>}
+              </div>
 
-                <label>Contraseña</label>
+              <div className="mb-3">
+                <label className="form-label fw-semibold">Contraseña</label>
                 <input
                   type="password"
                   {...register("password")}
-                  className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                  className={`form-control rounded-3 ${errors.password ? "is-invalid" : ""}`}
                   placeholder="********"
                 />
-                {errors.password && (
-                  <div className="invalid-feedback">
-                    {errors.password.message}
-                  </div>
-                )}
+                {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
+              </div>
 
-                <label>Confirmar contraseña</label>
+              <div className="mb-4">
+                <label className="form-label fw-semibold">Confirmar contraseña</label>
                 <input
                   type="password"
                   {...register("confirmPassword")}
-                  className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+                  className={`form-control rounded-3 ${errors.confirmPassword ? "is-invalid" : ""}`}
                   placeholder="********"
                 />
                 {errors.confirmPassword && (
-                  <div className="invalid-feedback">
-                    {errors.confirmPassword.message}
-                  </div>
+                  <div className="invalid-feedback">{errors.confirmPassword.message}</div>
                 )}
               </div>
 
-              <div className="text-center mb-3">
-                <Button color="primary" className="w-100" type="submit">
+              <div className="d-grid">
+                <Button color="primary" className="rounded-3 py-2 fw-bold" type="submit">
                   {regLoading ? "Registrando..." : "Registrar"}
                 </Button>
               </div>
@@ -194,32 +179,36 @@ const Register: React.FC = () => {
         </Col>
       </Row>
 
-      {/* Modal de verificación de código */}
       <Modal isOpen={isModalOpen} toggle={() => setIsModalOpen(!isModalOpen)}>
-        <ModalHeader toggle={() => setIsModalOpen(!isModalOpen)}>
-          Verificar Número
-        </ModalHeader>
+        <ModalHeader toggle={() => setIsModalOpen(!isModalOpen)}>Verificación</ModalHeader>
         <ModalBody>
-          <label>Código de Verificación</label>
+          <label className="form-label fw-semibold">Código de Verificación</label>
           <input
             type="text"
             value={verificationCode}
-            onChange={e => {
-              console.log("Código de verificación ingresado: ", e.target.value);
-              setVerificationCode(e.target.value);
-            }}
-            className="form-control"
-            placeholder="Ingresa el código que recibiste por WhatsApp"
+            onChange={e => setVerificationCode(e.target.value)}
+            className="form-control rounded-3"
+            placeholder="Ingresa el código recibido"
           />
-          {registrationError && (
-            <div className="text-danger">{registrationError}</div>
+          {verificationError && (
+            <div className="text-danger mt-2">
+              {typeof verificationError === "string"
+                ? verificationError
+                : verificationError.message || JSON.stringify(verificationError)}
+            </div>
           )}
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={onVerifyCode}>
             Verificar
           </Button>
-          <Button color="secondary" onClick={() => setIsModalOpen(false)}>
+          <Button
+            color="secondary"
+            onClick={() => {
+              setVerificationCode("");
+              setIsModalOpen(false);
+            }}
+          >
             Cancelar
           </Button>
         </ModalFooter>

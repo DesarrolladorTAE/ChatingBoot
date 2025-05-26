@@ -21,7 +21,7 @@ const Register = (state = INIT_STATE, action: any) => {
             ...state,
             loading: false,
             user: action.payload.data.user,
-            token: action.payload.data.token,
+            // token: action.payload.data.token,
             registrationError: null,
             isUserRegistered: true, // El registro fue exitoso
           };
@@ -32,6 +32,8 @@ const Register = (state = INIT_STATE, action: any) => {
             loading: false,
             codeVerified: true, // El código fue verificado correctamente
             verificationError: null, // Sin error en la verificación
+            token: action.payload.data.token, // token recibido
+            user: action.payload.data.user, // user recibido (según respuesta)
           };
 
         default:
