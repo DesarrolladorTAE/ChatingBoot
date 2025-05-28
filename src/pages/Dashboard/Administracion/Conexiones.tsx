@@ -21,10 +21,48 @@ const QrButton = memo(function QrButton({ conn, onShowQr }: QrButtonProps) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!conn.connection_id) return;
-    const channel = echo.channel(`connection.${conn.connection_id}`);
-    channel.listen(".qr.updated", () => dispatch(fetchConexionesRequest()));
-    return () => echo.leave(`connection.${conn.connection_id}`);
+    if (!conn.connection_id) {
+      console.log("[QR useEffect] Sin connection_id, no suscribo canal.");
+      return;
+    }
+    const channelName = `connection.${conn.connection_id}`;
+    console.log(`[QR useEffect] Suscribiéndose al canal: ${channelName}`);
+
+    // Declara el canal ANTES de usarlo
+    const channel = echo.channel(channelName);
+
+    // Opcional: define el tipo del payload de QR si lo sabes
+    type QrUpdatedPayload = { connectionId: string; qr: string };
+
+    // Si no sabes el tipo, usa "any" solo para debug inicial
+    const handler = (data: QrUpdatedPayload) => {
+      console.log(
+        `[QR useEffect] Evento .qr.updated recibido en canal ${channelName}:`,
+        data,
+      );
+      dispatch(fetchConexionesRequest());
+      console.log("[QR useEffect] fetchConexionesRequest despachado.");
+    };
+
+    channel.listen(".qr.updated", handler);
+
+    channel.listen("qr.updated", (data: QrUpdatedPayload) =>
+      console.log(`[DEBUG] Recibido evento qr.updated (sin punto):`, data),
+    );
+    channel.listen(".App\\Events\\QrUpdated", (data: QrUpdatedPayload) =>
+      console.log(`[DEBUG] Recibido evento .App\\Events\\QrUpdated:`, data),
+    );
+    channel.listen("App\\Events\\QrUpdated", (data: QrUpdatedPayload) =>
+      console.log(
+        `[DEBUG] Recibido evento App\\Events\\QrUpdated (sin punto):`,
+        data,
+      ),
+    );
+
+    return () => {
+      console.log(`[QR useEffect] Saliendo del canal: ${channelName}`);
+      echo.leave(channelName);
+    };
   }, [conn.connection_id, dispatch]);
 
   if (conn.session_status === "ready")
@@ -41,17 +79,17 @@ const QrButton = memo(function QrButton({ conn, onShowQr }: QrButtonProps) {
         Cerrar sesión
       </button>
     );
- if (conn.session_status === "pending" && conn.qr_code)
-  return (
-    <button
-      onClick={() => {
-        if (conn.qr_code) onShowQr(conn.qr_code);
-      }}
-      className="text-green-700 font-semibold hover:underline"
-    >
-      Leer QR
-    </button>
-  );
+  if (conn.session_status === "pending" && conn.qr_code)
+    return (
+      <button
+        onClick={() => {
+          if (conn.qr_code) onShowQr(conn.qr_code);
+        }}
+        className="text-green-700 font-semibold hover:underline"
+      >
+        Leer QR
+      </button>
+    );
 
   if (conn.session_status === "pending")
     return <span className="text-gray-400">Esperando QR...</span>;
@@ -61,7 +99,7 @@ const QrButton = memo(function QrButton({ conn, onShowQr }: QrButtonProps) {
 const Conexiones: React.FC = () => {
   const dispatch = useDispatch();
   const { list, loading, error } = useSelector(
-    (state: RootState) => state.Administracion.conexiones
+    (state: RootState) => state.Administracion.conexiones,
   );
   const [showModal, setShowModal] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
@@ -82,7 +120,7 @@ const Conexiones: React.FC = () => {
   useEffect(() => {
     const channel = echo.channel("public-connections");
     channel.listen(".ConnectionStatusUpdated", () =>
-      dispatch(fetchConexionesRequest())
+      dispatch(fetchConexionesRequest()),
     );
     return () => echo.leave("public-connections");
   }, [dispatch]);
@@ -106,14 +144,14 @@ const Conexiones: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
-      setFormData((prev) => ({ ...prev, [name]: checked }));
+      setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -158,7 +196,7 @@ const Conexiones: React.FC = () => {
     if (!qrImage || !showQrModal) return;
     const match = list.find(
       (conn: Connection) =>
-        conn.qr_code === qrImage && conn.session_status === "ready"
+        conn.qr_code === qrImage && conn.session_status === "ready",
     );
     if (match) {
       setShowQrModal(false);
@@ -213,7 +251,7 @@ const Conexiones: React.FC = () => {
                     <td className="px-6 py-3 text-center">
                       <QrButton
                         conn={conn}
-                        onShowQr={(qr) => {
+                        onShowQr={qr => {
                           setQrImage(qr);
                           setShowQrModal(true);
                         }}
@@ -224,7 +262,10 @@ const Conexiones: React.FC = () => {
                     </td>
                     <td className="px-6 py-3 text-center">
                       {conn.is_team_default && (
-                        <FaCheckCircle className="text-emerald-500 mx-auto" title="Predeterminada" />
+                        <FaCheckCircle
+                          className="text-emerald-500 mx-auto"
+                          title="Predeterminada"
+                        />
                       )}
                     </td>
                     <td className="px-6 py-3 text-right space-x-2">

@@ -62,6 +62,7 @@ function* registerUser({ payload: { user } }: any): Generator<any, void, any> {
         error,
       ),
     );
+    console.error("Error al registrar el usuario:", error);
   }
 }
 
